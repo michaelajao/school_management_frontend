@@ -7,15 +7,18 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { toast } from "sonner";
+import { useAuth } from "@/contexts/auth-context";
 
 export default function StudentOnboardingPage() {
   const router = useRouter();
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
     fullName: "",
     dateOfBirth: "",
     gradeLevel: "",
     studentId: "",
-    contactEmail: "",
+    contactEmail: user?.email || "",
     contactPhone: "",
     address: "",
     guardianName: "",
@@ -26,6 +29,7 @@ export default function StudentOnboardingPage() {
   });
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 2;
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -36,8 +40,7 @@ export default function StudentOnboardingPage() {
     if (currentStep < totalSteps) {
       setCurrentStep((prev) => prev + 1);
     } else {
-      // Complete onboarding
-      router.push("/dashboard/student");
+      submitOnboarding();
     }
   };
 
@@ -47,12 +50,32 @@ export default function StudentOnboardingPage() {
     }
   };
 
+  const submitOnboarding = async () => {
+    setIsSubmitting(true);
+    try {
+      // When API is ready, connect here
+      // For now, simulate API call with a timeout
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      
+      // Store onboarding data in localStorage for now
+      localStorage.setItem("studentOnboardingData", JSON.stringify(formData));
+      
+      toast.success("Profile setup completed!");
+      router.push("/dashboard/student");
+    } catch (error) {
+      toast.error("Failed to complete setup. Please try again.");
+      console.error("Onboarding error:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="max-w-3xl mx-auto space-y-8">
       <div>
-        <h1 className="text-3xl font-bold">Student Profile Setup</h1>
+        <h1 className="text-3xl font-bold">Student Setup</h1>
         <p className="text-muted-foreground mt-2">
-          Complete your student profile to get started
+          Complete your student profile information
         </p>
 
         <div className="flex items-center gap-2 mt-6">
@@ -80,9 +103,9 @@ export default function StudentOnboardingPage() {
       <Card className="p-6">
         {currentStep === 1 && (
           <div className="space-y-4">
-            <h2 className="font-semibold text-xl">Personal Details</h2>
+            <h2 className="font-semibold text-xl">Personal Information</h2>
             <p className="text-sm text-muted-foreground">
-              Tell us about yourself
+              Your basic personal details
             </p>
             <Separator />
             <div className="space-y-4 pt-4">
@@ -222,7 +245,7 @@ export default function StudentOnboardingPage() {
                 <Input
                   id="subjects"
                   name="subjects"
-                  placeholder="e.g. Mathematics, Science, Art, Sports"
+                  placeholder="Math, Science, Art, etc."
                   value={formData.subjects}
                   onChange={handleChange}
                 />
@@ -235,12 +258,18 @@ export default function StudentOnboardingPage() {
           <Button
             variant="outline"
             onClick={prevStep}
-            disabled={currentStep === 1}
+            disabled={currentStep === 1 || isSubmitting}
           >
             Back
           </Button>
-          <Button onClick={nextStep}>
-            {currentStep === totalSteps ? "Complete Setup" : "Continue"}
+          <Button onClick={nextStep} disabled={isSubmitting}>
+            {isSubmitting ? (
+              "Processing..."
+            ) : currentStep === totalSteps ? (
+              "Complete Setup"
+            ) : (
+              "Continue"
+            )}
           </Button>
         </div>
       </Card>

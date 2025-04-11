@@ -7,6 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { useAuth } from "@/contexts/auth-context";
+import { toast } from "sonner";
 
 type AuthFormProps = {
   type: "signin" | "signup";
@@ -14,6 +16,7 @@ type AuthFormProps = {
 
 export function AuthForm({ type }: AuthFormProps) {
   const router = useRouter();
+  const { login, signup } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
@@ -70,20 +73,16 @@ export function AuthForm({ type }: AuthFormProps) {
     setIsLoading(true);
     
     try {
-      // This is where you'd integrate with your backend API
-      // For now, we'll just simulate a successful signup
-      console.log("Form data:", formData);
-      
-      // After successful authentication, redirect to appropriate page
       if (type === "signup") {
-        // After signup, redirect to onboarding
-        router.push("/onboarding");
+        await signup(formData.email, formData.password);
+        toast.success("Account created successfully!");
       } else {
-        // After signin, redirect to dashboard
-        router.push("/dashboard");
+        await login(formData.email, formData.password);
+        toast.success("Welcome back!");
       }
     } catch (error) {
       console.error("Authentication error:", error);
+      toast.error("Authentication failed. Please check your credentials and try again.");
       setErrors({
         form: "Authentication failed. Please check your credentials and try again."
       });

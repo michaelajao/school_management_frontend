@@ -5,6 +5,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { useAuth } from "@/contexts/auth-context";
+import { toast } from "sonner";
 
 type UserRole = "admin" | "teacher" | "parent" | "student";
 
@@ -42,11 +44,35 @@ function RoleCard({ role, title, description, icon, isSelected, onClick }: RoleC
 
 export default function OnboardingPage() {
   const router = useRouter();
+  const { user } = useAuth();
   const [selectedRole, setSelectedRole] = useState<UserRole | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleContinue = () => {
     if (!selectedRole) return;
-    router.push(`/onboarding/${selectedRole}`);
+    
+    setIsLoading(true);
+    
+    // In a real application, you would save the user role to the backend
+    // For now, we'll just update the user object in localStorage
+    try {
+      const userData = localStorage.getItem("user");
+      
+      if (userData) {
+        const updatedUser = {
+          ...JSON.parse(userData),
+          role: selectedRole
+        };
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+      }
+      
+      router.push(`/onboarding/${selectedRole}`);
+    } catch (error) {
+      toast.error("Failed to save role selection. Please try again.");
+      console.error("Role selection error:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -81,7 +107,7 @@ export default function OnboardingPage() {
               <path d="M12 2v2" />
               <path d="M12 22v-2" />
               <path d="m17 20.66-1-1.73" />
-              <path d="M11 10.27 7 3.34" />
+              <path d="m7 3.34 1 1.73" />
               <path d="m20.66 17-1.73-1" />
               <path d="m3.34 7 1.73 1" />
               <path d="M14 12h8" />
@@ -112,13 +138,8 @@ export default function OnboardingPage() {
               strokeLinejoin="round"
               className="text-green-600"
             >
-              <path d="M3 15v4c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2v-4" />
-              <path d="M3 15h18" />
-              <path d="M7 10v5" />
-              <path d="M17 10v5" />
-              <path d="M12 10v5" />
-              <path d="M3 10a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v0a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v0Z" />
-              <path d="M12 6V3" />
+              <path d="M18 8a6 6 0 0 0-6-6 6 6 0 0 0-6 6c0 7 6 13 6 13s6-6 6-13Z" />
+              <circle cx="12" cy="8" r="2" />
             </svg>
           }
           isSelected={selectedRole === "teacher"}
@@ -179,10 +200,10 @@ export default function OnboardingPage() {
       <div className="flex justify-end">
         <Button
           onClick={handleContinue}
-          disabled={!selectedRole}
+          disabled={!selectedRole || isLoading}
           className="px-8"
         >
-          Continue
+          {isLoading ? "Processing..." : "Continue"}
         </Button>
       </div>
     </div>

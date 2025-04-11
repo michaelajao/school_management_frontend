@@ -7,13 +7,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { toast } from "sonner";
+import { useAuth } from "@/contexts/auth-context";
 
 export default function ParentOnboardingPage() {
   const router = useRouter();
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
     fullName: "",
     relationshipToStudent: "",
-    contactEmail: "",
+    contactEmail: user?.email || "",
     contactPhone: "",
     address: "",
     emergencyContact: "",
@@ -23,6 +26,7 @@ export default function ParentOnboardingPage() {
   });
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 2;
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -33,14 +37,33 @@ export default function ParentOnboardingPage() {
     if (currentStep < totalSteps) {
       setCurrentStep((prev) => prev + 1);
     } else {
-      // Complete onboarding
-      router.push("/dashboard/parent");
+      submitOnboarding();
     }
   };
 
   const prevStep = () => {
     if (currentStep > 1) {
       setCurrentStep((prev) => prev - 1);
+    }
+  };
+
+  const submitOnboarding = async () => {
+    setIsSubmitting(true);
+    try {
+      // When API is ready, connect here
+      // For now, simulate API call with a timeout
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      
+      // Store onboarding data in localStorage for now
+      localStorage.setItem("parentOnboardingData", JSON.stringify(formData));
+      
+      toast.success("Profile setup completed!");
+      router.push("/dashboard/parent");
+    } catch (error) {
+      toast.error("Failed to complete setup. Please try again.");
+      console.error("Onboarding error:", error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -201,12 +224,18 @@ export default function ParentOnboardingPage() {
           <Button
             variant="outline"
             onClick={prevStep}
-            disabled={currentStep === 1}
+            disabled={currentStep === 1 || isSubmitting}
           >
             Back
           </Button>
-          <Button onClick={nextStep}>
-            {currentStep === totalSteps ? "Complete Setup" : "Continue"}
+          <Button onClick={nextStep} disabled={isSubmitting}>
+            {isSubmitting ? (
+              "Processing..."
+            ) : currentStep === totalSteps ? (
+              "Complete Setup"
+            ) : (
+              "Continue"
+            )}
           </Button>
         </div>
       </Card>

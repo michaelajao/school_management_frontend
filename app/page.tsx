@@ -16,12 +16,12 @@ export default function Home() {
               height={28}
               className="text-[#1B5B5E]"
             />
-            <span className="font-bold text-xl">SchoolMS</span>
+            <span className="font-bold text-xl text-[#1B5B5E]">SchoolMS</span>
           </Link>
           <nav className="flex gap-4 items-center">
             <Link 
               href="/auth/signin" 
-              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors duration-200"
+              className="text-sm font-medium text-[#134345] hover:text-[#1B5B5E] transition-colors duration-200"
             >
               Sign In
             </Link>
@@ -37,10 +37,10 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="flex flex-col lg:flex-row items-center gap-12">
             <div className="lg:w-1/2 space-y-6 animate-fadeIn">
-              <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-slate-900">
+              <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-[#0e1d1e]">
                 School Management System for Africa and Beyond
               </h1>
-              <p className="text-xl text-slate-600">
+              <p className="text-xl text-[#222f30]">
                 A comprehensive, user-friendly platform designed to streamline educational administration in 
                 Nigeria, Ghana, and globally. Enhance learning outcomes with our powerful school management solution.
               </p>
@@ -64,27 +64,27 @@ export default function Home() {
                     className="absolute inset-0 w-full h-full object-contain p-4 transition-transform hover:scale-105"
                   />
                 </div>
-                <h3 className="text-xl font-medium mb-2">Role-Specific Dashboards</h3>
+                <h3 className="text-xl font-medium mb-2 text-[#134345]">Role-Specific Dashboards</h3>
                 <ul className="space-y-2">
-                  <li className="flex items-center gap-2 text-slate-700 hover:text-[#1B5B5E] transition-colors duration-200">
+                  <li className="flex items-center gap-2 text-[#2c3e40] hover:text-[#1B5B5E] transition-colors duration-200">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#1B5B5E]">
                       <path d="M20 6L9 17l-5-5" />
                     </svg>
                     For Administrators
                   </li>
-                  <li className="flex items-center gap-2 text-slate-700 hover:text-[#1B5B5E] transition-colors duration-200">
+                  <li className="flex items-center gap-2 text-[#2c3e40] hover:text-[#1B5B5E] transition-colors duration-200">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#1B5B5E]">
                       <path d="M20 6L9 17l-5-5" />
                     </svg>
                     For Teachers
                   </li>
-                  <li className="flex items-center gap-2 text-slate-700 hover:text-[#1B5B5E] transition-colors duration-200">
+                  <li className="flex items-center gap-2 text-[#2c3e40] hover:text-[#1B5B5E] transition-colors duration-200">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#1B5B5E]">
                       <path d="M20 6L9 17l-5-5" />
                     </svg>
                     For Parents
                   </li>
-                  <li className="flex items-center gap-2 text-slate-700 hover:text-[#1B5B5E] transition-colors duration-200">
+                  <li className="flex items-center gap-2 text-[#2c3e40] hover:text-[#1B5B5E] transition-colors duration-200">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#1B5B5E]">
                       <path d="M20 6L9 17l-5-5" />
                     </svg>
@@ -101,8 +101,8 @@ export default function Home() {
       <section id="features" className="py-20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4">Comprehensive School Management</h2>
-            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
+            <h2 className="text-3xl font-bold mb-4 text-[#0e1d1e]">Comprehensive School Management</h2>
+            <p className="text-xl text-[#222f30] max-w-3xl mx-auto">
               Our platform centralizes student and teacher data, automates attendance and grading, 
               facilitates parent engagement, and integrates seamless payment and donation options.
             </p>
@@ -119,8 +119,8 @@ export default function Home() {
                   <path d="M16 3.13a4 4 0 0 1 0 7.75" />
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold mb-2">User Management</h3>
-              <p className="text-slate-600">
+              <h3 className="text-xl font-semibold mb-2 text-[#134345]">User Management</h3>
+              <p className="text-[#2c3e40]">
                 Comprehensive user management system with role-based access control for administrators, teachers, parents, and students.
               </p>
             </div>
@@ -138,8 +138,8 @@ export default function Home() {
                   <path d="M12 6V3" />
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold mb-2">Attendance Tracking</h3>
-              <p className="text-slate-600">
+              <h3 className="text-xl font-semibold mb-2 text-[#134345]">Attendance Tracking</h3>
+              <p className="text-[#2c3e40]">
                 Easily track student attendance, generate reports, and send automated notifications to parents.
               </p>
             </div>
@@ -153,8 +153,8 @@ export default function Home() {
                   <path d="m15 13-3 3-3-3" />
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold mb-2">Grade Management</h3>
-              <p className="text-slate-600">
+              <h3 className="text-xl font-semibold mb-2 text-[#134345]">Grade Management</h3>
+              <p className="text-[#2c3e40]">
                 Complete grading system with customizable assessment types, grade calculations, and progress reports.
               </p>
             </div>
@@ -175,8 +175,8 @@ export default function Home() {
                   <path d="M16 18h.01" />
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold mb-2">Calendar & Scheduling</h3>
-              <p className="text-slate-600">
+              <h3 className="text-xl font-semibold mb-2 text-[#134345]">Calendar & Scheduling</h3>
+              <p className="text-[#2c3e40]">
                 School-wide calendar system for classes, events, exam schedules, and important dates.
               </p>
             </div>
@@ -188,8 +188,8 @@ export default function Home() {
                   <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold mb-2">Communication</h3>
-              <p className="text-slate-600">
+              <h3 className="text-xl font-semibold mb-2 text-[#134345]">Communication</h3>
+              <p className="text-[#2c3e40]">
                 Integrated messaging system for direct communication between teachers, parents, and administrators.
               </p>
             </div>
@@ -201,8 +201,8 @@ export default function Home() {
                   <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold mb-2">Performance Analytics</h3>
-              <p className="text-slate-600">
+              <h3 className="text-xl font-semibold mb-2 text-[#134345]">Performance Analytics</h3>
+              <p className="text-[#2c3e40]">
                 Visualize student performance metrics, track improvement, and identify areas needing attention.
               </p>
             </div>
@@ -214,8 +214,8 @@ export default function Home() {
       <section className="py-20 bg-slate-50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4">Pricing Plans</h2>
-            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
+            <h2 className="text-3xl font-bold mb-4 text-[#0e1d1e]">Pricing Plans</h2>
+            <p className="text-xl text-[#222f30] max-w-3xl mx-auto">
               Choose the plan that works best for your school's size and needs.
             </p>
           </div>
@@ -224,30 +224,30 @@ export default function Home() {
             {/* Freemium Plan */}
             <div className="bg-white rounded-lg p-6 shadow-md border border-slate-200 transition-all duration-300 hover:shadow-xl hover:-translate-y-2">
               <div className="text-center mb-6">
-                <h3 className="text-2xl font-bold">Freemium</h3>
-                <div className="mt-4 text-4xl font-bold">Free</div>
-                <p className="text-sm text-slate-500 mt-2">Forever</p>
+                <h3 className="text-2xl font-bold text-[#134345]">Freemium</h3>
+                <div className="mt-4 text-4xl font-bold text-[#1B5B5E]">Free</div>
+                <p className="text-sm text-[#2c3e40] mt-2">Forever</p>
               </div>
               <ul className="space-y-3 mb-8">
-                <li className="flex items-center gap-2 text-slate-700 hover:text-slate-900 transition-colors duration-200">
+                <li className="flex items-center gap-2 text-[#2c3e40] hover:text-[#134345] transition-colors duration-200">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#1B5B5E]">
                     <path d="M20 6L9 17l-5-5" />
                   </svg>
                   Basic student management
                 </li>
-                <li className="flex items-center gap-2 text-slate-700 hover:text-slate-900 transition-colors duration-200">
+                <li className="flex items-center gap-2 text-[#2c3e40] hover:text-[#134345] transition-colors duration-200">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#1B5B5E]">
                     <path d="M20 6L9 17l-5-5" />
                   </svg>
                   Teacher management
                 </li>
-                <li className="flex items-center gap-2 text-slate-700 hover:text-slate-900 transition-colors duration-200">
+                <li className="flex items-center gap-2 text-[#2c3e40] hover:text-[#134345] transition-colors duration-200">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#1B5B5E]">
                     <path d="M20 6L9 17l-5-5" />
                   </svg>
                   Attendance tracking
                 </li>
-                <li className="flex items-center gap-2 text-slate-700 hover:text-slate-900 transition-colors duration-200">
+                <li className="flex items-center gap-2 text-[#2c3e40] hover:text-[#134345] transition-colors duration-200">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#1B5B5E]">
                     <path d="M20 6L9 17l-5-5" />
                   </svg>
@@ -265,36 +265,36 @@ export default function Home() {
                 Popular Choice
               </div>
               <div className="text-center mb-6">
-                <h3 className="text-2xl font-bold">Standard</h3>
-                <div className="mt-4 text-4xl font-bold">$X<span className="text-lg font-normal text-slate-500">/month</span></div>
-                <p className="text-sm text-slate-500 mt-2">Billed annually or monthly</p>
+                <h3 className="text-2xl font-bold text-[#134345]">Standard</h3>
+                <div className="mt-4 text-4xl font-bold text-[#1B5B5E]">$X<span className="text-lg font-normal text-[#2c3e40]">/month</span></div>
+                <p className="text-sm text-[#2c3e40] mt-2">Billed annually or monthly</p>
               </div>
               <ul className="space-y-3 mb-8">
-                <li className="flex items-center gap-2 text-slate-700 hover:text-slate-900 transition-colors duration-200">
+                <li className="flex items-center gap-2 text-[#2c3e40] hover:text-[#134345] transition-colors duration-200">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#1B5B5E]">
                     <path d="M20 6L9 17l-5-5" />
                   </svg>
                   Everything in Freemium
                 </li>
-                <li className="flex items-center gap-2 text-slate-700 hover:text-slate-900 transition-colors duration-200">
+                <li className="flex items-center gap-2 text-[#2c3e40] hover:text-[#134345] transition-colors duration-200">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#1B5B5E]">
                     <path d="M20 6L9 17l-5-5" />
                   </svg>
                   Parent communication
                 </li>
-                <li className="flex items-center gap-2 text-slate-700 hover:text-slate-900 transition-colors duration-200">
+                <li className="flex items-center gap-2 text-[#2c3e40] hover:text-[#134345] transition-colors duration-200">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#1B5B5E]">
                     <path d="M20 6L9 17l-5-5" />
                   </svg>
                   Comprehensive grading system
                 </li>
-                <li className="flex items-center gap-2 text-slate-700 hover:text-slate-900 transition-colors duration-200">
+                <li className="flex items-center gap-2 text-[#2c3e40] hover:text-[#134345] transition-colors duration-200">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#1B5B5E]">
                     <path d="M20 6L9 17l-5-5" />
                   </svg>
                   Timetable management
                 </li>
-                <li className="flex items-center gap-2 text-slate-700 hover:text-slate-900 transition-colors duration-200">
+                <li className="flex items-center gap-2 text-[#2c3e40] hover:text-[#134345] transition-colors duration-200">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#1B5B5E]">
                     <path d="M20 6L9 17l-5-5" />
                   </svg>
@@ -309,36 +309,36 @@ export default function Home() {
             {/* Premium Plan */}
             <div className="bg-white rounded-lg p-6 shadow-md border border-slate-200 transition-all duration-300 hover:shadow-xl hover:-translate-y-2">
               <div className="text-center mb-6">
-                <h3 className="text-2xl font-bold">Premium</h3>
-                <div className="mt-4 text-4xl font-bold">$X<span className="text-lg font-normal text-slate-500">/month</span></div>
-                <p className="text-sm text-slate-500 mt-2">Billed annually or monthly</p>
+                <h3 className="text-2xl font-bold text-[#134345]">Premium</h3>
+                <div className="mt-4 text-4xl font-bold text-[#1B5B5E]">$X<span className="text-lg font-normal text-[#2c3e40]">/month</span></div>
+                <p className="text-sm text-[#2c3e40] mt-2">Billed annually or monthly</p>
               </div>
               <ul className="space-y-3 mb-8">
-                <li className="flex items-center gap-2 text-slate-700 hover:text-slate-900 transition-colors duration-200">
+                <li className="flex items-center gap-2 text-[#2c3e40] hover:text-[#134345] transition-colors duration-200">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#1B5B5E]">
                     <path d="M20 6L9 17l-5-5" />
                   </svg>
                   Everything in Standard
                 </li>
-                <li className="flex items-center gap-2 text-slate-700 hover:text-slate-900 transition-colors duration-200">
+                <li className="flex items-center gap-2 text-[#2c3e40] hover:text-[#134345] transition-colors duration-200">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#1B5B5E]">
                     <path d="M20 6L9 17l-5-5" />
                   </svg>
                   Advanced analytics
                 </li>
-                <li className="flex items-center gap-2 text-slate-700 hover:text-slate-900 transition-colors duration-200">
+                <li className="flex items-center gap-2 text-[#2c3e40] hover:text-[#134345] transition-colors duration-200">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#1B5B5E]">
                     <path d="M20 6L9 17l-5-5" />
                   </svg>
                   EdTech integrations
                 </li>
-                <li className="flex items-center gap-2 text-slate-700 hover:text-slate-900 transition-colors duration-200">
+                <li className="flex items-center gap-2 text-[#2c3e40] hover:text-[#134345] transition-colors duration-200">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#1B5B5E]">
                     <path d="M20 6L9 17l-5-5" />
                   </svg>
                   Donation/payment processing
                 </li>
-                <li className="flex items-center gap-2 text-slate-700 hover:text-slate-900 transition-colors duration-200">
+                <li className="flex items-center gap-2 text-[#2c3e40] hover:text-[#134345] transition-colors duration-200">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#1B5B5E]">
                     <path d="M20 6L9 17l-5-5" />
                   </svg>
@@ -354,72 +354,72 @@ export default function Home() {
       </section>
 
       {/* Africa Focus Section */}
-      <section className="py-20">
+      <section className="py-20 bg-[#1B5B5E]">
         <div className="container mx-auto px-4">
           <div className="flex flex-col lg:flex-row items-center gap-12">
             <div className="lg:w-1/2">
-              <div className="aspect-[4/3] bg-slate-100 rounded-lg overflow-hidden relative flex items-center justify-center transition-all duration-500 hover:shadow-xl hover:scale-[1.02]">
+              <div className="aspect-[4/3] bg-white/10 rounded-lg overflow-hidden relative flex items-center justify-center transition-all duration-500 hover:shadow-xl hover:scale-[1.02]">
                 <Image 
                   src="/globe.svg" 
                   alt="African Education Focus" 
                   width={400} 
                   height={300}
-                  className="absolute inset-0 w-full h-full object-contain p-8 transition-transform hover:scale-105 animate-pulse"
+                  className="absolute inset-0 w-full h-full object-contain p-8 transition-transform hover:scale-105 animate-pulse text-white"
                 />
               </div>
             </div>
             <div className="lg:w-1/2 space-y-6">
-              <h2 className="text-3xl font-bold">Designed for African Educational Needs</h2>
-              <p className="text-lg text-slate-600">
+              <h2 className="text-3xl font-bold text-white">Designed for African Educational Needs</h2>
+              <p className="text-lg text-white/90">
                 Our School Management System is tailored to meet the unique challenges and opportunities
                 in Nigerian and Ghanaian educational institutions, with features designed to overcome
                 infrastructure limitations and maximize educational outcomes.
               </p>
-              <ul className="space-y-3">
+              <ul className="space-y-5">
                 <li className="flex items-start gap-3 hover:translate-x-1 transition-transform duration-300">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#1B5B5E] mt-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white mt-1">
                     <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
                     <path d="m9 12 2 2 4-4" />
                   </svg>
                   <div>
-                    <span className="font-medium">Works offline</span>
-                    <p className="text-slate-600 text-sm mt-1">
+                    <span className="font-medium text-white">Works offline</span>
+                    <p className="text-white/90 mt-1">
                       Handles intermittent internet connectivity with offline capabilities
                     </p>
                   </div>
                 </li>
                 <li className="flex items-start gap-3 hover:translate-x-1 transition-transform duration-300">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#1B5B5E] mt-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white mt-1">
                     <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
                     <path d="m9 12 2 2 4-4" />
                   </svg>
                   <div>
-                    <span className="font-medium">Multiple payment options</span>
-                    <p className="text-slate-600 text-sm mt-1">
+                    <span className="font-medium text-white">Multiple payment options</span>
+                    <p className="text-white/90 mt-1">
                       Support for local payment methods including mobile money
                     </p>
                   </div>
                 </li>
                 <li className="flex items-start gap-3 hover:translate-x-1 transition-transform duration-300">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#1B5B5E] mt-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white mt-1">
                     <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
                     <path d="m9 12 2 2 4-4" />
                   </svg>
                   <div>
-                    <span className="font-medium">Low-bandwidth optimized</span>
-                    <p className="text-slate-600 text-sm mt-1">
+                    <span className="font-medium text-white">Low-bandwidth optimized</span>
+                    <p className="text-white/90 mt-1">
                       Fast performance even with limited internet speeds
                     </p>
                   </div>
                 </li>
                 <li className="flex items-start gap-3 hover:translate-x-1 transition-transform duration-300">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#1B5B5E] mt-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white mt-1">
                     <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
                     <path d="m9 12 2 2 4-4" />
                   </svg>
                   <div>
-                    <span className="font-medium">Multi-language support</span>
-                    <p className="text-slate-600 text-sm mt-1">
+                    <span className="font-medium text-white">Multi-language support</span>
+                    <p className="text-white/90 mt-1">
                       Supporting local languages for better accessibility
                     </p>
                   </div>
@@ -434,7 +434,7 @@ export default function Home() {
       <section className="bg-slate-900 text-white py-16">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold mb-6 transition-all duration-700 hover:scale-105">Transform Your School's Administration Today</h2>
-          <p className="text-xl text-slate-300 mb-8 max-w-3xl mx-auto">
+          <p className="text-xl text-slate-100 mb-8 max-w-3xl mx-auto">
             Join schools across Nigeria, Ghana, and worldwide using our platform to improve administration, 
             enhance teaching efficiency, and boost student outcomes.
           </p>
@@ -459,13 +459,13 @@ export default function Home() {
                 />
                 SchoolMS
               </h3>
-              <p className="text-sm">
+              <p className="text-slate-200 text-sm">
                 A comprehensive school management system designed for educational institutions in Africa and beyond.
               </p>
             </div>
             <div>
               <h4 className="font-semibold text-white mb-4">Product</h4>
-              <ul className="space-y-2 text-sm">
+              <ul className="space-y-2 text-slate-200 text-sm">
                 <li><Link href="#features" className="hover:text-white transition-colors duration-200 hover:translate-x-1 inline-block">Features</Link></li>
                 <li><Link href="#" className="hover:text-white transition-colors duration-200 hover:translate-x-1 inline-block">Pricing</Link></li>
                 <li><Link href="#" className="hover:text-white transition-colors duration-200 hover:translate-x-1 inline-block">Testimonials</Link></li>
@@ -474,7 +474,7 @@ export default function Home() {
             </div>
             <div>
               <h4 className="font-semibold text-white mb-4">Resources</h4>
-              <ul className="space-y-2 text-sm">
+              <ul className="space-y-2 text-slate-200 text-sm">
                 <li><Link href="#" className="hover:text-white transition-colors duration-200 hover:translate-x-1 inline-block">Documentation</Link></li>
                 <li><Link href="#" className="hover:text-white transition-colors duration-200 hover:translate-x-1 inline-block">Support</Link></li>
                 <li><Link href="#" className="hover:text-white transition-colors duration-200 hover:translate-x-1 inline-block">Blog</Link></li>
@@ -483,7 +483,7 @@ export default function Home() {
             </div>
             <div>
               <h4 className="font-semibold text-white mb-4">Company</h4>
-              <ul className="space-y-2 text-sm">
+              <ul className="space-y-2 text-slate-200 text-sm">
                 <li><Link href="#" className="hover:text-white transition-colors duration-200 hover:translate-x-1 inline-block">About</Link></li>
                 <li><Link href="#" className="hover:text-white transition-colors duration-200 hover:translate-x-1 inline-block">Careers</Link></li>
                 <li><Link href="#" className="hover:text-white transition-colors duration-200 hover:translate-x-1 inline-block">Privacy Policy</Link></li>
@@ -491,7 +491,7 @@ export default function Home() {
               </ul>
             </div>
           </div>
-          <div className="border-t border-slate-700 mt-8 pt-8 text-sm text-center">
+          <div className="border-t border-slate-700 mt-8 pt-8 text-sm text-center text-slate-200">
             © 2025 School Management System. All rights reserved.
           </div>
         </div>
