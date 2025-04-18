@@ -83,28 +83,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setLoading(true);
     try {
       // Mock signup - will be replaced with actual API implementation
-      console.log("Signup with:", email, password);
+      console.log("Signup attempt with:", email, password);
       
-      // Create a temporary user object (similar to login)
-      const mockUser = {
-        id: "user-" + Date.now(),
-        name: email.split('@')[0],
-        email,
-        role: email.includes('admin') ? 'admin' : 
-              email.includes('teacher') ? 'teacher' : 
-              email.includes('parent') ? 'parent' : 'student',
-      } as User;
+      // Determine mock role based on email (temporary)
+      const role = email.includes('admin') ? 'admin' : 
+                   email.includes('teacher') ? 'teacher' : 
+                   email.includes('parent') ? 'parent' : 'student';
+
+      // NOTE: In a real app, the backend would handle user creation and 
+      // potentially send back a token or confirm the next step.
+      // We are simulating the step *after* initial signup confirmation.
+
+      // Redirect based on role, passing email for invite flows
+      let redirectPath = `/onboarding/${role}`;
+      if (role !== 'admin') {
+        redirectPath += `?email=${encodeURIComponent(email)}`;
+      }
       
-      // Store in localStorage
-      localStorage.setItem("user", JSON.stringify(mockUser));
-      setUser(mockUser);
-      
-      // After signup, redirect to onboarding page based on role
-      router.push(`/onboarding/${mockUser.role}`);
+      console.log(`Redirecting to: ${redirectPath}`);
+      router.push(redirectPath);
       
     } catch (error) {
       console.error("Signup failed:", error);
-      throw error;
+      // Re-throw the error so the AuthForm can display a generic message
+      throw error; 
     } finally {
       setLoading(false);
     }
