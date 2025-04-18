@@ -85,8 +85,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Mock signup - will be replaced with actual API implementation
       console.log("Signup with:", email, password);
       
-      // After signup, redirect to onboarding page
-      router.push("/onboarding");
+      // Create a temporary user object (similar to login)
+      const mockUser = {
+        id: "user-" + Date.now(),
+        name: email.split('@')[0],
+        email,
+        role: email.includes('admin') ? 'admin' : 
+              email.includes('teacher') ? 'teacher' : 
+              email.includes('parent') ? 'parent' : 'student',
+      } as User;
+      
+      // Store in localStorage
+      localStorage.setItem("user", JSON.stringify(mockUser));
+      setUser(mockUser);
+      
+      // After signup, redirect to onboarding page based on role
+      router.push(`/onboarding/${mockUser.role}`);
       
     } catch (error) {
       console.error("Signup failed:", error);
