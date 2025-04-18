@@ -20,23 +20,40 @@ export default function AdminOnboardingPage() {
   const router = useRouter();
   const { user } = useAuth();
   const [formData, setFormData] = useState({
-    firstName: "", // Added
-    lastName: "", // Added
-    gender: "", // Added
+    firstName: "", 
+    lastName: "", 
+    gender: "", 
     email: user?.email || "",
-    phone: "", // Kept
-    schoolName: "", // Kept
-    schoolAlias: "", // Added
-    country: "NG", // Added, default NG
-    role: "", // Added (Principal, Proprietor, Head Teacher)
-    website: "", // Kept (optional)
+    phone: "", 
+    schoolName: "", 
+    schoolAlias: "", 
+    country: "NG", 
+    role: "", 
+    website: "", 
+    logo: null as File | null, // Added for logo file
+    primaryColor: "#1B5B5E", // Added for color scheme, default to current primary
   });
-  // Removed multi-step state: currentStep, totalSteps
+  const [logoPreview, setLogoPreview] = useState<string | null>(null); // Added for logo preview
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type, files } = e.target;
+    if (type === "file" && files) {
+      const file = files[0];
+      setFormData((prev) => ({ ...prev, [name]: file }));
+      // Generate preview
+      if (file) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setLogoPreview(reader.result as string);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        setLogoPreview(null);
+      }
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   // Handler for Select components
@@ -49,12 +66,14 @@ export default function AdminOnboardingPage() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const submitOnboarding = async (e: React.FormEvent<HTMLFormElement>) => { // Added form event
-    e.preventDefault(); // Prevent default form submission
+  const submitOnboarding = async (e: React.FormEvent<HTMLFormElement>) => { 
+    e.preventDefault(); 
     setIsSubmitting(true);
     try {
       // Validate required fields (basic example)
-      const requiredFields: (keyof typeof formData)[] = ['firstName', 'lastName', 'gender', 'email', 'phone', 'schoolName', 'country', 'role'];
+      // Note: Logo might be optional depending on final requirements
+      const requiredFields: (keyof Omit<typeof formData, 'logo' | 'website' | 'schoolAlias'>)[] = 
+        ['firstName', 'lastName', 'gender', 'email', 'phone', 'schoolName', 'country', 'role', 'primaryColor'];
       const missingFields = requiredFields.filter(field => !formData[field]);
 
       if (missingFields.length > 0) {
@@ -63,16 +82,29 @@ export default function AdminOnboardingPage() {
         return;
       }
       
-      // When API is ready, connect here
-      console.log("Submitting Super Admin Data:", formData);
-      // For now, simulate API call with a timeout
+      // ** IMPORTANT: File Handling for Real API **
+      // When using a real API, you'll likely need to send the form data
+      // using FormData, especially for the file upload.
+      // Example:
+      // const apiFormData = new FormData();
+      // Object.entries(formData).forEach(([key, value]) => {
+      //   if (value !== null) {
+      //     apiFormData.append(key, value);
+      //   }
+      // });
+      // await fetch('/api/onboarding/admin', { method: 'POST', body: apiFormData });
+
+      // For now, log data (excluding file content)
+      const dataToLog = { ...formData, logo: formData.logo?.name || null };
+      console.log("Submitting Super Admin Data:", dataToLog);
+      
       await new Promise((resolve) => setTimeout(resolve, 1000));
       
-      // Store onboarding data in localStorage for now
-      localStorage.setItem("superAdminOnboardingData", JSON.stringify(formData));
+      // Store onboarding data (excluding file) in localStorage for now
+      localStorage.setItem("superAdminOnboardingData", JSON.stringify(dataToLog));
       
       toast.success("School profile setup completed!");
-      router.push("/dashboard/admin"); // Assuming admin dashboard route
+      router.push("/dashboard/admin"); 
     } catch (error) {
       toast.error("Failed to complete setup. Please try again.");
       console.error("Onboarding error:", error);
@@ -247,6 +279,43 @@ export default function AdminOnboardingPage() {
                      onChange={handleChange}
                    />
                  </div>
+              </div>
+
+              {/* Logo Upload */}
+              <div className="grid gap-2">
+                <Label htmlFor="logo">School Logo</Label>
+                <Input
+                  id="logo"
+                  name="logo"
+                  type="file"
+                  accept="image/png, image/jpeg, image/svg+xml" // Specify acceptable image types
+                  onChange={handleChange}
+                  className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
+                />
+                {logoPreview && (
+                  <div className="mt-2">
+                    <Label>Logo Preview:</Label>
+                    <img src={logoPreview} alt="Logo Preview" className="h-16 w-auto border rounded mt-1" />
+                  </div>
+                )}
+              </div>
+
+              {/* Primary Color Selection */}
+              <div className="grid gap-2">
+                <Label htmlFor="primaryColor">Primary Brand Color *</Label>
+                <div className="flex items-center gap-2">
+                  <Input
+                    id="primaryColor"
+                    name="primaryColor"
+                    type="color"
+                    value={formData.primaryColor}
+                    onChange={handleChange}
+                    className="w-12 h-10 p-1"
+                    required
+                  />
+                  <span className="text-sm text-muted-foreground">({formData.primaryColor})</span>
+                </div>
+                <p className="text-xs text-muted-foreground">This color will be used for buttons, highlights, and the sidebar.</p>
               </div>
             </div>
           </div>
