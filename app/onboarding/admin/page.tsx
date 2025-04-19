@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,18 +23,25 @@ export default function AdminOnboardingPage() {
     firstName: "", 
     lastName: "", 
     gender: "", 
-    email: user?.email || "",
+    email: user?.email || "", // Keep initial attempt
     phone: "", 
     schoolName: "", 
     schoolAlias: "", 
     country: "NG", 
     role: "", 
     website: "", 
-    logo: null as File | null, // Added for logo file
-    primaryColor: "#1B5B5E", // Added for color scheme, default to current primary
+    logo: null as File | null, 
+    primaryColor: "#1B5B5E", 
   });
-  const [logoPreview, setLogoPreview] = useState<string | null>(null); // Added for logo preview
+  const [logoPreview, setLogoPreview] = useState<string | null>(null); 
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Add useEffect to update email when user context changes
+  useEffect(() => {
+    if (user?.email) {
+      setFormData((prev) => ({ ...prev, email: user.email }));
+    }
+  }, [user?.email]); // Dependency array ensures this runs when user email is available/changes
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, files } = e.target;
