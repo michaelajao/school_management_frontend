@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation"; // Import useSearchParams
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,38 +10,47 @@ import { Separator } from "@/components/ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"; // Import Select components
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"; // Import RadioGroup components
 import { toast } from "sonner";
-import { useAuth } from "@/contexts/auth-context";
+// Remove useAuth if no longer needed for other user details on this page, or keep if needed elsewhere
+// import { useAuth } from "@/contexts/auth-context";
 
 // Assuming countries list is available or fetched
-const countries = [{ code: "NG", name: "Nigeria" }, { code: "GH", name: "Ghana" }, { code: "US", name: "United States" }]; 
+const countries = [{ code: "NG", name: "Nigeria" }, { code: "GH", name: "Ghana" }, { code: "US", name: "United States" }];
 const adminRoles = ["Principal", "Proprietor", "Head Teacher"];
 
 export default function AdminOnboardingPage() {
   const router = useRouter();
-  const { user } = useAuth();
+  const searchParams = useSearchParams(); // Get query parameters
+  // const { user } = useAuth(); // Remove or comment out if not needed
+
   const [formData, setFormData] = useState({
-    firstName: "", 
-    lastName: "", 
-    gender: "", 
-    email: user?.email || "", // Keep initial attempt
-    phone: "", 
-    schoolName: "", 
-    schoolAlias: "", 
-    country: "NG", 
-    role: "", 
-    website: "", 
-    logo: null as File | null, 
-    primaryColor: "#1B5B5E", 
+    firstName: "",
+    lastName: "",
+    gender: "",
+    email: "", // Initialize email as empty
+    phone: "",
+    schoolName: "",
+    schoolAlias: "",
+    country: "NG",
+    role: "",
+    website: "",
+    logo: null as File | null,
+    primaryColor: "#1B5B5E",
   });
-  const [logoPreview, setLogoPreview] = useState<string | null>(null); 
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Add useEffect to update email when user context changes
+  // Add useEffect to update email from query parameters
   useEffect(() => {
-    if (user?.email) {
-      setFormData((prev) => ({ ...prev, email: user.email }));
+    const emailFromQuery = searchParams.get("email");
+    if (emailFromQuery) {
+      setFormData((prev) => ({ ...prev, email: emailFromQuery }));
+    } else {
+      // Handle missing email - maybe redirect or show error
+      toast.error("Onboarding link is missing the required email. Please sign up again.");
+      // Consider redirecting: router.push('/auth/signup');
+      console.error("Admin onboarding page loaded without email query parameter.");
     }
-  }, [user?.email]); // Dependency array ensures this runs when user email is available/changes
+  }, [searchParams, router]); // Add router to dependency array if used inside
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, files } = e.target;
@@ -73,13 +82,19 @@ export default function AdminOnboardingPage() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const submitOnboarding = async (e: React.FormEvent<HTMLFormElement>) => { 
-    e.preventDefault(); 
+  const submitOnboarding = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     setIsSubmitting(true);
+    // Ensure email is present before submitting
+    if (!formData.email) {
+      toast.error("Email is missing. Cannot complete setup.");
+      setIsSubmitting(false);
+      return;
+    }
     try {
       // Validate required fields (basic example)
       // Note: Logo might be optional depending on final requirements
-      const requiredFields: (keyof Omit<typeof formData, 'logo' | 'website' | 'schoolAlias'>)[] = 
+      const requiredFields: (keyof Omit<typeof formData, 'logo' | 'website' | 'schoolAlias'>)[] =
         ['firstName', 'lastName', 'gender', 'email', 'phone', 'schoolName', 'country', 'role', 'primaryColor'];
       const missingFields = requiredFields.filter(field => !formData[field]);
 
@@ -88,7 +103,7 @@ export default function AdminOnboardingPage() {
         setIsSubmitting(false);
         return;
       }
-      
+
       // ** IMPORTANT: File Handling for Real API **
       // When using a real API, you'll likely need to send the form data
       // using FormData, especially for the file upload.
@@ -104,14 +119,14 @@ export default function AdminOnboardingPage() {
       // For now, log data (excluding file content)
       const dataToLog = { ...formData, logo: formData.logo?.name || null };
       console.log("Submitting Super Admin Data:", dataToLog);
-      
+
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      
+
       // Store onboarding data (excluding file) in localStorage for now
       localStorage.setItem("superAdminOnboardingData", JSON.stringify(dataToLog));
-      
+
       toast.success("School profile setup completed!");
-      router.push("/dashboard/admin"); 
+      router.push("/dashboard/admin");
     } catch (error) {
       toast.error("Failed to complete setup. Please try again.");
       console.error("Onboarding error:", error);
@@ -130,12 +145,13 @@ export default function AdminOnboardingPage() {
       </div>
 
       <Card className="p-6">
-        <form onSubmit={submitOnboarding} className="space-y-6"> 
+        <form onSubmit={submitOnboarding} className="space-y-6">
           {/* Personal Information Section */}
           <div>
             <h2 className="font-semibold text-xl">Your Information</h2>
             <Separator className="my-4" />
             <div className="space-y-4">
+              {/* ... First Name, Last Name ... */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="grid gap-2">
                   <Label htmlFor="firstName">First Name *</Label>
@@ -161,29 +177,31 @@ export default function AdminOnboardingPage() {
                 </div>
               </div>
 
+              {/* ... Gender ... */}
               <div className="grid gap-2">
-                 <Label>Gender *</Label>
-                 <RadioGroup
-                   name="gender"
-                   value={formData.gender}
-                   onValueChange={(value) => handleRadioChange("gender", value)}
-                   className="flex space-x-4"
-                 >
-                   <div className="flex items-center space-x-2">
-                     <RadioGroupItem value="male" id="male" />
-                     <Label htmlFor="male">Male</Label>
-                   </div>
-                   <div className="flex items-center space-x-2">
-                     <RadioGroupItem value="female" id="female" />
-                     <Label htmlFor="female">Female</Label>
-                   </div>
-                   <div className="flex items-center space-x-2">
-                     <RadioGroupItem value="other" id="other" />
-                     <Label htmlFor="other">Other</Label>
-                   </div>
-                 </RadioGroup>
+                <Label>Gender *</Label>
+                <RadioGroup
+                  name="gender"
+                  value={formData.gender}
+                  onValueChange={(value) => handleRadioChange("gender", value)}
+                  className="flex space-x-4"
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="male" id="male" />
+                    <Label htmlFor="male">Male</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="female" id="female" />
+                    <Label htmlFor="female">Female</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="other" id="other" />
+                    <Label htmlFor="other">Other</Label>
+                  </div>
+                </RadioGroup>
               </div>
 
+              {/* ... Email, Phone ... */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="grid gap-2">
                   <Label htmlFor="email">Email *</Label>
@@ -193,8 +211,7 @@ export default function AdminOnboardingPage() {
                     type="email"
                     placeholder="your.email@example.com"
                     value={formData.email}
-                    onChange={handleChange}
-                    disabled // Assuming email comes from auth context and shouldn't be changed here
+                    disabled // Email comes from signup/query param
                     required
                   />
                 </div>
@@ -210,92 +227,93 @@ export default function AdminOnboardingPage() {
                   />
                 </div>
               </div>
-               <div className="grid gap-2">
-                 <Label htmlFor="role">Your Role *</Label>
-                 <Select name="role" value={formData.role} onValueChange={(value) => handleSelectChange("role", value)} required>
-                   <SelectTrigger>
-                     <SelectValue placeholder="Select your role" />
-                   </SelectTrigger>
-                   <SelectContent>
-                     {adminRoles.map((role) => (
-                       <SelectItem key={role} value={role}>
-                         {role}
-                       </SelectItem>
-                     ))}
-                   </SelectContent>
-                 </Select>
-               </div>
-            </div>
-          </div>
+              {/* ... Role ... */}
+              <div className="grid gap-2">
+                <Label htmlFor="role">Your Role *</Label>
+                <Select name="role" value={formData.role} onValueChange={(value) => handleSelectChange("role", value)} required>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select your role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {adminRoles.map((role) => (
+                      <SelectItem key={role} value={role}>
+                        {role}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div> {/* Closing div for personal info space-y-4 */}
+          </div> {/* Closing div for personal info section */}
 
           {/* School Information Section */}
           <div className="pt-6">
             <h2 className="font-semibold text-xl">School Information</h2>
             <Separator className="my-4" />
             <div className="space-y-4">
+              {/* ... School Name, Alias ... */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                 <div className="grid gap-2">
-                   <Label htmlFor="schoolName">School Name *</Label>
-                   <Input
-                     id="schoolName"
-                     name="schoolName"
-                     placeholder="e.g. Greenfield High School"
-                     value={formData.schoolName}
-                     onChange={handleChange}
-                     required
-                   />
-                 </div>
-                 <div className="grid gap-2">
-                   <Label htmlFor="schoolAlias">School Alias</Label>
-                   <Input
-                     id="schoolAlias"
-                     name="schoolAlias"
-                     placeholder="e.g. GHS"
-                     value={formData.schoolAlias}
-                     onChange={handleChange}
-                     // Assuming alias is optional based on requirements text, but making required based on table structure
-                     // required 
-                   />
-                 </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="schoolName">School Name *</Label>
+                  <Input
+                    id="schoolName"
+                    name="schoolName"
+                    placeholder="e.g. Greenfield High School"
+                    value={formData.schoolName}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="schoolAlias">School Alias</Label>
+                  <Input
+                    id="schoolAlias"
+                    name="schoolAlias"
+                    placeholder="e.g. GHS"
+                    value={formData.schoolAlias}
+                    onChange={handleChange}
+                  />
+                </div>
               </div>
 
+              {/* ... Country, Website ... */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                 <div className="grid gap-2">
-                   <Label htmlFor="country">Country *</Label>
-                   <Select name="country" value={formData.country} onValueChange={(value) => handleSelectChange("country", value)} required>
-                     <SelectTrigger>
-                       <SelectValue placeholder="Select country" />
-                     </SelectTrigger>
-                     <SelectContent>
-                       {countries.map((country) => (
-                         <SelectItem key={country.code} value={country.code}>
-                           {country.name}
-                         </SelectItem>
-                       ))}
-                     </SelectContent>
-                   </Select>
-                 </div>
-                 <div className="grid gap-2">
-                   <Label htmlFor="website">School Website (Optional)</Label>
-                   <Input
-                     id="website"
-                     name="website"
-                     type="url"
-                     placeholder="https://yourschool.edu"
-                     value={formData.website}
-                     onChange={handleChange}
-                   />
-                 </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="country">Country *</Label>
+                  <Select name="country" value={formData.country} onValueChange={(value) => handleSelectChange("country", value)} required>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select country" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {countries.map((country) => (
+                        <SelectItem key={country.code} value={country.code}>
+                          {country.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="website">School Website (Optional)</Label>
+                  <Input
+                    id="website"
+                    name="website"
+                    type="url"
+                    placeholder="https://yourschool.edu"
+                    value={formData.website}
+                    onChange={handleChange}
+                  />
+                </div>
               </div>
 
-              {/* Logo Upload */}
+              {/* ... Logo Upload ... */}
               <div className="grid gap-2">
                 <Label htmlFor="logo">School Logo</Label>
                 <Input
                   id="logo"
                   name="logo"
                   type="file"
-                  accept="image/png, image/jpeg, image/svg+xml" // Specify acceptable image types
+                  accept="image/png, image/jpeg, image/svg+xml"
                   onChange={handleChange}
                   className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
                 />
@@ -307,7 +325,7 @@ export default function AdminOnboardingPage() {
                 )}
               </div>
 
-              {/* Primary Color Selection */}
+              {/* ... Primary Color ... */}
               <div className="grid gap-2">
                 <Label htmlFor="primaryColor">Primary Brand Color *</Label>
                 <div className="flex items-center gap-2">
@@ -324,16 +342,17 @@ export default function AdminOnboardingPage() {
                 </div>
                 <p className="text-xs text-muted-foreground">This color will be used for buttons, highlights, and the sidebar.</p>
               </div>
-            </div>
-          </div>
+            </div> {/* Closing div for school info space-y-4 */} 
+          </div> {/* Closing div for school info section */}
 
-          <div className="flex justify-end mt-8"> 
+          {/* Submit Button */}
+          <div className="flex justify-end mt-8">
             <Button type="submit" disabled={isSubmitting}>
               {isSubmitting ? "Processing..." : "Complete Setup"}
             </Button>
           </div>
-        </form>
-      </Card>
-    </div>
+        </form> {/* Closing form tag */} 
+      </Card> {/* Closing Card tag */} 
+    </div> // Closing main div tag
   );
 }

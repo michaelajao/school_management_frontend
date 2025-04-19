@@ -96,9 +96,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       // Redirect based on role, passing email for invite flows
       let redirectPath = `/onboarding/${role}`;
-      if (role !== 'admin') {
-        redirectPath += `?email=${encodeURIComponent(email)}`;
-      }
+      // Always add email to query params for onboarding
+      redirectPath += `?email=${encodeURIComponent(email)}`;
       
       console.log(`Redirecting to: ${redirectPath}`);
       router.push(redirectPath);
