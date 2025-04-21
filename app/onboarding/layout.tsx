@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Separator } from "@/components/ui/separator";
+// import { Separator } from "@/components/ui/separator";
 
 export default function OnboardingLayout({
   children,
@@ -7,7 +7,7 @@ export default function OnboardingLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen ">
       <header className="border-b bg-white">
         <div className="container flex h-16 items-center justify-between px-4">
           <Link href="/" className="flex items-center gap-2">
@@ -23,7 +23,7 @@ export default function OnboardingLayout({
           </nav>
         </div>
       </header>
-      <main className="container max-w-5xl py-10 px-4">{children}</main>
+      <main className="container bg-[#008080] py-10 px-4">{children}</main>
       <footer className="border-t bg-white">
         <div className="container flex h-16 items-center justify-between px-4">
           <div className="text-sm text-muted-foreground">

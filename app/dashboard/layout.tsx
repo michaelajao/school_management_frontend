@@ -109,7 +109,7 @@ export default function DashboardLayout({
       <div className="p-4 border-b border-slate-700">
         <Link href={`/dashboard/${user?.role}`} className="font-bold text-xl flex items-center gap-2">
           <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white">
-            {user?.name.charAt(0).toUpperCase()}
+            {user?.role.charAt(0).toUpperCase()}
           </div>
           {isSidebarOpen && (
             <div>
