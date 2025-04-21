@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useAuth } from "@/contexts/auth-context";
 import { toast } from "sonner";
+import { Checkbox } from "../ui/checkbox";
+import { validatePassword } from "@/components/auth/utils/validatePassword";
 
 type AuthFormProps = {
   type: "signin" | "signup";
@@ -18,6 +20,7 @@ export function AuthForm({ type }: AuthFormProps) {
   const router = useRouter();
   const { login, signup } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -51,11 +54,16 @@ export function AuthForm({ type }: AuthFormProps) {
     
     // Password validation
     if (!formData.password) {
-      newErrors.password = "Password is required";
-    } else if (formData.password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters";
-    }
-    
+      newErrors.password = "Password is required"
+    } else {
+      // Validate password using shared utility
+      // Displays the first rule violation as the error message
+      const { valid, errors } = validatePassword(formData.password)
+
+      if (!valid) {
+        newErrors.password = errors[0]
+      }
+}
     // Confirm password validation for signup
     if (type === "signup" && formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = "Passwords do not match";
@@ -133,7 +141,7 @@ export function AuthForm({ type }: AuthFormProps) {
           <Input
             id="password"
             name="password"
-            type="password"
+            type={showPassword ? 'text' : 'password'}
             placeholder="••••••••"
             value={formData.password}
             onChange={handleChange}
@@ -150,7 +158,7 @@ export function AuthForm({ type }: AuthFormProps) {
             <Input
               id="confirmPassword"
               name="confirmPassword"
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               placeholder="••••••••"
               value={formData.confirmPassword}
               onChange={handleChange}
@@ -161,6 +169,14 @@ export function AuthForm({ type }: AuthFormProps) {
             )}
           </div>
         )}
+
+        <div className="flex items-center gap-4 p-2 rounded">
+          <Checkbox id="showPassword"
+            checked={showPassword}
+            onCheckedChange={(checked) => setShowPassword(!!checked)}
+           />
+          <Label htmlFor="showPassword">Show Password</Label>
+        </div>
         
         <Button 
           type="submit" 
