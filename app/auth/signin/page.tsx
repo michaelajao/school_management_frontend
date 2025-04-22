@@ -23,7 +23,7 @@ export default function SigninPage() {
             </div>
             <div className="bg-slate-800 p-4 rounded-lg flex-1">
               <h3 className="font-medium">For Students</h3>
-              <p className="text-sm text-slate-400">Access assignments and track grades</p>
+              <p className="text-sm text-slate-400">Access all assignments and track grades</p>
             </div>
           </div>
         </div>
