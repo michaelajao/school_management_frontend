@@ -84,6 +84,9 @@ export function AuthForm({ type }: AuthFormProps) {
       if (type === "signup") {
         await signup(formData.email, formData.password);
         toast.success("Account created successfully!");
+
+        // redirect user to payment page (while passing the email as a param)
+        router.push(`/mockPayment?email=${formData.email}`);
       } else {
         await login(formData.email, formData.password);
         toast.success("Welcome back!");
