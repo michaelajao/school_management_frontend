@@ -95,9 +95,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // We are simulating the step *after* initial signup confirmation.
 
       // Redirect based on role, passing email for invite flows
-      let redirectPath = `/onboarding/${role}`;
+      let redirectPath = `/paymentGateway`;
       // Always add email to query params for onboarding
-      redirectPath += `?email=${encodeURIComponent(email)}`;
+      // redirectPath += `?email=${encodeURIComponent(email)}`;
       
       console.log(`Redirecting to: ${redirectPath}`);
       router.push(redirectPath);

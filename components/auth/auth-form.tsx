@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -11,14 +11,17 @@ import { useAuth } from "@/contexts/auth-context";
 import { toast } from "sonner";
 import { Checkbox } from "../ui/checkbox";
 import { validatePassword } from "@/components/auth/utils/validatePassword";
+import { usePricingStore } from "@/store/usePricingStore"; 
+
 
 type AuthFormProps = {
   type: "signin" | "signup";
 };
 
 export function AuthForm({ type }: AuthFormProps) {
-  const router = useRouter();
+  // const router = useRouter();
   const { login, signup } = useAuth();
+  const setUserEmail = usePricingStore((state) => state.setUserEmail); 
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -83,6 +86,7 @@ export function AuthForm({ type }: AuthFormProps) {
     try {
       if (type === "signup") {
         await signup(formData.email, formData.password);
+        setUserEmail(formData.email); // Set the email in the pricing store
         toast.success("Account created successfully!");
       } else {
         await login(formData.email, formData.password);
@@ -196,7 +200,7 @@ export function AuthForm({ type }: AuthFormProps) {
       <div className="mt-6 text-center text-sm">
         {type === "signin" ? (
           <p>
-            Don't have an account?{" "}
+            Don&apos;t have an account?{" "}
             <Link href="/auth/signup" className="text-primary font-medium hover:underline">
               Sign up
             </Link>
