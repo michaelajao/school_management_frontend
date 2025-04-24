@@ -88,7 +88,7 @@ You can find more videos on youtube or feel free to reach out to other memebers 
 
 2. **Push and Open a Pull Request**: Once your changes are ready, push them to your branch and create a pull request (PR) to merge it into the `development` branch.
 
-3. **Code Review Request**: Request a code review from **Adeleye Remi-Alarape**. Ensure that all changes are reviewed and any necessary updates are made before proceeding.
+3. **Code Review Request**: Request a code review from `Adeleye Remi-Alarape` or `Timi Ombe`. Ensure that all changes are reviewed and any necessary updates are made before proceeding.
 
 4. **Make Necessary Changes**: After the review, make any required changes based on the feedback. Push the changes to the feature branch for re-review if necessary.
 
@@ -105,6 +105,50 @@ Please ensure your pull request includes:
   - [ ] Code review requested from **Adeleye Remi-Alarape**.
   - [ ] Unit tests are written and passing (if applicable).
   - [ ] Documentation has been updated (if applicable).
+
+
+<summary><strong>📌 Example PR Template</strong></summary>
+
+
+> ### This pull request adds a new "Login Form" feature to the application.
+> 
+> The form includes fields for the user’s email and password, and a submit button that sends the data to the backend for authentication. This feature was added in response to the need for a user login page.
+>
+> **What**: Created a new login form component (`LoginForm.tsx`).  
+> **Why**: The login functionality is required for users to access the dashboard of the application.
+>
+> ---
+>
+> ### 🧩 Type of Change
+> - [x] New feature
+>
+> ### 🔗 Related Issue
+> Resolves #45 - Add Login Form to the Application.
+>
+> ---
+>
+> ### ✅ Checklist
+> - [x] Code follows the project's style guidelines  
+> - [x] Tests have been added/updated for the changes (unit tests and integration tests included)  
+> - [x] Documentation has been updated accordingly (added new section on the login form)  
+> - [x] All tests pass (run `npm test` to verify)  
+> - [x] No breaking changes have been introduced  
+> - [x] I have checked for any security vulnerabilities in my code  
+> - [x] I have verified the changes work in all relevant environments (dev, staging, production)  
+>
+> ---
+>
+> ### 🖼 Screenshots (if applicable)
+> ![Login Form UI](https://linktothescreenshot.com/login_form_ui.png)
+>
+> ---
+>
+> ### ℹ️ Additional Information
+> - The form is styled using the existing theme of the application.
+> - The backend endpoint for handling login is already set up, so no additional server changes were required.
+
+</details>
+
 
 ## Merging Process
 
