@@ -34,7 +34,7 @@ export default function PaymentPage() {
     });
 
     setTimeout(() => {
-      if (userEmail) router.push(`/onboarding/admin?email=${encodeURIComponent(userEmail)}`);
+      if (userEmail) router.push(`/onboarding/admin`);
     }, 1000);
   };
 

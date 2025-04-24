@@ -15,20 +15,21 @@ import { toast } from "sonner";
 import Image from "next/image";
 import { CountrySelect, StateSelect } from "react-country-state-city";
 import "react-country-state-city/dist/react-country-state-city.css";
+import { usePricingStore } from "@/store/usePricingStore";
 
 const adminRoles = ["Principal", "Proprietor", "Head Teacher"];
 
 export default function AdminOnboardingView() {
   const router = useRouter();
-  // const searchParams = useSearchParams();
   const [errors, setErrors] = useState<Record<string, boolean>>({});
   const [country, setCountry] = useState<any>(null);
   const [currentState, setCurrentState] = useState<any>(null);
+  const { userEmail } = usePricingStore();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     gender: "",
-    email: "",
+    email: userEmail,
     phone: "",
     schoolName: "",
     schoolAlias: "",
@@ -198,6 +199,7 @@ export default function AdminOnboardingView() {
                   name="email"
                   value={formData.email}
                   className="bg-gray-100"
+                  readOnly
                 />
               </div>
 
