@@ -9,8 +9,8 @@ import SuccessModal from "../modal/Successfulmodal";
 
 const PRICING_PLANS = [
   { key: "freemium", name: "Freemium", price: "Free", features: ["Basic features", "Community support"] },
-  { key: "standard", name: "Standard", price: "$10/mo", features: ["All Freemium features", "Email support", "More storage"] },
-  { key: "premium", name: "Premium", price: "$25/mo", features: ["All Standard features", "Priority support", "Unlimited storage"] },
+  { key: "standard", name: "Standard", price: "$x/mo", features: ["All Freemium features", "Email support", "More storage"] },
+  { key: "premium", name: "Premium", price: "$x/mo", features: ["All Standard features", "Priority support", "Unlimited storage"] },
 ] as const;
 
 export default function PricingView() {
@@ -86,13 +86,13 @@ export default function PricingView() {
             </div>
           </div>
 
-          <Button
+            <Button
             className="w-full bg-[#1B5B5E] hover:bg-[#1B5B5E]/90 text-white py-6 text-lg"
-            onClick={() => setShowModal(true)}
+            onClick={() => window.location.href = '/mockPayment'}
             disabled={!selectedPlan || !userEmail}
-          >
+            >
             Proceed to Payment
-          </Button>
+            </Button>
         </div>
       </div>
 
