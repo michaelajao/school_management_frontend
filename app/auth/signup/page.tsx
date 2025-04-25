@@ -1,5 +1,4 @@
 import { AuthForm } from "@/components/auth/auth-form";
-import Image from "next/image";
 import Link from "next/link";
 
 export default function SignupPage() {

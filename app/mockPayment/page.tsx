@@ -6,37 +6,36 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { useRouter, useSearchParams } from "next/navigation";
-
+import { useRouter } from "next/navigation";
+import { usePricingStore } from "@/store/usePricingStore";
 
 export default function PaymentPage() {
-  const searchParams = useSearchParams();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [email, setEmail] = useState<string | null>(null);
-
+  const { userEmail } = usePricingStore();
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    const emailFromQuery = searchParams.get("email"); // Get the email from query params
-    if (emailFromQuery) {
-      setEmail(emailFromQuery); // Store the email in the state
-    } else {
-      router.push('/auth/signup'); // Redirect to signup if email is not found
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (hydrated && !userEmail) {
+      router.push('/auth/signup');
     }
-  }, [searchParams, router]);
+  }, [hydrated, userEmail, router]);
 
   const handlePayment = (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     toast.success("Payment Successful", {
-        description: "Redirecting...",
-      });
-      
-      setTimeout(() => {
-        // Redirect to the onboarding admin page with the email as a parameter
-        if (email) router.push(`/onboarding/admin?email=${encodeURIComponent(email)}`);
-      }, 1000);
+      description: "Redirecting...",
+    });
+
+    setTimeout(() => {
+      if (userEmail) router.push(`/onboarding/admin`);
+    }, 1000);
   };
 
   return (
@@ -47,6 +46,15 @@ export default function PaymentPage() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handlePayment} className="space-y-4">
+            <div>
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                value={userEmail || ""}
+                readOnly
+                className="bg-gray-100"
+              />
+            </div>
             <div>
               <Label htmlFor="name">Name on Card</Label>
               <Input id="name" placeholder="Jane Doe" required />
