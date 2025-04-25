@@ -73,8 +73,8 @@ export default function RegistrationForm({ prefilledRole }: Props) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="w-full max-w-md mx-auto space-y-6">
+    <div className="min-h-screen4flex items-center justify-center p-4">
+      <div className="w-full bg-white p-10 rounded-3xl max-w-md mx-auto space-y-6">
         <div className="text-center">
           <h2 className="text-3xl font-bold tracking-tight">Create Your Account</h2>
           <p className="mt-2 text-sm text-gray-600">
@@ -168,7 +168,7 @@ export default function RegistrationForm({ prefilledRole }: Props) {
               checked={form.agreed}
               onCheckedChange={val => handleChange("agreed", !!val)}
             />
-            <Label htmlFor="terms" className={`text-sm leading-none ${errors.agreed ? 'text-red-500' : ''}`}>
+            <Label htmlFor="terms" className={`text-sm  leading-none ${errors.agreed ? 'text-red-500' : ''}`}>
               I agree to the{" "}
               <a href="#" className="text-primary underline hover:text-primary/80">
                 Terms of Service
