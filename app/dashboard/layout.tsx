@@ -1,239 +1,74 @@
-"use client";
+"use client"; // Mark layout as client to support client components
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { AppSidebar, MobileSidebar } from "@/components/layout/AppSidebar"; // Import the new sidebar
+import { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/contexts/auth-context";
-import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
-import { Menu, X, ChevronRight } from "lucide-react";
-import { BarChart, LineChart, PieChart } from "lucide-react"; // Import icons if needed
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useAuth } from "@/contexts/auth-context"; // Import useAuth
+import { LogOut } from "lucide-react"; // Import LogOut icon
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const { user, isAuthenticated, loading, logout } = useAuth();
-  const pathname = usePathname();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [isMobile, setIsMobile] = useState(false);
+// import Header from "@/components/layout/Header"; // Example: If you have a header component
 
-  // Check for mobile screen on mount and window resize
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-      if (window.innerWidth < 768) {
-        setIsSidebarOpen(false);
-      } else {
-        setIsSidebarOpen(true);
-      }
-    };
-    
-    // Check initially
-    checkMobile();
-    
-    // Add resize listener
-    window.addEventListener("resize", checkMobile);
-    
-    // Cleanup
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
+type DashboardLayoutProps = {
+  children: ReactNode;
+};
 
-  // Show loading state
-  if (loading) {
-    return <div className="flex h-screen items-center justify-center">Loading...</div>;
-  }
+export default function DashboardLayout({ children }: DashboardLayoutProps) {
+  const { user, logout } = useAuth(); // Get user and logout function
 
-  // Redirect if not authenticated
-  if (!isAuthenticated) {
-    // Use window.location.href instead of redirect for client-side navigation
-    if (typeof window !== "undefined") {
-      window.location.href = "/auth/signin";
-      return null;
-    }
-    return null;
-  }
-
-  // Menu items based on user role
-  const getMenuItems = () => {
-    const commonItems = [
-      { name: "Dashboard", href: `/dashboard/${user?.role}` },
-      { name: "Profile", href: `/dashboard/profile` },
-    ];
-
-    // --- Super Admin Role ---
-    if (user?.role === "superadmin") {
-      return [
-        { name: "Overview", href: "/dashboard/superadmin", icon: BarChart }, // Example icon
-        { name: "School Management", href: "/dashboard/superadmin/schools" }, // Added for multi-school
-        { name: "User Management", href: "/dashboard/superadmin/users" }, // Combined users
-        { name: "Academic Management", href: "/dashboard/superadmin/academics" }, // Combined academics
-        { name: "Finance & Admin", href: "/dashboard/superadmin/finance" }, // Combined finance
-        { name: "Communication", href: "/dashboard/superadmin/communication" }, // Combined communication
-        { name: "Events & Scheduling", href: "/dashboard/superadmin/events" },
-        { name: "Settings", href: "/dashboard/superadmin/settings" },
-      ];
-    }
-    // --- End Super Admin Role ---
-
-    if (user?.role === "admin") {
-      return [
-        ...commonItems,
-        { name: "Students", href: "/dashboard/admin/students" },
-        { name: "Teachers", href: "/dashboard/admin/teachers" },
-        { name: "Classes", href: "/dashboard/admin/classes" },
-        { name: "Reports", href: "/dashboard/admin/reports" },
-      ];
-    }
-
-    if (user?.role === "teacher") {
-      return [
-        ...commonItems,
-        { name: "My Classes", href: "/dashboard/teacher/classes" },
-        { name: "Attendance", href: "/dashboard/teacher/attendance" },
-        { name: "Assignments", href: "/dashboard/teacher/assignments" },
-      ];
-    }
-
-    if (user?.role === "parent") {
-      return [
-        ...commonItems,
-        { name: "Children", href: "/dashboard/parent/children" },
-        { name: "Academic Progress", href: "/dashboard/parent/progress" },
-        { name: "Attendance", href: "/dashboard/parent/attendance" },
-      ];
-    }
-
-    if (user?.role === "student") {
-      return [
-        ...commonItems,
-        { name: "Classes", href: "/dashboard/student/classes" },
-        { name: "Assignments", href: "/dashboard/student/assignments" },
-        { name: "Progress", href: "/dashboard/student/progress" },
-      ];
-    }
-
-    return commonItems;
-  };
-
-  const menuItems = getMenuItems();
-
-  // Sidebar component
-  const SidebarContent = () => (
-    <>
-      <div className="p-4 border-b border-slate-700">
-        <Link href={`/dashboard/${user?.role}`} className="font-bold text-xl flex items-center gap-2">
-          <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-white"> {/* Changed color for superadmin */}
-            {user?.role === 'superadmin' ? 'SA' : user?.role.charAt(0).toUpperCase()}
-          </div>
-          {isSidebarOpen && (
-            <div>
-              <span className="text-white">{user?.role === 'superadmin' ? 'SaaS Platform' : 'SchoolMS'}</span>
-              <p className="text-sm text-slate-400 mt-1">{user?.name}</p>
-              <p className="text-xs text-slate-500 capitalize">{user?.role}</p>
-            </div>
-          )}
-        </Link>
-      </div>
-      <nav className="flex-1 p-4 overflow-y-auto">
-        <ul className="space-y-1">
-          {menuItems.map((item) => (
-            <li key={item.href}>
-              <Link
-                href={item.href}
-                className={`flex items-center px-4 py-2 rounded-md transition-colors ${
-                  pathname === item.href
-                    ? "bg-slate-700 text-white"
-                    : "text-slate-300 hover:bg-slate-700 hover:text-white"
-                }`}
-              >
-                {/* Optional: Add icons */}
-                {/* {item.icon && <item.icon className="mr-3 h-4 w-4" />} */}
-                {item.name}
-                {isSidebarOpen ? null : <ChevronRight className="ml-auto h-4 w-4" />}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </nav>
-      <div className="p-4 border-t border-slate-700">
-        <Button 
-          variant="outline" 
-          className="w-full text-slate-300 hover:text-white border-slate-600"
-          onClick={() => logout()}
-        >
-          {isSidebarOpen ? "Log Out" : "Out"}
-        </Button>
-      </div>
-    </>
-  );
-
-  // Main layout with responsive behavior
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50">
-      {/* For desktop: Collapsible Sidebar */}
-      <div 
-        className={`hidden md:flex bg-slate-800 text-white flex-col h-full transition-all duration-300 ${
-          isSidebarOpen ? "w-64" : "w-20"
-        }`}
-      >
-        <SidebarContent />
-      </div>
+    <div className="flex min-h-screen w-full flex-col bg-muted/40">
+      {/* Desktop Sidebar */}
+      <AppSidebar />
 
-      {/* For mobile: Drawer/Sheet */}
-      <div className="md:hidden">
-        <Sheet>          <SheetTrigger asChild>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="fixed top-4 left-4 z-40"
-            >
-              <Menu className="h-5 w-5" />
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="left" className="p-0 bg-slate-800 text-white w-[280px]">
-            {/* Adding SheetTitle for accessibility */}
-            <div className="sr-only">
-              <SheetTitle>Navigation Menu</SheetTitle>
-            </div>
-            <SidebarContent />
-          </SheetContent>
-        </Sheet>
-      </div>
-
-      {/* Main content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Header */}
-        <header className="bg-white border-b p-4 flex items-center justify-between">
-          {/* Toggle button for desktop */}
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="hidden md:flex" 
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          >
-            {isSidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </Button>
-          
-          <div className="md:hidden">
-            {/* This div creates space in mobile view where the Sheet trigger is rendered */}
-            <div className="w-8 h-8" />
-          </div>
-          
-          {/* Page Title - this could be dynamic based on current path */}          <h1 className="text-lg font-medium">
-            {user?.role ? `${user.role.charAt(0).toUpperCase() + user.role.slice(1)} Dashboard` : "Dashboard"}
-            {user?.role === 'superadmin' && ' - Platform Overview'} {/* Adjust title for superadmin */}
-          </h1>
-
-          {/* Right side of header - could add notifications, profile menu, etc. */}
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-500">Welcome, {user?.name}</span>
+      <div className="flex flex-col sm:gap-4 sm:py-4 lg:pl-64"> {/* Adjust pl to match sidebar width */}
+        {/* Header (Optional) - Include Mobile Sidebar Trigger Here */}
+        <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
+          <MobileSidebar /> {/* Mobile toggle */}
+          {/* Other header content like breadcrumbs, user menu */}
+          <div className="ml-auto flex items-center gap-4">
+            {/* User Menu Dropdown */}
+            {user && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="overflow-hidden rounded-full"
+                  >
+                    <Avatar className="h-8 w-8">
+                      {/* Add user avatar image if available */}
+                      {/* <AvatarImage src={user.avatarUrl} alt={user.name} /> */}
+                      <AvatarFallback>{user.name ? user.name.charAt(0).toUpperCase() : "U"}</AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>{user.name || "My Account"}</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>Settings</DropdownMenuItem>
+                  <DropdownMenuItem>Support</DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={logout}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
           </div>
         </header>
 
-        {/* Main content area with padding */}
-        <main className="flex-1 overflow-y-auto p-6">
+        {/* Main Content Area */}
+        <main className="flex-1 gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
           {children}
         </main>
       </div>
