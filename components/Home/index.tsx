@@ -33,6 +33,7 @@ export default function HomeIndex() {
               />
               <span className="font-bold text-xl text-[#1B5B5E]">SchoolMS</span>
             </Link>
+            {/* Optional: Add Login/Signup buttons here if needed */}
           </div>
         </header>
 
@@ -123,7 +124,7 @@ export default function HomeIndex() {
         </section>
 
         {/* Pricing Section */}
-        <section className="py-20 md:py-28 bg-gradient-to-b from-gray-50 to-gray-100">
+        <section id="pricing" className="py-20 md:py-28 bg-gradient-to-b from-gray-50 to-gray-100">
           <div className="container mx-auto px-4">
             <div className="text-center mb-16 max-w-3xl mx-auto">
               <h2 className="text-3xl md:text-4xl font-bold mb-4 text-[#134345]">Simple, Transparent Pricing</h2>
@@ -241,6 +242,7 @@ export default function HomeIndex() {
                     { title: "Low-Bandwidth Optimized", description: "Ensures fast performance even on slower connections.", icon: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white/80"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg> },
                     { title: "Multi-Language Support", description: "Includes local languages for enhanced accessibility.", icon: <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white/80"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg> },
                   ].map((item, i) => (
+                    // Wrap each item in an <li> tag
                     <li key={i} className="flex items-start gap-4 group">
                       <div className="flex-shrink-0 w-8 h-8 mt-1 rounded-full bg-white/10 flex items-center justify-center transition-colors duration-300 group-hover:bg-white/20">
                         {item.icon}
