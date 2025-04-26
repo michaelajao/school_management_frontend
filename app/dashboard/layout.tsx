@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/auth-context";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { Menu, X, ChevronRight } from "lucide-react";
+import { BarChart, LineChart, PieChart } from "lucide-react"; // Import icons if needed
 
 export default function DashboardLayout({
   children,
@@ -61,6 +62,21 @@ export default function DashboardLayout({
       { name: "Profile", href: `/dashboard/profile` },
     ];
 
+    // --- Super Admin Role ---
+    if (user?.role === "superadmin") {
+      return [
+        { name: "Overview", href: "/dashboard/superadmin", icon: BarChart }, // Example icon
+        { name: "School Management", href: "/dashboard/superadmin/schools" }, // Added for multi-school
+        { name: "User Management", href: "/dashboard/superadmin/users" }, // Combined users
+        { name: "Academic Management", href: "/dashboard/superadmin/academics" }, // Combined academics
+        { name: "Finance & Admin", href: "/dashboard/superadmin/finance" }, // Combined finance
+        { name: "Communication", href: "/dashboard/superadmin/communication" }, // Combined communication
+        { name: "Events & Scheduling", href: "/dashboard/superadmin/events" },
+        { name: "Settings", href: "/dashboard/superadmin/settings" },
+      ];
+    }
+    // --- End Super Admin Role ---
+
     if (user?.role === "admin") {
       return [
         ...commonItems,
@@ -108,12 +124,12 @@ export default function DashboardLayout({
     <>
       <div className="p-4 border-b border-slate-700">
         <Link href={`/dashboard/${user?.role}`} className="font-bold text-xl flex items-center gap-2">
-          <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white">
-            {user?.role.charAt(0).toUpperCase()}
+          <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-white"> {/* Changed color for superadmin */}
+            {user?.role === 'superadmin' ? 'SA' : user?.role.charAt(0).toUpperCase()}
           </div>
           {isSidebarOpen && (
             <div>
-              <span className="text-white">SchoolMS</span>
+              <span className="text-white">{user?.role === 'superadmin' ? 'SaaS Platform' : 'SchoolMS'}</span>
               <p className="text-sm text-slate-400 mt-1">{user?.name}</p>
               <p className="text-xs text-slate-500 capitalize">{user?.role}</p>
             </div>
@@ -124,7 +140,7 @@ export default function DashboardLayout({
         <ul className="space-y-1">
           {menuItems.map((item) => (
             <li key={item.href}>
-              <Link 
+              <Link
                 href={item.href}
                 className={`flex items-center px-4 py-2 rounded-md transition-colors ${
                   pathname === item.href
@@ -132,6 +148,8 @@ export default function DashboardLayout({
                     : "text-slate-300 hover:bg-slate-700 hover:text-white"
                 }`}
               >
+                {/* Optional: Add icons */}
+                {/* {item.icon && <item.icon className="mr-3 h-4 w-4" />} */}
                 {item.name}
                 {isSidebarOpen ? null : <ChevronRight className="ml-auto h-4 w-4" />}
               </Link>
@@ -205,8 +223,9 @@ export default function DashboardLayout({
           
           {/* Page Title - this could be dynamic based on current path */}          <h1 className="text-lg font-medium">
             {user?.role ? `${user.role.charAt(0).toUpperCase() + user.role.slice(1)} Dashboard` : "Dashboard"}
+            {user?.role === 'superadmin' && ' - Platform Overview'} {/* Adjust title for superadmin */}
           </h1>
-          
+
           {/* Right side of header - could add notifications, profile menu, etc. */}
           <div className="flex items-center gap-2">
             <span className="text-sm text-gray-500">Welcome, {user?.name}</span>
