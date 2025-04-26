@@ -13,19 +13,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
 import Image from "next/image";
-import { CountrySelect, StateSelect } from "react-country-state-city";
-import "react-country-state-city/dist/react-country-state-city.css";
-// import { usePricingStore } from "@/store/usePricingStore"; // Remove usePricingStore
+import { CountryDropdown, RegionDropdown } from "react-country-region-selector";
 import { useAuth } from "@/contexts/auth-context"; // Import useAuth
+import { useFormValidation } from "@/hooks/useFormValidation";
 
 const adminRoles = ["Principal", "Proprietor", "Head Teacher"];
 
 export default function AdminOnboardingView() {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth(); // Use auth context
-  const [errors, setErrors] = useState<Record<string, boolean>>({});
-  const [country, setCountry] = useState<any>(null);
-  const [currentState, setCurrentState] = useState<any>(null);
   // const { userEmail } = usePricingStore(); // Remove usePricingStore usage
   const [formData, setFormData] = useState({
     firstName: "",
@@ -46,6 +42,12 @@ export default function AdminOnboardingView() {
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Form validation using custom hook
+  const requiredFields: Array<keyof typeof formData> = [
+    "firstName","lastName","gender","phone","schoolName","role","primaryColor","address","country","state",
+  ];
+  const { errors, validate, clearError } = useFormValidation(formData, requiredFields);
+
   // Set email from auth context once loaded
   useEffect(() => {
     if (user?.email) {
@@ -61,27 +63,11 @@ export default function AdminOnboardingView() {
     }
   }, [authLoading, user, router]);
 
-  const validateForm = () => {
-    const newErrors: Record<string, boolean> = {};
-    const requiredFields = ['firstName', 'lastName', 'gender', 'phone', 'schoolName', 'role', 'primaryColor'];
-    
-    requiredFields.forEach(field => {
-      if (!formData[field as keyof typeof formData]) {
-        newErrors[field] = true;
-      }
-    });
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, files } = e.target;
     
     // Clear error when user starts typing
-    if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: false }));
-    }
+    clearError(name as keyof typeof formData);
 
     if (type === "file" && files) {
       const file = files[0];
@@ -97,22 +83,18 @@ export default function AdminOnboardingView() {
   };
 
   const handleSelectChange = (name: string, value: string) => {
-    if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: false }));
-    }
+    clearError(name as keyof typeof formData);
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleRadioChange = (name: string, value: string) => {
-    if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: false }));
-    }
+    clearError(name as keyof typeof formData);
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const submitOnboarding = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!validateForm()) return;
+    if (!validate()) return;
 
     setIsSubmitting(true);
     try {
@@ -136,8 +118,8 @@ export default function AdminOnboardingView() {
   return (
     <div className="max-w-3xl mx-auto p-4 space-y-6"> {/* Adjusted max-width to reduce whitespace */}
       <header className="space-y-2 text-center">
-        <h1 className="text-3xl font-bold text-gray-900">School Administration Setup</h1>
-        <p className="text-gray-600">Complete your profile and school information to get started</p>
+        <h1 className="text-3xl font-bold text-gray-900">Superadmin School Setup</h1>
+        <p className="text-gray-600">Complete your profile and school information to onboard your school.</p>
       </header>
 
       <Card className="p-6 shadow-sm">
@@ -280,45 +262,33 @@ export default function AdminOnboardingView() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label className="text-gray-700">Country *</Label>
-                <CountrySelect
-                  onChange={(_country: any) => {
-                    setCountry(_country);
-                    setCurrentState(null);
-                    setFormData(prev => ({
-                      ...prev,
-                      country: _country ? _country.name : "",
-                      state: "",
-                    }));
-                    if (errors.country) setErrors(prev => ({ ...prev, country: false }));
-                    if (errors.state) setErrors(prev => ({ ...prev, state: false }));
-                  }}
-                  placeHolder="Select Country"
-                  containerClassName="form-group"
-                  inputClassName="w-full border rounded px-3 py-2"
-                  value={country}
-                />
-                {errors.country && <p className="text-red-500 text-sm">Required field</p>}
+              <Label className="text-gray-700">Country *</Label>
+              <CountryDropdown
+                defaultOptionLabel="Select Country"
+                value={formData.country}
+                onChange={(val: string) => {
+                  setFormData(prev => ({ ...prev, country: val, state: "" }));
+                  clearError("country");
+                  clearError("state");
+                }}
+                className="w-full border rounded px-3 py-2"
+              />
+              {errors.country && <p className="text-red-500 text-sm">Required field</p>}
               </div>
               <div className="space-y-2">
-                <Label className="text-gray-700">State *</Label>
-                <StateSelect
-                  countryid={country?.id}
-                  onChange={(_state: any) => {
-                    setCurrentState(_state);
-                    setFormData(prev => ({
-                      ...prev,
-                      state: _state ? _state.name : "",
-                    }));
-                    if (errors.state) setErrors(prev => ({ ...prev, state: false }));
-                  }}
-                  placeHolder="Select State"
-                  containerClassName="form-group"
-                  inputClassName="w-full border rounded px-3 py-2"
-                  value={currentState}
-                  disabled={!country}
-                />
-                {errors.state && <p className="text-red-500 text-sm">Required field</p>}
+              <Label className="text-gray-700">State *</Label>
+              <RegionDropdown
+                blankOptionLabel="Select State"
+                defaultOptionLabel="Select State"
+                country={formData.country}
+                value={formData.state}
+                onChange={(val: string) => {
+                  setFormData(prev => ({ ...prev, state: val }));
+                  clearError("state");
+                }}
+                className="w-full border rounded px-3 py-2"
+              />
+              {errors.state && <p className="text-red-500 text-sm">Required field</p>}
               </div>
             </div>
 

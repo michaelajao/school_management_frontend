@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { useFormValidation } from "@/hooks/useFormValidation";
 
 type UserRole = "admin" | "teacher" | "parent" | "student";
 
@@ -27,34 +28,17 @@ export default function RegistrationForm({ prefilledRole }: Props) {
     agreed: false,
   });
 
-  const [errors, setErrors] = useState<{ [key: string]: boolean }>({});
   const [isLoading, setIsLoading] = useState(false);
+  const requiredFields: Array<keyof typeof form> = ["firstName", "lastName", "email", "phone", "password", "agreed"];
+  const { errors, validate, clearError } = useFormValidation(form, requiredFields);
 
   const handleChange = (key: keyof typeof form, value: string | boolean) => {
     setForm(prev => ({ ...prev, [key]: value }));
-    setErrors(prev => ({ ...prev, [key]: false }));
+    clearError(key);
   };
 
   const handleSubmit = () => {
-    const newErrors: { [key: string]: boolean } = {};
-    let hasError = false;
-
-    // Check each field
-    Object.entries(form).forEach(([key, value]) => {
-      if (key === 'agreed') {
-        if (!value) {
-          newErrors[key] = true;
-          hasError = true;
-        }
-      } else if (key !== 'role' && !value) {
-        newErrors[key] = true;
-        hasError = true;
-      }
-    });
-
-    setErrors(newErrors);
-
-    if (hasError) {
+    if (!validate()) {
       toast.error("Please fill in all required fields.");
       return;
     }
