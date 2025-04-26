@@ -6,81 +6,94 @@ import { redirect } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, Database, Upload, Users, Book, Calendar } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { UserFormDialog } from "@/components/admin/UserFormDialog";
 import { ClassTable, ClassData } from "@/components/admin/ClassTable";
 import { ClassFormDialog, ClassFormData } from "@/components/admin/ClassFormDialog";
-import { TimetableManagement } from "@/components/admin/TimetableManagement"; // Import new component
-import { AttendanceManagement } from "@/components/admin/AttendanceManagement"; // Import new component
-import { AssignmentsManagement } from "@/components/admin/AssignmentsManagement"; // Import new component
+import { TimetableManagement } from "@/components/admin/TimetableManagement"; 
+import { AttendanceManagement } from "@/components/admin/AttendanceManagement"; 
+import { AssignmentsManagement } from "@/components/admin/AssignmentsManagement"; 
 import { toast } from "sonner";
+import Link from "next/link";
 
 // Define UserData type matching the dialog's output (id can be undefined initially)
-type UserData = {
-  id?: string; // Allow id to be undefined
+interface UserData {
   name: string;
   email: string;
-  role: "admin" | "teacher" | "student";
-};
+  role: 'admin' | 'teacher' | 'student';
+  id?: string;
+  class?: string;
+  subject?: string;
+}
 
-// Define UserDataWithId for state management where ID is guaranteed
-type UserDataWithId = UserData & { id: string };
+// UserDataWithId ensures we have an ID
+interface UserDataWithId extends UserData {
+  id: string;
+}
 
+// Mock data for initial state
+const mockAdmins: UserDataWithId[] = [
+  { id: 'admin-1', name: 'John Smith', email: 'john@example.com', role: 'admin' },
+  { id: 'admin-2', name: 'Sarah Johnson', email: 'sarah@example.com', role: 'admin' },
+];
 
-// Update UserTable to accept UserDataWithId and onEdit callback
+const mockTeachers: UserDataWithId[] = [
+  { id: 'teacher-1', name: 'Michael Brown', email: 'michael@example.com', role: 'teacher', subject: 'Mathematics' },
+  { id: 'teacher-2', name: 'Emily Davis', email: 'emily@example.com', role: 'teacher', subject: 'Science' },
+  { id: 'teacher-3', name: 'David Wilson', email: 'david@example.com', role: 'teacher', subject: 'English' },
+];
+
+const mockStudents: UserDataWithId[] = [
+  { id: 'student-1', name: 'James Johnson', email: 'james@example.com', role: 'student', class: 'Class 10A' },
+  { id: 'student-2', name: 'Emma Williams', email: 'emma@example.com', role: 'student', class: 'Class 9B' },
+  { id: 'student-3', name: 'Olivia Brown', email: 'olivia@example.com', role: 'student', class: 'Class 10A' },
+  { id: 'student-4', name: 'William Jones', email: 'william@example.com', role: 'student', class: 'Class 9B' },
+];
+
+const mockClasses: ClassData[] = [
+  { id: 'class-1', name: 'Class 10A', teacher: 'Michael Brown', studentCount: 25 },
+  { id: 'class-2', name: 'Class 9B', teacher: 'Emily Davis', studentCount: 22 },
+  { id: 'class-3', name: 'Class 8C', teacher: 'David Wilson', studentCount: 20 },
+];
+
+// UserTable component that was missing but used in the page
 const UserTable = ({ users, onEdit }: { users: UserDataWithId[], onEdit: (user: UserDataWithId) => void }) => {
-  if (!users || users.length === 0) {
-    return <p className="text-sm text-muted-foreground">No users found.</p>;
-  }
   return (
     <Table>
       <TableHeader>
         <TableRow>
           <TableHead>Name</TableHead>
           <TableHead>Email</TableHead>
-          <TableHead>Role</TableHead>
+          {users[0]?.role === 'teacher' && <TableHead>Subject</TableHead>}
+          {users[0]?.role === 'student' && <TableHead>Class</TableHead>}
           <TableHead className="text-right">Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {users.map((user) => (
-          <TableRow key={user.id}>
-            <TableCell className="font-medium">{user.name}</TableCell>
-            <TableCell>{user.email}</TableCell>
-            <TableCell className="capitalize">{user.role}</TableCell>
-            <TableCell className="text-right">
-              <Button variant="outline" size="sm" onClick={() => onEdit(user)}>Edit</Button>
-            </TableCell>
+        {users.length === 0 ? (
+          <TableRow>
+            <TableCell colSpan={4} className="text-center">No users found</TableCell>
           </TableRow>
-        ))}
+        ) : (
+          users.map(user => (
+            <TableRow key={user.id}>
+              <TableCell>{user.name}</TableCell>
+              <TableCell>{user.email}</TableCell>
+              {user.role === 'teacher' && <TableCell>{user.subject || 'N/A'}</TableCell>}
+              {user.role === 'student' && <TableCell>{user.class || 'N/A'}</TableCell>}
+              <TableCell className="text-right">
+                <Button variant="ghost" size="sm" onClick={() => onEdit(user)}>
+                  Edit
+                </Button>
+              </TableCell>
+            </TableRow>
+          ))
+        )}
       </TableBody>
     </Table>
   );
 };
-
-// Mock Data (Ensure it matches UserDataWithId type)
-const mockAdmins: UserDataWithId[] = [
-  { id: "admin-1", name: "Alice Admin", email: "alice.admin@school.com", role: "admin" },
-  { id: "admin-2", name: "Bob Manager", email: "bob.manager@school.com", role: "admin" },
-];
-
-const mockTeachers: UserDataWithId[] = [
-  { id: "teach-1", name: "Charlie Teacher", email: "charlie.t@school.com", role: "teacher" },
-  { id: "teach-2", name: "Diana Professor", email: "diana.p@school.com", role: "teacher" },
-];
-
-const mockStudents: UserDataWithId[] = [
-  { id: "stu-1", name: "Ethan Student", email: "ethan.s@school.com", role: "student" },
-  { id: "stu-2", name: "Fiona Learner", email: "fiona.l@school.com", role: "student" },
-];
-
-// Mock Class Data
-const mockClasses: ClassData[] = [
-  { id: "class-1", name: "Grade 1A", teacher: "Charlie Teacher", studentCount: 25 },
-  { id: "class-2", name: "Grade 1B", teacher: "Diana Professor", studentCount: 23 },
-  { id: "class-3", name: "Grade 2", studentCount: 30 },
-];
 
 export default function AdminDashboardPage() {
   const { user, loading } = useAuth();
@@ -213,6 +226,44 @@ export default function AdminDashboardPage() {
         <p className="text-muted-foreground">Manage your school's operations.</p>
       </section>
 
+      {/* Quick Actions Card */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Quick Actions</CardTitle>
+          <CardDescription>Quickly access common administrative tasks</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Link href="/dashboard/admin/data-upload">
+              <Card className="hover:bg-muted/50 transition-colors cursor-pointer">
+                <CardContent className="flex flex-col items-center justify-center p-6">
+                  <Database className="h-8 w-8 mb-2 text-primary" />
+                  <h3 className="font-medium text-center">Data Upload</h3>
+                  <p className="text-sm text-muted-foreground text-center">Import student, teacher & class data</p>
+                </CardContent>
+              </Card>
+            </Link>
+            
+            <Card className="hover:bg-muted/50 transition-colors cursor-pointer">
+              <CardContent className="flex flex-col items-center justify-center p-6">
+                <Users className="h-8 w-8 mb-2 text-primary" />
+                <h3 className="font-medium text-center">Manage Users</h3>
+                <p className="text-sm text-muted-foreground text-center">Add or edit user accounts</p>
+              </CardContent>
+            </Card>
+            
+            <Card className="hover:bg-muted/50 transition-colors cursor-pointer">
+              <CardContent className="flex flex-col items-center justify-center p-6">
+                <Calendar className="h-8 w-8 mb-2 text-primary" />
+                <h3 className="font-medium text-center">Schedule Classes</h3>
+                <p className="text-sm text-muted-foreground text-center">Create or modify timetables</p>
+              </CardContent>
+            </Card>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Rest of existing cards */}
       {/* User Management Card */}
       <Card>
         <CardHeader>
@@ -331,20 +382,6 @@ export default function AdminDashboardPage() {
           onOpenChange={handleClassDialogChange}
         />
       )}
-
-      {/* Placeholder for other dashboard sections */}
-      {/* 
-      <section className="grid gap-4 md:grid-cols-2">
-        <Card>
-          <CardHeader><CardTitle>Quick Stats</CardTitle></CardHeader>
-          <CardContent><p>Total Students: ...</p></CardContent>
-        </Card>
-        <Card>
-          <CardHeader><CardTitle>Recent Activity</CardTitle></CardHeader>
-          <CardContent><p>...</p></CardContent>
-        </Card>
-      </section>
-      */}
     </div>
   );
 }
