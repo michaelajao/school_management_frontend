@@ -100,14 +100,6 @@ export default function HomeIndex() {
                       className="object-cover w-full h-full rounded-lg"
                       unoptimized
                     />
-                    <div className="absolute top-4 left-4 bg-[#1B5B5E]/80 text-white text-xs px-2 py-1 rounded">Admin View</div>
-                    <div className="absolute bottom-4 right-4 flex items-center gap-1 bg-white/80 px-2 py-1 rounded shadow-sm">
-                      <span className="relative flex h-2 w-2">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-                      </span>
-                      <span className="text-xs text-gray-700">Live Data</span>
-                    </div>
                   </div>
                 </div>
               </div>
