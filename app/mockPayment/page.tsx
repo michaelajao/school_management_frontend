@@ -7,23 +7,25 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { usePricingStore } from "@/store/usePricingStore";
+import { useAuth } from "@/contexts/auth-context"; // Import useAuth
 
 export default function PaymentPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const { userEmail } = usePricingStore();
+  const { user, loading: authLoading } = useAuth(); // Get user from useAuth
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
     setHydrated(true);
   }, []);
 
+  // Redirect if not authenticated or loading
   useEffect(() => {
-    if (hydrated && !userEmail) {
+    if (hydrated && !authLoading && !user) {
+      toast.error("Please sign up or log in first.");
       router.push('/auth/signup');
     }
-  }, [hydrated, userEmail, router]);
+  }, [hydrated, authLoading, user, router]);
 
   const handlePayment = (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,9 +36,20 @@ export default function PaymentPage() {
     });
 
     setTimeout(() => {
-      if (userEmail) router.push(`/onboarding/admin`);
+      // Redirect based on user role (assuming admin for this flow)
+      if (user?.role === 'admin') {
+        router.push(`/onboarding/admin`);
+      } else {
+        // Handle other roles or default redirect if needed
+        router.push('/dashboard'); 
+      }
     }, 1000);
   };
+
+  // Show loading state while auth context is resolving
+  if (authLoading || !hydrated) {
+    return <div className="flex h-screen items-center justify-center">Loading...</div>;
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
@@ -50,7 +63,7 @@ export default function PaymentPage() {
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
-                value={userEmail || ""}
+                value={user?.email || ""} // Use email from auth context
                 readOnly
                 className="bg-gray-100"
               />
@@ -73,7 +86,7 @@ export default function PaymentPage() {
                 <Input id="cvv" placeholder="123" required />
               </div>
             </div>
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button type="submit" className="w-full" disabled={loading || !user}>
               {loading ? "Processing..." : "Pay Now"}
             </Button>
           </form>

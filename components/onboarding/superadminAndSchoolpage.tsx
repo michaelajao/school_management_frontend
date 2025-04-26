@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState} from "react";
+import { useState, useEffect } from "react"; // Import useEffect
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,21 +15,23 @@ import { toast } from "sonner";
 import Image from "next/image";
 import { CountrySelect, StateSelect } from "react-country-state-city";
 import "react-country-state-city/dist/react-country-state-city.css";
-import { usePricingStore } from "@/store/usePricingStore";
+// import { usePricingStore } from "@/store/usePricingStore"; // Remove usePricingStore
+import { useAuth } from "@/contexts/auth-context"; // Import useAuth
 
 const adminRoles = ["Principal", "Proprietor", "Head Teacher"];
 
 export default function AdminOnboardingView() {
   const router = useRouter();
+  const { user, loading: authLoading } = useAuth(); // Use auth context
   const [errors, setErrors] = useState<Record<string, boolean>>({});
   const [country, setCountry] = useState<any>(null);
   const [currentState, setCurrentState] = useState<any>(null);
-  const { userEmail } = usePricingStore();
+  // const { userEmail } = usePricingStore(); // Remove usePricingStore usage
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     gender: "",
-    email: userEmail,
+    email: "", // Initialize email as empty
     phone: "",
     schoolName: "",
     schoolAlias: "",
@@ -43,6 +45,21 @@ export default function AdminOnboardingView() {
   });
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Set email from auth context once loaded
+  useEffect(() => {
+    if (user?.email) {
+      setFormData(prev => ({ ...prev, email: user.email }));
+    }
+  }, [user]);
+
+  // Redirect if not authenticated or loading
+  useEffect(() => {
+    if (!authLoading && !user) {
+      toast.error("Please sign up or log in first.");
+      router.push('/auth/signup');
+    }
+  }, [authLoading, user, router]);
 
   const validateForm = () => {
     const newErrors: Record<string, boolean> = {};
@@ -111,6 +128,10 @@ export default function AdminOnboardingView() {
     }
   };
 
+  // Show loading state while auth context is resolving
+  if (authLoading) {
+    return <div className="flex h-screen items-center justify-center">Loading...</div>;
+  }
 
   return (
     <div className="max-w-2xl mx-auto p-4 space-y-6">
@@ -197,7 +218,7 @@ export default function AdminOnboardingView() {
                 <Label className="text-gray-700">Email *</Label>
                 <Input
                   name="email"
-                  value={formData.email}
+                  value={formData.email} // Value now comes from state updated by useEffect
                   className="bg-gray-100"
                   readOnly
                 />
@@ -346,7 +367,7 @@ export default function AdminOnboardingView() {
           <Button
             type="submit"
             className="w-full"
-            disabled={isSubmitting}
+            disabled={isSubmitting || !user} // Disable if no user
           >
             {isSubmitting ? "Saving..." : "Complete Setup"}
           </Button>
