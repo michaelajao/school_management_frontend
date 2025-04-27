@@ -8,7 +8,7 @@ type User = {
   id: string;
   name: string;
   email: string;
-  role: "admin" | "teacher" | "student" | "parent";
+  role: "admin" | "teacher" | "student" | "parent" | "superadmin"; // Added superadmin
 };
 
 type AuthContextType = {
@@ -60,7 +60,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         id: "user-1",
         name: email.split('@')[0],
         email,
-        role: email.includes('admin') ? 'admin' : 
+        // Updated mock role assignment to include superadmin
+        role: email.includes('superadmin') ? 'superadmin' :
+              email.includes('admin') ? 'admin' : 
               email.includes('teacher') ? 'teacher' : 
               email.includes('parent') ? 'parent' : 'student',
       } as User;
@@ -87,7 +89,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.log("Signup attempt with:", email, password);
       
       // Determine mock role based on email (temporary)
-      const role = email.includes('admin') ? 'admin' : 
+      // Updated mock role assignment to include superadmin
+      const role = email.includes('superadmin') ? 'superadmin' :
+                   email.includes('admin') ? 'admin' : 
                    email.includes('teacher') ? 'teacher' : 
                    email.includes('parent') ? 'parent' : 'student';
 
@@ -95,11 +99,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // potentially send back a token or confirm the next step.
       // We are simulating the step *after* initial signup confirmation.
 
-      // Redirect based on role, passing email for invite flows
+      // *** FIX: Create and set user object after signup ***
+      const mockUser = {
+        id: `user-${Date.now()}`, // Simple unique ID for mock
+        name: email.split('@')[0],
+        email,
+        role,
+      } as User;
+
+      // Store in localStorage and update state
+      localStorage.setItem("user", JSON.stringify(mockUser));
+      setUser(mockUser);
+      // *** END FIX ***
+
+      // Redirect to payment gateway
       const redirectPath = `/paymentGateway`;
-      // Always add email to query params for onboarding
-      // redirectPath += `?email=${encodeURIComponent(email)}`;
-      
       console.log(`Redirecting to: ${redirectPath}`);
       router.push(redirectPath);
       
@@ -115,7 +129,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = () => {
     localStorage.removeItem("user");
     setUser(null);
-    router.push("/");
+    router.push("/auth/signin"); // Redirect to signin on logout
   };
 
   return (

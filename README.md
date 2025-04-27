@@ -1,248 +1,189 @@
+# School Management Frontend
 
-# School Management System Frontend
+A feature-rich, role-based school management system front-end built with Next.js, React, and Tailwind CSS. Supports multi-step onboarding for superadmins, admins, teachers, parents, and students, integrated payment and pricing flows, and a reusable UI component library built with Shadcn UI. The application is designed to be responsive across various screen sizes.
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+---
 
 ## Table of Contents
-1. [Getting Started](#getting-started)
-2. [Learn More](#learn-more)
-3. [Contribution Guidelines](#contribution-guidelines)
-   - [Branching Strategy](#branching-strategy)
-   - [Code Review Process](#code-review-process)
-   - [Pull Request Template](#pull-request-template)
-   - [Merging Process](#merging-process)
-4. [Writing Tests for the Project](#writing-tests-for-the-project)
-   - [Getting Started with Tests](#getting-started-with-tests)
-   - [Writing Tests](#writing-tests)
-   - [Test Coverage](#test-coverage)
-   - [Best Practices for Writing Tests](#best-practices-for-writing-tests)
-5. [Commit Message Naming Convention](#commit-message-naming-convention)
+
+- [School Management Frontend](#school-management-frontend)
+  - [Table of Contents](#table-of-contents)
+  - [Features](#features)
+  - [Tech Stack](#tech-stack)
+  - [Prerequisites](#prerequisites)
+  - [Getting Started](#getting-started)
+  - [Folder Structure](#folder-structure)
+  - [Key Flows](#key-flows)
+    - [Onboarding](#onboarding)
+    - [Payment & Pricing](#payment--pricing)
+  - [UI Component Library & Styling](#ui-component-library--styling)
+  - [State Management & Context](#state-management--context)
+  - [Custom Hooks](#custom-hooks)
+  - [Responsiveness](#responsiveness)
+  - [Testing](#testing)
+  - [Contributing](#contributing)
+  - [License](#license)
+
+---
+
+## Features
+
+- Multi-role onboarding (Superadmin, Admin, Teacher, Parent, Student) with dedicated forms.
+- Mock payment and subscription pricing flows using Zustand for state persistence.
+- Dynamic forms featuring a reusable validation hook (`useFormValidation`) for clear error handling.
+- Country and region selectors (`react-country-region-selector`) integrated with form styling.
+- Consistent and accessible design system powered by Shadcn UI (Radix UI primitives + Tailwind CSS).
+- Light/Dark theme support via `next-themes`.
+- Responsive layout adapting to mobile, tablet, and desktop views.
+- Simulated authentication flow using React Context and `localStorage`.
+- Toast notifications for user feedback via Sonner.
+
+---
+
+## Tech Stack
+
+- **Framework:** Next.js 15 (App Router)
+- **UI:** React 19, Tailwind CSS, Shadcn UI (Radix UI + CVA)
+- **State:** React Context (Auth), Zustand (Pricing)
+- **Validation:** Custom `useFormValidation` hook
+- **Notifications:** Sonner (toast)
+- **Country/Region:** `react-country-region-selector`
+- **Theming:** `next-themes`
+- **Testing:** Jest, React Testing Library
+- **Icons:** Lucide React
+- **Linting/Formatting:** ESLint, Prettier (configured via `eslint.config.mjs`, `postcss.config.mjs`)
+
+---
+
+## Prerequisites
+
+- Node.js >= 18
+- npm, yarn, or pnpm
+
+---
 
 ## Getting Started
 
-First, run the development server:
+1. **Clone the repo**
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+   ```bash
+   git clone https://github.com/your-org/school_management_frontend.git
+   cd school_management_frontend
+   ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. **Install dependencies**
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+3. **Run development server**
 
-## Learn More
+   ```bash
+   npm run dev
+   ```
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-- You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+4. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
-# Contribution Guidelines
+## Folder Structure
 
-## Some helpful videos: 
-<div align="center">
-  <img src="https://img.youtube.com/vi/ygqx50-JHEE/0.jpg" alt="Git Branching Basics for Beginners" />
-  <br/>
-  <a href="https://www.youtube.com/watch?v=ygqx50-JHEE" target="_blank">Watch: Git Branching Basics for Beginners</a>
-</div>
-
-<div align="center">
-  <img src="https://img.youtube.com/vi/a2OSRBz107I/0.jpg" alt="Create a Git Branch From Another Branch" />
-  <br/>
-  <a href="https://www.youtube.com/watch?v=a2OSRBz107I" target="_blank">Watch: Create a Git Branch From Another Branch</a>
-</div>
- 
-
-<div align="center"> <img src="https://img.youtube.com/vi/nifnpb2WyY4/0.jpg" alt="Git Branching Basics" /> <br/> <a href="https://www.youtube.com/watch?v=nifnpb2WyY4&utm_source=chatgpt.com" target="_blank">Watch: Git Branching Basics</a> </div> 
-
-You can find more videos on youtube or feel free to reach out to other memebers of the team if you need help!
-<!--
-<div align="center"> <img src="https://img.youtube.com/vi/U_IFGpJDbeU/0.jpg" alt="Git Branching Strategies Explained" /> <br/> <a href="https://www.youtube.com/watch?v=U_IFGpJDbeU" target="_blank">Watch: Git Branching Strategies Explained</a> </div>
--->
-
-## Branching Strategy
-
-1. **Create a Development Branch**: The main development branch is `development`. All new work, whether it's a feature or bug fix, should branch off from `development`.
-   
-2. **Feature Branches**: For each new feature or task, create a new branch using the naming convention:
-   - `feature/<feature-name>`
-   For example: `feature/add-login-form` or `feature/add-dashboard-button`.
-
-3. **Bug Fixes**: If you’re working on a bug fix, create a branch from `development` with the following nameing convention:
-     - `bugfix/<bug-name>` For example: `bugfix/fix-darkmode` or `bugfix/fix-button`.
-
-## Code Review Process
-
-1. **Create a Feature Branch**: Start by branching off from `development` using the appropriate feature or bugfix naming convention (`feature/<feature-name>` or `bugfix/<bug-name>`).
-
-2. **Push and Open a Pull Request**: Once your changes are ready, push them to your branch and create a pull request (PR) to merge it into the `development` branch.
-
-3. **Code Review Request**: Request a code review from `Adeleye Remi-Alarape` or `Timi Ombe`. Ensure that all changes are reviewed and any necessary updates are made before proceeding.
-
-4. **Make Necessary Changes**: After the review, make any required changes based on the feedback. Push the changes to the feature branch for re-review if necessary.
-
-5. **Merge into Development**: Once the review is complete and all feedback has been addressed, the PR can be merged into the `development` branch.
-
-6. **Merging to Main**: After significant progress is made on the `development` branch, a pull request will be created to merge it into `main` in batches, allowing for easier review and testing.
-
-## Pull Request Template
-
-Please ensure your pull request includes:
-- A clear description of the changes made.
-- Any relevant issue numbers or references.
-- A checklist for the following:
-  - [ ] Code review requested from **Adeleye Remi-Alarape**.
-  - [ ] Unit tests are written and passing (if applicable).
-  - [ ] Documentation has been updated (if applicable).
-
-
-<summary><strong>📌 Example PR Template</strong></summary>
-
-
-> ### This pull request adds a new "Login Form" feature to the application.
-> 
-> The form includes fields for the user’s email and password, and a submit button that sends the data to the backend for authentication. This feature was added in response to the need for a user login page.
->
-> **What**: Created a new login form component (`LoginForm.tsx`).  
-> **Why**: The login functionality is required for users to access the dashboard of the application.
->
-> ---
->
-> ### 🧩 Type of Change
-> - [x] New feature
->
-> ### 🔗 Related Issue
-> Resolves #45 - Add Login Form to the Application.
->
-> ---
->
-> ### ✅ Checklist
-> - [x] Code follows the project's style guidelines  
-> - [x] Tests have been added/updated for the changes (unit tests and integration tests included)  
-> - [x] Documentation has been updated accordingly (added new section on the login form)  
-> - [x] All tests pass (run `npm test` to verify)  
-> - [x] No breaking changes have been introduced  
-> - [x] I have checked for any security vulnerabilities in my code  
-> - [x] I have verified the changes work in all relevant environments (dev, staging, production)  
->
-> ---
->
-> ### 🖼 Screenshots (if applicable)
-> ![Login Form UI](https://linktothescreenshot.com/login_form_ui.png)
->
-> ---
->
-> ### ℹ️ Additional Information
-> - The form is styled using the existing theme of the application.
-> - The backend endpoint for handling login is already set up, so no additional server changes were required.
-
-</details>
-
-
-## Merging Process
-
-Once a pull request is reviewed and approved, it will be merged into `development`. Merges to `main` will be done periodically to ensure stability and minimize conflicts.
+```
+/app                 # Next.js App Router (routes, layouts, pages)
+/components          # Reusable UI components & feature-specific views
+  /auth              # Authentication related components
+  /Home              # Components for the main landing page
+  /modal             # Modal dialog components
+  /onboarding        # Onboarding flow components (registration, role-specific forms)
+  /PricingView       # Pricing page components
+  /ui                # Base Shadcn UI components (Button, Card, Input, etc.)
+  theme-provider.tsx # Provider for next-themes
+  theme-switcher.tsx # Component to toggle theme
+/contexts            # React context providers (AuthContext)
+/hooks               # Custom React hooks (useFormValidation, useMobile)
+/lib                 # Utility functions (e.g., cn for class merging)
+/store               # Zustand state management stores (usePricingStore)
+/_tests_             # Unit and integration tests using Jest & RTL
+/public              # Static assets (images, icons, fonts)
+# Configuration files (next.config.ts, tailwind.config.ts, tsconfig.json, etc.)
+```
 
 ---
 
-# Writing Tests for the Project
+## Key Flows
 
-Testing is an essential part of the development process. It ensures that your code works as expected and prevents regressions in the future. Here’s how to write and run tests for this project.
+### Onboarding
 
-## Getting Started with Tests
+1. **Registration** (`/app/onboarding/page.tsx`): Collects basic user info (`RegistrationForm`) and redirects based on selected role.
 
-1. **Test Setup**: Ensure you have the required testing dependencies. If they are not already installed, you can do so with:
+2. **Role Forms**:
+   - **Superadmin/Admin**: `/app/onboarding/admin/page.tsx` uses `components/onboarding/SuperadminAndSchoolpage.tsx` for detailed profile and school setup (name, address, logo, brand color, etc.).
+   - **Teacher/Parent/Student**: Simpler profile forms located under `/app/onboarding/[role]/page.tsx`.
 
-```bash
-npm install --save-dev jest @testing-library/react @testing-library/jest-dom
-```
+3. **Validation**: The `useFormValidation` hook manages required fields and displays inline error messages for a smooth user experience.
 
-2. **Directory Structure**: All tests are stored in the `__tests__` folder at the root of the project. Each component or module should have its corresponding test file.
+### Payment & Pricing
 
-## Writing Tests
-
-To write tests for a component or function, follow these steps:
-
-1. **Create a Test File**: Create a test file in the `__tests__` folder that mirrors the structure of the source code. For example, if you're testing a component located at `components/MyComponent.tsx`, create a test file at `__tests__/components/MyComponent.test.tsx`.
-
-2. **Import Required Modules**: Import the necessary testing libraries and the component/module you want to test.
-
-```tsx
-import { render, screen } from '@testing-library/react';
-import MyComponent from '../../components/MyComponent';
-```
-
-3. **Write Your Test Case**: Use `test()` to define a test case, and within it, describe the expected behavior of your component or function.
-
-```tsx
-test('renders MyComponent correctly', () => {
-  render(<MyComponent />);
-  const element = screen.getByText(/hello world/i);
-  expect(element).toBeInTheDocument();
-});
-```
-
-4. **Running Tests**: To run the tests, execute the following command:
-
-```bash
-npm test
-```
-
-This will run all the tests in your project and show the results in the terminal.
-
-## Test Coverage
-
-- **Unit Tests**: Unit tests are used to test individual functions or components in isolation.
-- **Integration Tests**: These tests verify that different parts of the application work together as expected.
-- **End-to-End (E2E) Tests**: These tests simulate user interactions with the app and ensure that the application works from start to finish.
-
-## Best Practices for Writing Tests
-
-- **Write Tests as You Develop**: As you write new features or make changes to existing ones, write tests alongside your code to ensure quality and prevent regressions.
-- **Test Edge Cases**: Always consider edge cases, such as empty inputs, invalid data, or unexpected user actions.
-- **Keep Tests Readable**: Write tests that are easy to understand for other developers. Avoid overly complex test cases.
-- **Use Mocking**: For external API calls, mock the responses to avoid hitting real APIs during tests.
-
-By following these guidelines, you can ensure that the codebase remains stable, maintainable, and easy to work with as the project grows.
+- **Pricing Page** (`/app/paymentGateway/page.tsx` using `components/PricingView/pricingView.tsx`): Displays subscription plans. Superadmins select a plan, enter mock payment details, and are redirected to onboarding upon "successful" payment.
+- **Mock Payment** (`/app/mockPayment/page.tsx`): A standalone page for demonstrating the payment form UI.
+- **Success Modal** (`components/modal/Successfulmodal.tsx`): Shown after mock payment, includes a countdown before redirecting.
 
 ---
 
-# Commit Message Naming Convention
+## UI Component Library & Styling
 
-Follow these guidelines for writing clean and consistent commit messages:
+- **Shadcn UI**: The core component library, located in `components/ui`. These are unstyled primitives built on Radix UI, styled with Tailwind CSS. See `components.json` for configuration.
+- **Tailwind CSS**: Used for all styling, configured in `tailwind.config.ts` and `app/globals.css`. Utility classes provide rapid development and consistency.
+- **Class Variance Authority (CVA)**: Used within Shadcn components (like `Button`) for managing component variants.
+- **`cn` Utility**: (`lib/utils.ts`) Merges Tailwind classes, essential for conditional styling in components.
 
-## Format:
+---
 
-```
-<type>: <description>
-```
+## State Management & Context
 
-Example: `feat: add login form` or `bugfix: resolve dashboard issue`.
+- **AuthContext** (`contexts/auth-context.tsx`): Manages simulated user authentication state (user object, loading status). Persists user info in `localStorage` for session persistence across refreshes. Provides context to protect routes and display user-specific UI.
+- **PricingStore** (`store/usePricingStore.ts`): A Zustand store for managing global state related to the pricing flow, such as the selected plan and user email. Zustand provides a simple and powerful way to handle state outside of the React component tree, with persistence middleware included.
 
-### Types:
-- **feat**: A new feature.
-- **fix**: A bug fix.
-- **docs**: Documentation changes.
-- **style**: Code style changes (e.g., formatting).
-- **refactor**: Refactoring code.
-- **test**: Adding or modifying tests.
-- **chore**: Routine tasks (e.g., dependency updates).
-- **build**: Changes related to the build process or configuration.
+---
 
-### Example Commit Messages:
-- `feat: add login form`
-- `bugfix: resolve issue with dashboard load time`
-- `docs: update README with testing guidelines`
+## Custom Hooks
 
-This convention will help keep the commit history clear and organized, making it easier to understand the purpose of each commit.
+- **`useFormValidation`** (`hooks/useFormValidation.ts`): A generic hook to handle form validation logic. Takes form data and a list of required fields, returning an `errors` object, a `validate` function, and a `clearError` function.
+- **`useMobile`** (`hooks/use-mobile.ts`): Detects if the current device screen width corresponds to mobile or tablet breakpoints, returning boolean flags (`isMobile`, `isTablet`). Useful for conditional rendering based on device type.
+
+---
+
+## Responsiveness
+
+- The application utilizes Tailwind CSS's responsive design features (e.g., `sm:`, `md:`, `lg:` prefixes) to ensure layouts adapt gracefully to different screen sizes.
+- Key components like forms, cards, and navigation are designed with responsiveness in mind.
+- The `useMobile` hook can be used for more complex JavaScript-based responsive logic if needed.
+
+---
+
+## Testing
+
+- **Jest**: The primary testing framework, configured in `jest.config.js` and `jest.setup.ts`.
+- **React Testing Library (RTL)**: Used for writing tests that interact with components similarly to how a user would. Encourages accessible and maintainable tests.
+- Sample tests are located in the `_tests_` directory (e.g., `Home.test.tsx`, `Onboarding.test.tsx`). Run tests using `npm test` or `yarn test`.
+
+---
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feat/your-feature`)
+3. Commit your changes (`git commit -m "feat: add ..."`)
+4. Push to branch (`git push origin feat/your-feature`)
+5. Open a Pull Request
+
+Please follow existing code conventions and run `npm run lint` before pushing.
+
+---
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).

@@ -25,7 +25,7 @@ export default function SuccessModal({ open, onOpenChange }: SuccessModalProps) 
   useEffect(() => {
     if (count === 0 && open) {
       onOpenChange(false);
-      router.push("/onboarding/admin    ");
+      router.push("/onboarding/admin");
     }
   }, [count, open, onOpenChange, router]);
 
