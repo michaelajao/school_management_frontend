@@ -1,3 +1,5 @@
+# Contributing
+
 ## Table of Contents
 1. [Getting Started](#getting-started)
 2. [Learn More](#learn-more)
