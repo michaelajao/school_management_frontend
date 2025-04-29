@@ -1,6 +1,6 @@
-"use client"; // Mark layout as client to support client components
+"use client";
 
-import { AppSidebar, MobileSidebar } from "@/components/layout/AppSidebar"; // Import the new sidebar
+import { SidebarWrapper } from "@/components/layout/sidebar/SidebarWrapper";
 import { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,7 +15,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/contexts/auth-context"; // Import useAuth
 import { LogOut } from "lucide-react"; // Import LogOut icon
 
-// import Header from "@/components/layout/Header"; // Example: If you have a header component
 
 type DashboardLayoutProps = {
   children: ReactNode;
@@ -25,14 +24,13 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const { user, logout } = useAuth(); // Get user and logout function
 
   return (
-    <div className="flex min-h-screen w-full flex-col bg-muted/40">
-      {/* Desktop Sidebar */}
-      <AppSidebar />
+    <div className="flex h-screen w-full flex-row bg-muted/40">
+      {/* Handles what sidebar to show depending on screensize */}
+      <SidebarWrapper />
 
-      <div className="flex flex-col sm:gap-4 sm:py-4 lg:pl-64"> {/* Adjust pl to match sidebar width */}
+      <div className=" *:flex flex-col sm:gap-4 sm:py-4 flex-1 overflow-y-auto "> {/* Adjust pl to match sidebar width */}
         {/* Header (Optional) - Include Mobile Sidebar Trigger Here */}
         <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
-          <MobileSidebar /> {/* Mobile toggle */}
           {/* Other header content like breadcrumbs, user menu */}
           <div className="ml-auto flex items-center gap-4">
             {/* User Menu Dropdown */}
