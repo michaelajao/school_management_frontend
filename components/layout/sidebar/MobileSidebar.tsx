@@ -42,7 +42,7 @@ export function MobileSidebar() {
 
   return (
     <Sheet>
-      <SheetTrigger asChild>
+      <SheetTrigger asChild className="mt-1 bg-[#ebfefe]">
         <Button variant="ghost" size="icon" className="fixed top-4 left-4 z-50 lg:hidden">
           <Menu className="h-6 w-6" />
           <span className="sr-only">Toggle Menu</span>

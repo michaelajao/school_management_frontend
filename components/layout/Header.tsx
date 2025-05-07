@@ -10,6 +10,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import NotificationBar from "@/components/layout/NotificationBar";
+import SearchBar from "./Searchbar";
 
 import { LogOut } from "lucide-react"; // Import LogOut icon
 import { useAuth } from "@/contexts/auth-context"; // Import useAuth
@@ -17,12 +19,20 @@ import { useAuth } from "@/contexts/auth-context"; // Import useAuth
 export default function Header() {
   const { user, logout } = useAuth(); // Get user and logout function
   return (
-    /* bg-red-100 flex flex-col sm:gap-4 sm:py-4 flex-1 overflow-y-auto */
-      <div className="flex flex-col mt-2 md:mt-0"> {/* Adjust pl to match sidebar width */}
+      <div className="flex justify-end lg:justify-between py-2 md:pl-6"> {/* Adjust pl to match sidebar width */}
+          {/* Search bar & Notificaiton panel */}
+          <div className="flex gap-10">
+              <SearchBar /> 
+
+              {/* It's static for now. Needs to be able to fetch notfications */}
+              <NotificationBar />
+          </div>     
         {/* Header (Optional) - Include Mobile Sidebar Trigger Here */}
-        <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
+        <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-4 bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
           {/* Other header content like breadcrumbs, user menu */}
           <div className="ml-auto flex items-center gap-4">
+
+
             {/* User Menu Dropdown */}
             {user && (
               <DropdownMenu>
