@@ -84,7 +84,7 @@ const commonSections: NavSection[] = [
     label: "Communication",
     icon: Megaphone,
     items: [
-      { href: "/dashboard/communication/announcements", label: "Announcements", icon: Megaphone },
+      { href: "/dashboard/communication/", label: "Announcements", icon: Megaphone },
       { href: "/dashboard/communication/notifications", label: "Notifications", icon: Bell },
     ],
   },
