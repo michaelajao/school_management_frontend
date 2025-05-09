@@ -274,3 +274,67 @@ export const getNavSectionsForRole = (role: UserRole): NavSection[] => {
       return [...commonSections, getSettingsSection(role)];
   }
 };
+
+export type Student = {
+  name: string;
+  class: string;
+  studentId: string;
+  outstandingFees: number;
+};
+
+export type Parent = {
+  id: string;
+  name: string;
+  email: string;
+  phoneNumber: string;
+  status: 'active' | 'pending';
+  gender: string;
+  address: string;
+  relationship: string;
+  occupation: string;
+  lastLogin: string | null;
+  linkedStudents: Student[];
+};
+
+export type ParentGroup = {
+  active: Parent[];
+  pending: Parent[];
+};
+
+
+export function getParents(parents: Parent[]): ParentGroup {
+  return parents.reduce(
+    (acc: ParentGroup, parent) => {
+      if (parent.status === 'active') {
+        acc.active.push(parent);
+      } else if (parent.status === 'pending') {
+        acc.pending.push(parent);
+      }
+      return acc;
+    },
+    { active: [], pending: [] }
+  );
+}
+
+export function formatDateTime(isoString: string): string {
+  /*
+
+  USAGE: 
+    const formatted = formatDateTime("2025-05-01T08:15:00Z");
+    console.log(formatted); // "May 1, 2025 - 8:15 AM"
+  */
+  const date = new Date(isoString);
+
+  const options: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  };
+
+  const formatted = date.toLocaleString('en-US', options);
+
+  return formatted.replace(',', ' -');
+}

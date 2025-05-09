@@ -12,7 +12,7 @@ export function AppSidebar() {
   // You can switch the role and see how it affects the dashboard
   // Valid roles: student | teacher | parent | admin | superadmim
   // const{ role } = useAuth();
-  const role: 'student' = 'student';
+  const role: 'superadmin' = 'superadmin';
 
   // Utility function that gets the necessary navigation section and items based on role.
   // Fits with the one layout system
