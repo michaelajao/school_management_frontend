@@ -29,7 +29,7 @@ import {
   ListChecks
 } from "lucide-react";
 
-export type UserRole = 'student' | 'teacher' | 'admin' | 'superadmin' | 'parent';
+export type UserRole = 'student' | 'staff' | 'admin' | 'superadmin' | 'parent';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -37,7 +37,7 @@ export function cn(...inputs: ClassValue[]) {
 
 export const inviteLinks: Record<string, UserRole> = {
   'abc123xyz': 'student',
-  'def456uvw': 'teacher',
+  'def456uvw': 'staff',
   'ghi789rst': 'admin',
 };
 
@@ -84,7 +84,7 @@ const commonSections: NavSection[] = [
     label: "Communication",
     icon: Megaphone,
     items: [
-      { href: "/dashboard/communication/announcements", label: "Announcements", icon: Megaphone },
+      { href: "/dashboard/communication/", label: "Announcements", icon: Megaphone },
       { href: "/dashboard/communication/notifications", label: "Notifications", icon: Bell },
     ],
   },
@@ -105,7 +105,7 @@ const superAdminSections: NavSection[] = [
     icon: Users,
     items: [
       { href: "/dashboard/users/admins", label: "Admins", icon: UserCog },
-      { href: "/dashboard/users/teachers", label: "Teachers", icon: UserCheck },
+      { href: "/dashboard/users/staff", label: "Staff", icon: UserCheck },
       { href: "/dashboard/users/students", label: "Students", icon: User },
       { href: "/dashboard/users/parents", label: "Parents", icon: CircleUser },
     ],
@@ -150,7 +150,7 @@ const adminSections: NavSection[] = [
     label: "User Management",
     icon: Users,
     items: [
-      { href: "/dashboard/users/teachers", label: "Teachers", icon: UserCheck },
+      { href: "/dashboard/users/staff", label: "Staff", icon: UserCheck },
       { href: "/dashboard/users/students", label: "Students", icon: User },
       { href: "/dashboard/users/parents", label: "Parents", icon: CircleUser },
     ],
@@ -164,8 +164,8 @@ const adminSections: NavSection[] = [
   },
 ];
 
-// --- Teacher Specific Sections
-const teacherSections: NavSection[] = [
+// --- staff Specific Sections
+const staffSections: NavSection[] = [
   {
     label: "My Classes",
     icon: BookOpenCheck,
@@ -228,7 +228,7 @@ const getSettingsSection = (role: UserRole): NavSection => {
           { href: "/dashboard/settings/permissions", label: "Permission Management", icon: HandCoins },
         ],
       };
-    case 'teacher':
+    case 'staff':
       return {
         label: "Settings",
         icon: Settings,
@@ -264,8 +264,8 @@ export const getNavSectionsForRole = (role: UserRole): NavSection[] => {
       return [...commonSections, ...superAdminSections, getSettingsSection(role)];
     case "admin":
       return [...commonSections, ...adminSections, getSettingsSection(role)];
-    case "teacher":
-      return [...commonSections, ...teacherSections, getSettingsSection(role)];
+    case "staff":
+      return [...commonSections, ...staffSections, getSettingsSection(role)];
     case "student":
       return [...commonSections, ...studentSections, getSettingsSection(role)];
     case "parent":
