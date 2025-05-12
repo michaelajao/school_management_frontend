@@ -1,139 +1,130 @@
-import { ChevronUp, ChevronDown, MoreHorizontal } from "lucide-react"; // Use MoreHorizontal for horizontal dots
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+'use client';
 
-export type ClassArm = {
-    id: string;
-    name: string;
-    teacher: string;
-    assistant: string;
-    studentCount: number;
-    classification: string; // Added classification field
-};
+import { FC, useState } from 'react';
+import { Search, SlidersHorizontal, Plus, Upload, MoreVertical, MoreHorizontal } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
-export default function ClassTables() {
+interface ClassItem {
+  class: string;
+  teacher: string;
+  assistant: string;
+  count: number;
+  type: string;
+}
+
+const classData: (ClassItem & { id: string })[] = [
+  { id: 'year-7A', class: 'Year 7A', teacher: 'Anthony Allen', assistant: 'Samuel Olera', count: 20, type: 'Science' },
+  { id: 'year-7B', class: 'Year 7B', teacher: 'Samuel Olera', assistant: 'Betty Jacobs', count: 20, type: 'Commercial' },
+  { id: 'Year 7C', class: 'Year 7C', teacher: 'Susan Oyii', assistant: 'Anthony Allen', count: 20, type: 'Art' },
+  { id: 'Year 8A', class: 'Year 8A', teacher: 'Kore Ogbei', assistant: '', count: 20, type: 'Science' },
+  { id: 'Year 8B', class: 'Year 8B', teacher: 'Michael Aigboka', assistant: 'Annabella Adu', count: 20, type: 'Art' },
+  { id: 'Year 8C', class: 'Year 8C', teacher: 'Eduard Cole', assistant: '', count: 20, type: 'Commercial' },
+  { id: 'Year 9A', class: 'Year 9A', teacher: 'Justin Ogbo', assistant: 'Michael Aigboka', count: 20, type: 'Art' },
+  { id: 'Year 9B', class: 'Year 9B', teacher: 'Kore Ogbei', assistant: '', count: 20, type: 'Science' },
+  { id: 'Year 9C', class: 'Year 9C', teacher: 'Eduard Cole', assistant: '', count: 20, type: 'Commercial' },
+  { id: 'year-7a', class: 'Year 10A', teacher: 'Elizabeth Arii', assistant: '', count: 20, type: 'Science' },
+  { id: 'Year 10B', class: 'Year 10B', teacher: 'Kore Ogbei', assistant: '', count: 20, type: 'Art' },
+  { id: 'Year 10C', class: 'Year 10C', teacher: 'Susan Oyii', assistant: 'Justin Ogbo', count: 20, type: 'Science' },
+  { id: 'Year 11A', class: 'Year 11A', teacher: 'Samuel Olera', assistant: 'Susan Oyii', count: 20, type: 'Commercial' },
+  { id: 'Year 11B', class: 'Year 11B', teacher: 'Kore Ogbei', assistant: 'Betty Jacobs', count: 20, type: 'Art' },
+  { id: 'Year 11C', class: 'Year 11C', teacher: 'Eduard Cole', assistant: 'Michael Aigboka', count: 20, type: 'Science' },
+  { id: 'year 12A', class: 'Year 12A', teacher: 'Michael Aigboka', assistant: 'Eduard Cole', count: 20, type: 'Commercial' },
+  { id: 'Year 12B', class: 'Year 12B', teacher: 'Michael Aigboka', assistant: 'Kore Ogbei', count: 20, type: 'Science' },
+];
+
+const ClassListPage: FC = () => {
     const router = useRouter();
-    const [classes, setClasses] = useState<ClassArm[]>([
-        {
-            id: '1',
-            name: 'JSS 2A',
-            teacher: 'Mr. John',
-            assistant: 'Ms. Ada',
-            studentCount: 35,
-            classification: 'Science',
-        },
-        {
-            id: '2',
-            name: 'SS1 B',
-            teacher: 'Mrs. Kemi',
-            assistant: '',
-            studentCount: 28,
-            classification: 'Arts',
-        },
-    ]);
-
-    const [searchTerm, setSearchTerm] = useState('');
     const [menuVisible, setMenuVisible] = useState<string | null>(null);
-    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
-
-    const filteredClasses = classes.filter(cls =>
-        cls.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        cls.teacher.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
     const toggleMenu = (id: string) => {
         setMenuVisible(menuVisible === id ? null : id);
     };
+  return (
+    <div className="p-6">
+      <div className="bg-white p-6 rounded-lg shadow">
+        {/* <h2 className="text-lg font-semibold text-gray-800">Class List</h2>
+        <p className="text-sm text-gray-500 mb-4">Manage Classes and Info</p> */}
 
-    const toggleSort = (column: string) => {
-        setSortDirection(prev => (prev === 'asc' ? 'desc' : 'asc'));
-        // You can implement sorting logic here based on the column and sort direction
-    };
+        {/* Top Actions
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
+          <div className="flex items-center w-full md:max-w-sm border rounded-md px-3 py-2 bg-gray-50">
+            <Search className="w-4 h-4 text-gray-400 mr-2" />
+            <input
+              type="text"
+              placeholder="Search by Name, Student ID or Class"
+              className="w-full bg-transparent focus:outline-none text-sm"
+            />
+          </div>
 
-    return (
-        <>
-            <div className="overflow-x-auto bg-white shadow-md">
-                <table className="min-w-full table-auto">
-                    <thead className="bg-gray-200">
-                        <tr>
-                            <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">
-                                <span className="cursor-pointer" onClick={() => toggleSort('name')}>
-                                    {sortDirection === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                                </span>
-                                Class
-                            </th>
-                            <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">
-                                <span className="cursor-pointer" onClick={() => toggleSort('teacher')}>
-                                    {sortDirection === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                                </span>
-                                Class Teacher
-                            </th>
-                            <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">
-                                <span className="cursor-pointer" onClick={() => toggleSort('assistant')}>
-                                    {sortDirection === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                                </span>
-                                Assistant Teacher
-                            </th>
-                            <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">
-                                <span className="cursor-pointer" onClick={() => toggleSort('studentCount')}>
-                                    {sortDirection === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                                </span>
-                                Students Count
-                            </th>
-                            <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">
-                                <span className="cursor-pointer" onClick={() => toggleSort('classification')}>
-                                    {sortDirection === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                                </span>
-                                Classifications
-                            </th>
-                            <th className="px-6 py-4 text-left text-sm font-medium text-gray-600">
-                                Actions
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody className="text-sm text-gray-600">
-                        {filteredClasses.map((cls) => (
-                            <tr key={cls.id} className="border-t hover:bg-gray-50">
-                                <td className="px-6 py-4">{cls.name}</td>
-                                <td className="px-6 py-4">{cls.teacher}</td>
-                                <td className="px-6 py-4">{cls.assistant || '-'}</td>
-                                <td className="px-6 py-4">{cls.studentCount}</td>
-                                <td className="px-6 py-4">{cls.classification}</td>
-                                <td className="px-6 py-4 relative">
-                                    {/* Three dots button (Horizontal) */}
-                                    <button
-                                        onClick={() => toggleMenu(cls.id)}
-                                        className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
-                                        aria-label="Actions"
-                                    >
-                                        <MoreHorizontal size={16} />
-                                    </button>
+          <div className="flex items-center space-x-3">
+            <button className="flex items-center px-4 py-2 border rounded-md text-sm text-gray-700 hover:bg-gray-100">
+              <SlidersHorizontal className="w-4 h-4 mr-2" />
+              Filter
+            </button>
 
-                                    {/* Menu with Edit and View options */}
-                                    {menuVisible === cls.id && (
-                                        <div className="absolute right-0 bg-white border rounded-lg shadow-md mt-2">
-                                            <button
-                                                onClick={() => router.push('/dashboard/academics/classes/edit_class')}
-                                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                                aria-label="Edit Class"
-                                            >
-                                                Edit
-                                            </button>
-                                            <button
-                                                onClick={() => router.push('/dashboard/academics/classes/manage')}
-                                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                                aria-label="View Class"
-                                            >
-                                                View
-                                            </button>
-                                        </div>
-                                    )}
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-        </>
-    );
-}
+            <button className="flex items-center px-4 py-2 border border-[#028A82] text-[#028A82] rounded-md text-sm hover:bg-[#028A82]/10">
+              <Plus className="w-4 h-4 mr-2" />
+              Add New Student
+            </button>
+
+            <button className="flex items-center px-4 py-2 bg-[#028A82] text-white rounded-md text-sm hover:bg-[#02736e]">
+              <Upload className="w-4 h-4 mr-2" />
+              Bulk Upload (CSV)
+            </button>
+          </div>
+        </div> */}
+
+        {/* Table */}
+        <div className="overflow-x-auto">
+          <table className="min-w-full text-sm">
+            <thead className="bg-gray-50 text-left text-gray-600">
+              <tr>
+                <th className="px-4 py-3">Class</th>
+                <th className="px-4 py-3">Class Teacher</th>
+                <th className="px-4 py-3">Assistant Teacher</th>
+                <th className="px-4 py-3">Students Count</th>
+                <th className="px-4 py-3">Classification</th>
+                <th className="px-4 py-3">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {classData.map((item, idx) => (
+                <tr key={idx} className="border-t hover:bg-gray-50">
+                  <td className="px-4 py-3 font-medium text-gray-700">{item.class}</td>
+                  <td className="px-4 py-3">{item.teacher}</td>
+                  <td className="px-4 py-3">{item.assistant || '—'}</td>
+                  <td className="px-4 py-3 text-[#028A82]">{item.count}</td>
+                  <td className="px-4 py-3">{item.type}</td>
+                  <td className="px-4 py-3">
+                    <button onClick={() => toggleMenu(item.id)} className="cursor-pointer">
+                      <MoreHorizontal className="w-4 h-4 text-gray-500" />
+                    </button>
+                        {menuVisible === item.id && (
+                            <div className="absolute right-0 bg-white border rounded-lg shadow-md mt-2">
+                                <button
+                                    onClick={() => router.push('/dashboard/academics/classes/edit_class')}
+                                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                    aria-label="Edit Class"
+                                >
+                                    Edit
+                                </button>
+                                <button
+                                    onClick={() => router.push('/dashboard/academics/classes/manage')}
+                                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                    aria-label="View Class"
+                                >
+                                    View
+                                </button>
+                            </div>
+                        )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ClassListPage;
