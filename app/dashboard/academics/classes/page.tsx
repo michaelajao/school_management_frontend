@@ -8,7 +8,6 @@ import ClassTables from '@/components/admin/ClassTables';
 
 
 const ClassManagement: React.FC = () => {
-
     return (
         <div className="max-w-7xl mx-auto p-4">
             <h2 className="text-3xl font-semibold text-gray-800 mb-6">Class Management</h2>
@@ -16,12 +15,19 @@ const ClassManagement: React.FC = () => {
             <SummaryCard />
             {/* Action Buttons */}
             <ClassActions />
-            {/* Search & Actions */}
-            <SearchAndActions />
-            <TimetableManagement />
-            {/* Class Table */}
-            <ClassTables />
-        </div>
+            <div className='overflow-x-auto bg-white shadow-md rounded-lg p-6'>
+                <div className="mb-4">
+                    <h2 className="text-xl font-semibold">Class List</h2>
+                    <p className="text-gray-600">Manage Class and Info</p>
+                    </div>
+                    
+                    {/* Search & Actions */}
+                    <SearchAndActions />
+                    
+                    {/* Class Table */}
+                    <ClassTables />
+                    </div>
+                </div>
     );
 };
 
