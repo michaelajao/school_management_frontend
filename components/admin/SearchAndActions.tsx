@@ -1,9 +1,10 @@
-import {
-    MagnifyingGlassIcon,
-    ChevronDownIcon,
-    ArrowUpTrayIcon,
-  } from '@heroicons/react/24/solid';
-  import { useState } from 'react';
+// import {
+//     MagnifyingGlassIcon,
+//     ChevronDownIcon,
+//     ArrowUpTrayIcon,
+//   } from '@heroicons/react/24/solid';
+  import { ArrowUpIcon, ChevronDownIcon, GlassesIcon } from 'lucide-react';
+import { SetStateAction, useState } from 'react';
   
   export default function SearchAndActions() {
     const [searchTerm, setSearchTerm] = useState('');
@@ -14,7 +15,7 @@ import {
       setShowFilterDropdown(!showFilterDropdown);
     };
   
-    const handleGenderSelect = (gender) => {
+    const handleGenderSelect = (gender: SetStateAction<string>) => {
       setSelectedGender(gender);
       setShowFilterDropdown(false);
     };
@@ -23,7 +24,7 @@ import {
     <div className="flex flex-wrap justify-between items-center gap-2 bg-white p-4 shadow-sm rounded-xl mb-6">
         <div className="flex items-center gap-2 flex-grow md:flex-grow-0">
           <div className="relative w-full md:w-80">
-            <MagnifyingGlassIcon className="w-5 h-5 text-gray-400 absolute left-3 top-2.5" />
+            <GlassesIcon className="w-5 h-5 text-gray-400 absolute left-3 top-2.5" />
             <input
               type="text"
               placeholder="Search by Name or Teacher"
@@ -64,7 +65,7 @@ import {
             + Add New Student
           </button>
           <button className="flex items-center gap-2 bg-[#00594C] text-white px-4 py-2 rounded-lg font-medium hover:bg-[#00473D]">
-            <ArrowUpTrayIcon className="w-4 h-4" />
+            <ArrowUpIcon className="w-4 h-4" />
             <span>Bulk Upload (.CSV)</span>
           </button>
         </div>
