@@ -29,7 +29,7 @@ import {
   ListChecks
 } from "lucide-react";
 
-export type UserRole = 'student' | 'teacher' | 'admin' | 'superadmin' | 'parent';
+export type UserRole = 'student' | 'staff' | 'admin' | 'superadmin' | 'parent';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -37,7 +37,7 @@ export function cn(...inputs: ClassValue[]) {
 
 export const inviteLinks: Record<string, UserRole> = {
   'abc123xyz': 'student',
-  'def456uvw': 'teacher',
+  'def456uvw': 'staff',
   'ghi789rst': 'admin',
 };
 
@@ -84,7 +84,7 @@ const commonSections: NavSection[] = [
     label: "Communication",
     icon: Megaphone,
     items: [
-      { href: "/dashboard/communication/announcements", label: "Announcements", icon: Megaphone },
+      { href: "/dashboard/communication/", label: "Announcements", icon: Megaphone },
       { href: "/dashboard/communication/notifications", label: "Notifications", icon: Bell },
     ],
   },
@@ -105,7 +105,7 @@ const superAdminSections: NavSection[] = [
     icon: Users,
     items: [
       { href: "/dashboard/users/admins", label: "Admins", icon: UserCog },
-      { href: "/dashboard/users/teachers", label: "Teachers", icon: UserCheck },
+      { href: "/dashboard/users/staff", label: "Staff", icon: UserCheck },
       { href: "/dashboard/users/students", label: "Students", icon: User },
       { href: "/dashboard/users/parents", label: "Parents", icon: CircleUser },
     ],
@@ -150,7 +150,7 @@ const adminSections: NavSection[] = [
     label: "User Management",
     icon: Users,
     items: [
-      { href: "/dashboard/users/teachers", label: "Teachers", icon: UserCheck },
+      { href: "/dashboard/users/staff", label: "Staff", icon: UserCheck },
       { href: "/dashboard/users/students", label: "Students", icon: User },
       { href: "/dashboard/users/parents", label: "Parents", icon: CircleUser },
     ],
@@ -164,8 +164,8 @@ const adminSections: NavSection[] = [
   },
 ];
 
-// --- Teacher Specific Sections
-const teacherSections: NavSection[] = [
+// --- staff Specific Sections
+const staffSections: NavSection[] = [
   {
     label: "My Classes",
     icon: BookOpenCheck,
@@ -228,7 +228,7 @@ const getSettingsSection = (role: UserRole): NavSection => {
           { href: "/dashboard/settings/permissions", label: "Permission Management", icon: HandCoins },
         ],
       };
-    case 'teacher':
+    case 'staff':
       return {
         label: "Settings",
         icon: Settings,
@@ -264,8 +264,8 @@ export const getNavSectionsForRole = (role: UserRole): NavSection[] => {
       return [...commonSections, ...superAdminSections, getSettingsSection(role)];
     case "admin":
       return [...commonSections, ...adminSections, getSettingsSection(role)];
-    case "teacher":
-      return [...commonSections, ...teacherSections, getSettingsSection(role)];
+    case "staff":
+      return [...commonSections, ...staffSections, getSettingsSection(role)];
     case "student":
       return [...commonSections, ...studentSections, getSettingsSection(role)];
     case "parent":
@@ -274,3 +274,67 @@ export const getNavSectionsForRole = (role: UserRole): NavSection[] => {
       return [...commonSections, getSettingsSection(role)];
   }
 };
+
+export type Student = {
+  name: string;
+  class: string;
+  studentId: string;
+  outstandingFees: number;
+};
+
+export type Parent = {
+  id: string;
+  name: string;
+  email: string;
+  phoneNumber: string;
+  status: 'active' | 'pending';
+  gender: string;
+  address: string;
+  relationship: string;
+  occupation: string;
+  lastLogin: string | null;
+  linkedStudents: Student[];
+};
+
+export type ParentGroup = {
+  active: Parent[];
+  pending: Parent[];
+};
+
+
+export function getParents(parents: Parent[]): ParentGroup {
+  return parents.reduce(
+    (acc: ParentGroup, parent) => {
+      if (parent.status === 'active') {
+        acc.active.push(parent);
+      } else if (parent.status === 'pending') {
+        acc.pending.push(parent);
+      }
+      return acc;
+    },
+    { active: [], pending: [] }
+  );
+}
+
+export function formatDateTime(isoString: string): string {
+  /*
+
+  USAGE: 
+    const formatted = formatDateTime("2025-05-01T08:15:00Z");
+    console.log(formatted); // "May 1, 2025 - 8:15 AM"
+  */
+  const date = new Date(isoString);
+
+  const options: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  };
+
+  const formatted = date.toLocaleString('en-US', options);
+
+  return formatted.replace(',', ' -');
+}

@@ -10,14 +10,14 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
 // Import specific chart components from recharts
-import { 
-  ResponsiveContainer, PieChart, Pie, Cell, CartesianGrid, XAxis, YAxis, 
-  Tooltip, LineChart, Line, BarChart, Bar 
-} from "recharts"; 
-import { 
-  Search, Building, Users, TrendingUp, CreditCard, 
-  PlusCircle, DollarSign, ArrowUp, ArrowDown, 
-  Download, AlertTriangle, Bell, CheckCircle, Eye, ArrowRight, 
+import {
+  ResponsiveContainer, PieChart, Pie, Cell, CartesianGrid, XAxis, YAxis,
+  Tooltip, LineChart, Line, BarChart, Bar
+} from "recharts";
+import {
+  Search, Building, Users, TrendingUp, CreditCard,
+  PlusCircle, DollarSign, ArrowUp, ArrowDown,
+  Download, AlertTriangle, Bell, CheckCircle, Eye, ArrowRight,
   Globe, Settings, School, Layers, Link as LinkIcon, Calendar
 } from "lucide-react";
 import Link from "next/link";
@@ -227,7 +227,7 @@ export default function SuperAdminDashboardPage() {
             <Card className="bg-muted/50 border-none shadow-none">
               <CardContent className="p-4">
                 <h3 className="font-medium text-sm mb-2 flex items-center">
-                  <AlertTriangle className="h-4 w-4 mr-2 text-amber-500" /> 
+                  <AlertTriangle className="h-4 w-4 mr-2 text-amber-500" />
                   Pending School Approvals
                 </h3>
                 <ul className="space-y-2 text-sm">
@@ -260,7 +260,7 @@ export default function SuperAdminDashboardPage() {
                 <TabsTrigger value="chart">Chart View</TabsTrigger>
                 <TabsTrigger value="summary">Summary</TabsTrigger>
               </TabsList>
-              
+
               <TabsContent value="chart">
                 <ChartContainer config={revenueConfig} className="h-[300px] w-full">
                   <BarChart data={revenueData}>
@@ -273,7 +273,7 @@ export default function SuperAdminDashboardPage() {
                   </BarChart>
                 </ChartContainer>
               </TabsContent>
-              
+
               <TabsContent value="summary">
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   <Card className="bg-muted/50">
@@ -316,10 +316,10 @@ export default function SuperAdminDashboardPage() {
                 <XAxis dataKey="month" tickLine={false} axisLine={false} />
                 <YAxis tickLine={false} axisLine={false} width={40} domain={[0, 'dataMax + 2']} />
                 <Tooltip content={<ChartTooltipContent indicator="line" />} />
-                <Line 
-                  type="monotone" 
-                  dataKey="schools" 
-                  stroke="var(--color-schools)" 
+                <Line
+                  type="monotone"
+                  dataKey="schools"
+                  stroke="var(--color-schools)"
                   strokeWidth={2}
                   dot={{ stroke: "var(--color-schools)", fill: "white", strokeWidth: 2, r: 4 }}
                   activeDot={{ stroke: "var(--color-schools)", fill: "var(--color-schools)", strokeWidth: 0, r: 6 }}
@@ -425,8 +425,8 @@ export default function SuperAdminDashboardPage() {
                     <TableCell>{school.students}</TableCell>
                     <TableCell>
                       <Badge variant={school.subscription === "Premium" ? "default" : "outline"} className={
-                        school.subscription === "Premium" 
-                          ? "bg-[#1B5B5E] hover:bg-[#134345]" 
+                        school.subscription === "Premium"
+                          ? "bg-[#1B5B5E] hover:bg-[#134345]"
                           : school.subscription === "Standard"
                             ? "border-[#2A9D8F] text-[#2A9D8F]"
                             : "border-[#E9C46A] text-[#E9C46A]"
@@ -445,7 +445,7 @@ export default function SuperAdminDashboardPage() {
             </Table>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader>
             <CardTitle>System Alerts</CardTitle>
@@ -457,12 +457,12 @@ export default function SuperAdminDashboardPage() {
                 <div key={alert.id} className="flex items-start gap-3 pb-3 border-b border-border last:border-0 last:pb-0">
                   <div className={
                     alert.type === "warning" ? "text-amber-500 bg-amber-50 p-1.5 rounded-full" :
-                    alert.type === "info" ? "text-blue-500 bg-blue-50 p-1.5 rounded-full" :
-                    "text-green-500 bg-green-50 p-1.5 rounded-full"
+                      alert.type === "info" ? "text-blue-500 bg-blue-50 p-1.5 rounded-full" :
+                        "text-green-500 bg-green-50 p-1.5 rounded-full"
                   }>
-                    {alert.type === "warning" ? <AlertTriangle className="h-4 w-4" /> : 
-                     alert.type === "info" ? <Bell className="h-4 w-4" /> : 
-                     <CheckCircle className="h-4 w-4" />}
+                    {alert.type === "warning" ? <AlertTriangle className="h-4 w-4" /> :
+                      alert.type === "info" ? <Bell className="h-4 w-4" /> :
+                        <CheckCircle className="h-4 w-4" />}
                   </div>
                   <div>
                     <p className="text-sm font-medium">{alert.message}</p>
@@ -470,10 +470,10 @@ export default function SuperAdminDashboardPage() {
                   </div>
                 </div>
               ))}
-              
+
               <div className="flex items-center justify-between pt-2">
                 <p className="text-sm font-medium flex items-center">
-                  <span className="h-2 w-2 bg-green-500 rounded-full mr-2"></span> 
+                  <span className="h-2 w-2 bg-green-500 rounded-full mr-2"></span>
                   All Systems Operational
                 </p>
                 <Button variant="ghost" size="sm" className="text-xs h-8">
@@ -503,7 +503,7 @@ export default function SuperAdminDashboardPage() {
                   <p className="text-xs text-muted-foreground">Today, 10:23 AM</p>
                 </div>
               </div>
-              
+
               <div className="flex items-start gap-3">
                 <div className="relative mt-1">
                   <div className="h-2 w-2 rounded-full bg-[#1B5B5E]"></div>
@@ -514,7 +514,7 @@ export default function SuperAdminDashboardPage() {
                   <p className="text-xs text-muted-foreground">Yesterday, 3:45 PM</p>
                 </div>
               </div>
-              
+
               <div className="flex items-start gap-3">
                 <div className="relative mt-1">
                   <div className="h-2 w-2 rounded-full bg-[#1B5B5E]"></div>
@@ -525,7 +525,7 @@ export default function SuperAdminDashboardPage() {
                   <p className="text-xs text-muted-foreground">Apr 24, 2025, 2:00 AM</p>
                 </div>
               </div>
-              
+
               <div className="flex items-start gap-3">
                 <div className="relative mt-1">
                   <div className="h-2 w-2 rounded-full bg-[#1B5B5E]"></div>
@@ -543,7 +543,7 @@ export default function SuperAdminDashboardPage() {
             </Button>
           </CardFooter>
         </Card>
-        
+
         <Card>
           <CardHeader>
             <CardTitle>Upcoming Events</CardTitle>
@@ -561,7 +561,7 @@ export default function SuperAdminDashboardPage() {
                   <Badge variant="outline" className="mt-1.5">Online</Badge>
                 </div>
               </div>
-              
+
               <div className="flex gap-4">
                 <div className="flex-shrink-0 w-14 h-14 rounded-md bg-muted flex flex-col items-center justify-center">
                   <span className="text-xs font-medium">MAY</span>
@@ -573,7 +573,7 @@ export default function SuperAdminDashboardPage() {
                   <Badge variant="outline" className="mt-1.5">Virtual</Badge>
                 </div>
               </div>
-              
+
               <div className="flex gap-4">
                 <div className="flex-shrink-0 w-14 h-14 rounded-md bg-muted flex flex-col items-center justify-center">
                   <span className="text-xs font-medium">JUN</span>
