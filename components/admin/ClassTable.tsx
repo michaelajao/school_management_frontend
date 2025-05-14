@@ -30,6 +30,9 @@ export function ClassTable({ classes, onEdit, onDelete }: ClassTableProps) {
   }
 
   return (
+    <div>
+      <h2>Class List</h2>
+      <p>Manage Class and Info</p>
     <Table>
       <TableHeader>
         <TableRow>
@@ -57,5 +60,6 @@ export function ClassTable({ classes, onEdit, onDelete }: ClassTableProps) {
         ))}
       </TableBody>
     </Table>
+    </div>
   );
 }
