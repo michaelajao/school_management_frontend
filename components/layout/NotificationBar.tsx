@@ -1,4 +1,4 @@
-import { Bell, MessageSquare, AlarmClock } from "lucide-react";
+import { Bell, MessageSquareMore, AlarmClock } from "lucide-react";
 import Link from "next/link";
 
 export default function NotificationBar() {
@@ -14,9 +14,9 @@ export default function NotificationBar() {
     <div className="flex items-center gap-8 mr-4">
       {/* Notification */}
       <Link className="relative cursor-pointer" href='#'>
-        <Bell className="w-6 h-6 text-muted-foreground" style={{color: '#1B5B5E', backgroundColor: '#ebfefe'}} />
+        <Bell className="w-[28px] h-[28px] text-muted-foreground" style={{color: '#1B5B5E', backgroundColor: '#ebfefe'}} />
         {unread.notifications > 0 && (
-          <span className="absolute -top-1 -right-1 inline-flex items-center justify-center h-4 w-4 rounded-full bg-red-500 text-white text-xs font-bold">
+          <span className="absolute -top-1 -right-1 inline-flex items-center justify-center h-[15px] w-[15px] rounded-full bg-red-500 text-white text-xs font-bold">
             {unread.notifications}
           </span>
         )}
@@ -24,9 +24,9 @@ export default function NotificationBar() {
 
       {/* Messages */}
       <Link className="relative cursor-pointer" href='#'>
-        <MessageSquare className="w-6 h-6 text-muted-foreground" style={{color: '#1B5B5E', backgroundColor: '#ebfefe'}}  />
+        <MessageSquareMore className="w-[28px] h-[28px] text-muted-foreground" style={{color: '#1B5B5E', backgroundColor: '#ebfefe'}}  />
         {unread.messages > 0 && (
-          <span className="absolute -top-1 -right-1 inline-flex items-center justify-center h-4 w-4 rounded-full bg-red-500 text-white text-xs font-bold">
+          <span className="absolute -top-1 -right-1 inline-flex items-center justify-center h-[15px] w-[15px] rounded-full bg-red-500 text-white text-xs font-bold">
             {unread.messages}
           </span>
         )}
@@ -34,9 +34,9 @@ export default function NotificationBar() {
 
       {/* Alarms */}
       <Link className="relative cursor-pointer" href='#'>
-        <AlarmClock className="w-6 h-6 text-muted-foreground" style={{color: '#1B5B5E', backgroundColor: '#ebfefe'}}  />
+        <AlarmClock className="w-[28px] h-[28px] text-muted-foreground" style={{color: '#1B5B5E', backgroundColor: '#ebfefe'}}  />
         {unread.alarms > 0 && (
-          <span className="absolute -top-1 -right-1 inline-flex items-center justify-center h-4 w-4 rounded-full bg-red-500 text-white text-xs font-bold">
+          <span className="absolute -top-1 -right-1 inline-flex items-center justify-center h-[15px] w-[15px] rounded-full bg-red-500 text-white text-xs font-bold">
             {unread.alarms}
           </span>
         )}
