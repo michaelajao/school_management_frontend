@@ -26,8 +26,8 @@ const ClassManagement: React.FC = () => {
                     
                     {/* Class Table */}
                     <ClassTables />
-                    </div>
                 </div>
+            </div>
     );
 };
 
