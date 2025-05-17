@@ -80,7 +80,7 @@ export default function ClassActions() {
       <button
         className="border border-#BDFAFF-400 text-[#BDFAFF]-500 px-3 py-2 rounded-lg font-medium hover:bg-[#BAE6E0]"
         onClick={() => {
-          router.push('/dashboard/academics/classes/assign_subject_teacher');
+          router.push('/dashboard/academics/classes/add_subject');
         }}
       >
         Add Subject
@@ -99,7 +99,7 @@ export default function ClassActions() {
       <button
         className="border border-#BDFAFF-400 text-[#7C3AED] px-3 py-2 rounded-lg font-medium hover:bg-[#D8D0FF]"
         onClick={() => {
-          router.push('/dashboard/academics/classes/view_class_performance');
+          router.push('/dashboard/academics/classes/performance_grade');
         }}
       >
         View Class Performance

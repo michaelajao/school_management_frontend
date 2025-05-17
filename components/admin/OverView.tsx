@@ -22,7 +22,9 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import { ChevronRight, GraduationCap, IdCard, Plus } from "lucide-react";
+import { AlarmClock, ChevronRight, GraduationCap, IdCard, Plus, Users } from "lucide-react";
+import { SummaryCard } from "./parents/SummaryCard";
+import { PiPercentBold } from "react-icons/pi";
 
 const attendanceData = [
   { month: "Jan", value: 70 },
@@ -122,7 +124,7 @@ const AdminDashboard = () => {
   return (
     <div className="p-6 space-y-6">
       {/* Header Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      {/* <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card>
           <CardContent className="p-4 text-center flex flex-row justify-around items-center">
             <span className="bg-[#BDFAFF] bg-opacity-30 rounded-full p-2">
@@ -167,7 +169,44 @@ const AdminDashboard = () => {
             </span>
           </CardContent>
         </Card>
-      </div>
+      </div> */}
+            {/* Summary Cards */}
+            <div className="flex gap-4 justify-between bg-[#f7f7f7] p-4 mb-6">
+                <SummaryCard
+                    icon={<GraduationCap className="text-cyan-700" />}
+                    value={1250}
+                    label="Total Students"
+                    textColor="#00787A"
+                    bgColor="#E6FBFF"
+                />
+                <SummaryCard
+                    icon={<Users className="text-orange-500" />}
+                    value={78}
+                    label="Total Staff"
+                    textColor="#F78C1F"
+                    bgColor="#FFE7CC"
+                />
+                <SummaryCard
+                    // icon={<span className="bg-[#28C76F33] bg-opacity-30 rounded-full p-2">
+                    //       <IdCard size={40} color="#28C76F"  />
+                    //       </span>}
+                    icon={<PiPercentBold className="text-[#00B266]-600" />}
+                    value="78%"
+                    label="Total Fee Paid"
+                    textColor="#00B266"
+                    bgColor="#DFF9E4"
+                />
+                <SummaryCard
+                    icon={<span className="bg-[#FFDDDE80] bg-opacity-60 rounded-full p-2"> 
+                          <IdCard size={40} color="#EF1A36" />
+                          </span>}
+                    // icon={<AlarmClock className="text-red-[#EF1A36]" />}
+                    value={5}
+                    label="Pending Approvals"
+                    textColor="#EF1A36"
+                    bgColor="#FFE6E6"
+                />
+            </div>
 
       {/* Action Buttons */}
       <div className="flex gap-4 flex-wrap">

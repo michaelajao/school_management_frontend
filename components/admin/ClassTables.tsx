@@ -124,12 +124,16 @@ const ClassListPage: FC = () => {
                                     </button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end">
+                                  <button onClick={() => router.push('/dashboard/academics/classes/edit_class')}>
                                     <DropdownMenuItem>
                                         View
                                     </DropdownMenuItem>
+                                  </button>
+                                  <button onClick={() => router.push('/dashboard/academics/classes/manage')}>
                                     <DropdownMenuItem>
                                         Edit
                                     </DropdownMenuItem>
+                                  </button>
                                     <DropdownMenuItem>
                                         Delete
                                     </DropdownMenuItem>
