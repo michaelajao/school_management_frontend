@@ -12,6 +12,7 @@ import {
     DropdownMenuRadioItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { CustomButton } from '../generalComp/custom-button.';
 
 
 const staffData = [
@@ -137,14 +138,14 @@ const StaffListTable = () => {
                         </button>
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Button
-
+                                <CustomButton
                                     variant="outline"
-                                    className="flex items-center justify-start gap-2 border border-[#008080] text-teal-600 rounded-lg px-4 md:py-6 text-sm md:w-1/3 cursor-pointer"
+                                    size="sm"
+                                    icon={<Plus />}
+                                    className="w-[135px] h-[50px] rounded-[10px] border-[0.5px] border-[#008080] text-[#008080] text-[10px] hover:bg-[#008080] hover:text-[#fff]"
                                 >
-                                    <Plus className="w-4 h-4" />
                                     Add New Staff
-                                </Button>
+                                </CustomButton>
                             </DropdownMenuTrigger>
 
                             <DropdownMenuContent side="bottom" align="start" className="w-56">
@@ -155,12 +156,14 @@ const StaffListTable = () => {
                                 </DropdownMenuRadioGroup>
                             </DropdownMenuContent>
                         </DropdownMenu>
-
-
-                        <button className="flex items-center justify-center bg-[#008080] text-white rounded-lg px-4 py-1 text-sm md:w-1/3 cursor-pointer">
-                            <Upload className="mr-2" />
+                        <CustomButton
+                            variant="default"
+                            size="sm"
+                            icon={<Upload />}
+                            className="w-[138px] h-[50px] rounded-[10px] border-[0.5px] border-[#008080] text-[#fff] text-[10px]"
+                        >
                             Bulk Upload (CSV)
-                        </button>
+                        </CustomButton>
                     </div>
 
                 </div>
@@ -206,22 +209,34 @@ const StaffListTable = () => {
                         </tbody>
                     </table>
                 </div>
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-6 text-sm text-gray-600 gap-2 sm:gap-0">
-                    <span>Showing 12 from 160 data</span>
-                    <div className="flex flex-wrap items-center gap-1">
-                        <button className="px-3 py-1 rounded bg-gray-200 text-gray-600">
-                            ❮ Previous
-                        </button>
-                        <button className="px-3 py-1 rounded bg-gray-800 text-white">
+            </div>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-6 text-sm text-gray-600 gap-2 sm:gap-0">
+                <span>Showing 12 from 160 data</span>
+                <div className="flex flex-wrap items-center gap-1">
+                    <CustomButton
+                        variant="ghost"
+                        size="sm"
+                        className="w-[114px] h-[40px] rounded-[3.75px] border-[0.5px] border-[#969A9EFE] text-[#fff] text-[10px]"
+                    >
+                        ❮❮ Previous
+                    </CustomButton>
+                    <div className=''>
+
+                        <Button className="w-[43px] h-[39px] px-3 py-1 rounded bg-white text-black">
                             1
-                        </button>
-                        <button className="px-3 py-1 rounded bg-gray-100">2</button>
-                        <button className="px-3 py-1 rounded bg-gray-100">3</button>
-                        <button className="px-3 py-1 rounded bg-gray-100">4</button>
-                        <button className="px-3 py-1 rounded bg-[#008080] text-white">
-                            Next ❯
-                        </button>
+                        </Button>
+                        <Button className="px-3 py-1 rounded bg-[#E4E4ED] text-[#7A7575]">2</Button>
+                        <Button className="px-3 py-1 rounded bg-[#E4E4ED] text-[#7A7575]">3</Button>
+                        <Button className="px-3 py-1 rounded bg-[#E4E4ED] text-[#7A7575]">4</Button>
                     </div>
+
+                    <CustomButton
+                        variant="default"
+                        size="sm"
+                        className="w-[86px] h-[40px] rounded-[3.75px] border-[0.5px] border-[#008080] text-[#fff] text-[10px]"
+                    >
+                        Next ❯❯
+                    </CustomButton>
                 </div>
             </div>
         </div>
