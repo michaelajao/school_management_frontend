@@ -1,4 +1,4 @@
-"use client"
+
 import { PerformanceChart } from '@/components/admin/PerformanceChart';
 import { PerformanceTable } from '@/components/admin/PerformanceTable';
 import React from 'react';
