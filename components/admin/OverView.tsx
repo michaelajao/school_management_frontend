@@ -21,6 +21,11 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+
+import { AlarmClock, ChevronRight, GraduationCap, IdCard, Plus, Users } from "lucide-react";
+import { SummaryCard } from "./parents/SummaryCard";
+import { PiPercentBold } from "react-icons/pi";
+
 import { ChevronRight, GraduationCap, IdCard, Plus } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import Link from "next/link";
@@ -39,6 +44,12 @@ const attendanceData = [
   { month: "Oct", value: 10 },
   { month: "Nov", value: 10 },
   { month: "Dec", value: 10 },
+  { month: "Jul", value: 30 },
+  { month: "Aug", value: 0 },
+  { month: "Sep", value: 20 },
+  { month: "Oct", value: 10 },
+  { month: "Nov", value: 10 },
+  { month: "Dec", value: 10 },
 ];
 
 const financialData = [
@@ -49,8 +60,20 @@ const financialData = [
   { month: "May", income: 0, expenses: 0 },
   { month: "Jun", income: 0, expenses: 0 },
 ];
+  { month: "Jan", income: 290000, expenses: 190000 },
+  { month: "Feb", income: 210000, expenses: 140000 },
+  { month: "Mar", income: 120000, expenses: 140000 },
+  { month: "Apr", income: 90000, expenses: 40000 },
+  { month: "May", income: 0, expenses: 0 },
+  { month: "Jun", income: 0, expenses: 0 },
+];
 
 const formatYAxis = (value: number) => {
+  if (value >= 1000) {
+    return `${value / 1000}k`;
+  }
+  return `${value}`;
+};
   if (value >= 1000) {
     return `${value / 1000}k`;
   }
@@ -81,6 +104,7 @@ const CustomTooltip = ({
   return null;
 };
 
+// Sample announcement data
 // Sample announcement data
 const announcements = [
   {
@@ -162,6 +186,7 @@ const AdminDashboard = () => {
           <CardContent className="p-4 text-center flex flex-row justify-around items-center">
             <span className="bg-[#28C76F33] bg-opacity-30 rounded-full p-2">
               <IdCard size={40} color="#28C76F" />
+              <IdCard size={40} color="#28C76F" />
             </span>
             <span>
               <p className="text-xl font-bold text-[#28C76F]">78%</p>
@@ -171,6 +196,7 @@ const AdminDashboard = () => {
         </Card>
         <Card>
           <CardContent className="p-4 text-center flex flex-row justify-around items-center">
+            <span className="bg-[#FFDDDE80] bg-opacity-60 rounded-full p-2">
             <span className="bg-[#FFDDDE80] bg-opacity-60 rounded-full p-2">
               <IdCard size={40} color="#EF1A36" />
             </span>
