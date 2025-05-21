@@ -1,8 +1,9 @@
 'use client';
 
 import { FC, useState } from 'react';
-import { Search, SlidersHorizontal, Plus, Upload, MoreVertical, MoreHorizontal } from 'lucide-react';
+import { Search, SlidersHorizontal, Plus, Upload,  MoreHorizontal, Ellipsis } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '../ui/dropdown-menu'; 
 
 interface ClassItem {
   class: string;
@@ -95,27 +96,49 @@ const ClassListPage: FC = () => {
                   <td className="px-4 py-3 text-[#028A82]">{item.count}</td>
                   <td className="px-4 py-3">{item.type}</td>
                   <td className="px-4 py-3">
-                    <button onClick={() => toggleMenu(item.id)} className="cursor-pointer">
+                    {/* <button onClick={() => toggleMenu(item.id)} className="relative cursor-pointer">
                       <MoreHorizontal className="w-4 h-4 text-gray-500" />
-                    </button>
-                        {menuVisible === item.id && (
+                    </button> */}
+                        {/* {menuVisible === item.id && (
                             <div className="absolute right-0 bg-white border rounded-lg shadow-md mt-2">
                                 <button
                                     onClick={() => router.push('/dashboard/academics/classes/edit_class')}
-                                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                                     aria-label="Edit Class"
                                 >
                                     Edit
                                 </button>
                                 <button
                                     onClick={() => router.push('/dashboard/academics/classes/manage')}
-                                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                                     aria-label="View Class"
                                 >
                                     View
                                 </button>
                             </div>
-                        )}
+                        )} */}
+                        <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <button>
+                                        <MoreHorizontal className="w-5 h-5 text-gray-500 hover:text-gray-700" />
+                                    </button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <button onClick={() => router.push('/dashboard/academics/classes/edit_class')}>
+                                    <DropdownMenuItem>
+                                        View
+                                    </DropdownMenuItem>
+                                  </button>
+                                  <button onClick={() => router.push('/dashboard/academics/classes/manage')}>
+                                    <DropdownMenuItem>
+                                        Edit
+                                    </DropdownMenuItem>
+                                  </button>
+                                    <DropdownMenuItem>
+                                        Delete
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
                   </td>
                 </tr>
               ))}

@@ -1,6 +1,7 @@
 "use client";
+import { ArrowLeftIcon } from 'lucide-react';
 import React, { useState } from 'react';
-import { ArrowLeftIcon } from '@heroicons/react/24/solid';
+// import { ArrowLeftIcon } from '@heroicons/react/24/solid';
 
 export default function EditClass() {
   const [searchTerm, setSearchTerm] = useState('');
