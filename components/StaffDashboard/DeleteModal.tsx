@@ -14,10 +14,15 @@ import {
 import { toast } from 'sonner';
 
 
-export const DeleteModal = () => {
+export const DeleteModal = ({title, deleteaction, onCancel } : {title: string, deleteaction: () => void, onCancel: () => void}) => {
     const handleDelete = () => {
+        deleteaction();
         toast("User Data has been Deleted!")
     };
+    const cancel = () => {
+        onCancel();
+        toast("Deletion Cancelled!")
+    };	
 
     return (
         <AlertDialog>
@@ -31,7 +36,7 @@ export const DeleteModal = () => {
                     <Trash2 className="w-10 h-10 text-red-600" />
                 </div>
                 <AlertDialogHeader>
-                    <AlertDialogTitle className="flex justify-center">Are You Sure You Want to Delete This User?</AlertDialogTitle>
+                    <AlertDialogTitle className="flex justify-center">Are You Sure You Want to Delete This {title}?</AlertDialogTitle>
                     <AlertDialogDescription className="px-26 text-justify">
                         This action will permanently remove the user’s account and access to the portal.
                     </AlertDialogDescription>
@@ -40,7 +45,7 @@ export const DeleteModal = () => {
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter className="flex justify-center gap-4">
-                    <AlertDialogCancel className="!bg-teal-700 text-white hover:text-white cursor-pointer">No Cancel</AlertDialogCancel>
+                    <AlertDialogCancel onClick={cancel} className="!bg-teal-700 text-white hover:text-white cursor-pointer">No Cancel</AlertDialogCancel>
                     <AlertDialogAction onClick={handleDelete}  className="bg-white text-[#EF1A36] border border-[#EF1A36] hover:bg-white cursor-pointer">
                         Yes, Delete User
                     </AlertDialogAction>

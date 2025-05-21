@@ -38,7 +38,7 @@ export function AppSidebar({ onItemClick }: SidebarProps) {
     }, []);
 
     return (
-        <aside className="flex flex-col *:w-68 p-4 h-full overflow-y-auto pt-10  bg-white">
+        <aside className="flex flex-col fixed *:w-68 p-4 h-full overflow-y-auto pt-10  bg-white">
             {/* School branding */}
             <div className="flex items-center mb-12">
                 <div
