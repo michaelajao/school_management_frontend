@@ -14,7 +14,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
    */
 
   return (
-    <div className="flex h-screen w-full flex-row bg-muted/40">
+    <div className="flex h-screen w-full flex-row bg-white">
       {/* Handles what sidebar to show depending on screensize */}
       <SidebarWrapper />
 
@@ -23,7 +23,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         <Header />
 
         {/* Main Content Area */}
-        <main className="flex-1 gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
+        {/* flex-1 gap-4 p-20 sm:px-6 sm:py-0 md:gap-8 */}
+        <main className="p-8 my-4 mx-4 lg:mx-8 rounded-2xl bg-[#F5F5F5]">
           {children}
         </main>
       </div>

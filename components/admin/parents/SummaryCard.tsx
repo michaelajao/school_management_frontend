@@ -1,13 +1,19 @@
+
 import { ReactNode } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 
+import { Card, CardHeader} from "@/components/ui/card"
+import Image from "next/image"
+
+
 type SummaryCardProps = {
-  icon: ReactNode;
-  value: number | string;
-  label: string;
-  textColor: string;
-  bgColor: string;
-};
+  icon: string
+  value: number
+  label: string
+  textColor: string
+  bgColor: string
+}
+
 
 export function SummaryCard({
   icon,
@@ -17,13 +23,12 @@ export function SummaryCard({
   bgColor,
 }: SummaryCardProps) {
   return (
-    <Card className="w-full sm:w-1/2 lg:w-1/4 h-[110px] flex gap-[16px] bg-[#FEFEFE] shadow-none border-none rounded-[20px]">
-      <CardContent className="flex items-center h-[55px] px-[15px] py-[27px] gap-[16px]">
-        <div
-          className="w-[55px] h-[55px] rounded-[27.5px] flex items-center justify-center gap-[10px]"
-          style={{ backgroundColor: bgColor }}
-        >
-          {icon}
+
+    <Card className="w-full ">
+      <CardHeader className="flex flex-row items-center gap-2">
+        <div className="p-2 w-20 h-20 rounded-full flex items-center justify-center" style={{ backgroundColor: bgColor }}>
+          <Image src={icon} alt="icon" width={20} height={20} />
+
         </div>
         <div className="flex flex-col justify-left gap-[2px] ">
           <p

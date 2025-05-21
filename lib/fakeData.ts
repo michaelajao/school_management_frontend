@@ -307,3 +307,62 @@ export const parents: Parent[]  = [
     ]
   }
 ];
+
+
+
+//students fake datas
+
+// types.ts or wherever you define table props
+export type StudentRow = {
+  id: string
+  name: string
+  studentId: string
+  class: string
+  gender: string
+}
+
+  
+
+
+
+export const studentColumns: { accessor: keyof StudentRow; header: string }[] = [
+  { accessor: "name", header: "Name" },
+  { accessor: "studentId", header: "ID" },
+  { accessor: "class", header: "Class" },
+  { accessor: "gender", header: "Gender" },
+];
+
+
+export const studentRows: StudentRow[] = [
+  { id: "1", name: "Kingsley Ekong", studentId: "STU-2025-0148", class: "Year 7A", gender: "Male" },
+  { id: "2", name: "Jenny Johnson", studentId: "STU-2025-0148", class: "Year 7B", gender: "Female" },
+  { id: "3", name: "Benita Gabriels", studentId: "STU-2025-0148", class: "Year 9A", gender: "Female" },
+  { id: "4", name: "Kingsley Ekong", studentId: "STU-2025-0148", class: "Year 10A", gender: "Male" },
+  { id: "5", name: "Ore Gabriels", studentId: "STU-2025-0148", class: "Year 7A", gender: "Female" },
+  { id: "6", name: "Jenny Johnson", studentId: "STU-2025-0148", class: "Year 12A", gender: "Male" },
+  { id: "7", name: "Franklin Akhabue", studentId: "STU-2025-0148", class: "Year 9C", gender: "Male" },
+  { id: "8", name: "Jenny Johnson", studentId: "STU-2025-0148", class: "Year 8B", gender: "Male" },
+  { id: "9", name: "Franklin Akhabue", studentId: "STU-2025-0148", class: "Year 10C", gender: "Male" },
+  { id: "10", name: "Jenny Johnson", studentId: "STU-2025-0148", class: "Year 11A", gender: "Male" },
+  { id: "11", name: "Franklin Akhabue", studentId: "STU-2025-0148", class: "Year 12C", gender: "Male" },
+  { id: "12", name: "Benita Gabriels", studentId: "STU-2025-0148", class: "Year 7C", gender: "Female" },
+  { id: "13", name: "Jenny Johnson", studentId: "STU-2025-0148", class: "Year 7A", gender: "Male" },
+  { id: "14", name: "Ore Gabriels", studentId: "STU-2025-0148", class: "Year 9B", gender: "Female" },
+  { id: "15", name: "Franklin Akhabue", studentId: "STU-2025-0148", class: "Year 11B", gender: "Male" },
+  { id: "16", name: "Kingsley Ekong", studentId: "STU-2025-0148", class: "Year 8A", gender: "Male" },
+  { id: "17", name: "Benita Gabriels", studentId: "STU-2025-0148", class: "Year 10B", gender: "Female" },
+  { id: "18", name: "Jenny Johnson", studentId: "STU-2025-0148", class: "Year 9D", gender: "Female" },
+  { id: "19", name: "Ore Gabriels", studentId: "STU-2025-0148", class: "Year 11C", gender: "Female" },
+  { id: "20", name: "Franklin Akhabue", studentId: "STU-2025-0148", class: "Year 7B", gender: "Male" },
+  { id: "21", name: "Kingsley Ekong", studentId: "STU-2025-0148", class: "Year 9A", gender: "Male" },
+  { id: "22", name: "Benita Gabriels", studentId: "STU-2025-0148", class: "Year 12A", gender: "Female" },
+  { id: "23", name: "Jenny Johnson", studentId: "STU-2025-0148", class: "Year 10C", gender: "Female" },
+  { id: "24", name: "Ore Gabriels", studentId: "STU-2025-0148", class: "Year 7C", gender: "Female" },
+  { id: "25", name: "Franklin Akhabue", studentId: "STU-2025-0148", class: "Year 11A", gender: "Male" },
+  { id: "26", name: "Kingsley Ekong", studentId: "STU-2025-0148", class: "Year 12C", gender: "Male" },
+  { id: "27", name: "Jenny Johnson", studentId: "STU-2025-0148", class: "Year 10A", gender: "Female" },
+  { id: "28", name: "Benita Gabriels", studentId: "STU-2025-0148", class: "Year 9C", gender: "Female" },
+  { id: "29", name: "Franklin Akhabue", studentId: "STU-2025-0148", class: "Year 8B", gender: "Male" },
+  { id: "30", name: "Ore Gabriels", studentId: "STU-2025-0148", class: "Year 12B", gender: "Female" },
+]
+
