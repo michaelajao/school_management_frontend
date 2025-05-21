@@ -1,5 +1,5 @@
 "use client"
-import { GeneraltList } from "@/components/admin/general"
+import { GeneraltList } from "@/components/admin/annoucement/general"
 import { useAuth } from "@/contexts/auth-context"
 
 const CommunicationView = () => {
