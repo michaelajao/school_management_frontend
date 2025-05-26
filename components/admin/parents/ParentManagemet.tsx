@@ -11,8 +11,15 @@ import type { Column } from "@/components/ui/GenericTable";
 import { useParentStore } from '@/store/parentStore';
 import { useRouter } from 'next/navigation';
 
-// Define columns as before
-const columns: Column<Parent>[] = [
+// Define a type for the cleaned parent data
+type CleanedParent = Omit<Parent, 'linkedStudents' | 'status' | 'lastLogin'> & {
+  linkedStudents: string;
+  status: "active" | "pending";
+  lastLogin: string;
+};
+
+// Define columns for the cleaned data
+const columns: Column<CleanedParent>[] = [
   { accessor: "name", header: "Parent Name" },
   { accessor: "email", header: "Email" },
   { accessor: "phoneNumber", header: "Phone Number" },
@@ -28,8 +35,17 @@ export default function ParentManagement() {
   const setSelectedParent = useParentStore((state) => state.setSelectedParent)
 
   // Preprocess the parent data: convert linkedStudents to a string of names and format lastLogin
-  const parentDataCleaned = parents.map((parent) => ({
+  const parentDataCleaned: CleanedParent[] = parents.map((parent) => ({
     ...parent,
+    linkedStudents: parent.linkedStudents.map(student => {
+    // Check if student is a string ID or an object
+    if (typeof student === 'string') {
+      return student;
+    } else if (typeof student === 'object' && student !== null && 'name' in student) {
+      return student.name;
+    }
+    return 'Unknown Student';
+  }).join(", "),
     status: (parent.status.charAt(0).toUpperCase() + parent.status.slice(1)) as "active" | "pending", // Ensure type is restricted
     lastLogin: parent.lastLogin ? formatDateTime(parent.lastLogin) : "N/A", // Format last login
   }));
@@ -58,30 +74,42 @@ export default function ParentManagement() {
     }
   ];
 
-  const handleView = (parent: Parent) => {
-    setSelectedParent(parent);
-    router.push('/users/admin/manage/parents/view');
-    console.log("Viewing parent:", parent);
+  const handleView = (cleanedParent: CleanedParent) => {
+    // Find the original parent data for navigation
+    const originalParent = parents.find(p => p.id === cleanedParent.id);
+    if (originalParent) {
+      setSelectedParent(originalParent);
+      router.push('/admin/manage/parents/view');
+      console.log("Viewing parent:", originalParent);
+    }
   };
 
-  const handleEdit = (parent: Parent) => {
-    setSelectedParent(parent)
-    router.push('/users/admin/manage/parents/edit');
-    console.log("Editing parent:", parent);
+  const handleEdit = (cleanedParent: CleanedParent) => {
+    // Find the original parent data for editing
+    const originalParent = parents.find(p => p.id === cleanedParent.id);
+    if (originalParent) {
+      setSelectedParent(originalParent);
+      router.push('/admin/manage/parents/edit');
+      console.log("Editing parent:", originalParent);
+    }
   };
 
-  const handleDelete = async (parent: Parent) => {
-    console.log("Deleting parent:", parent);
+  const handleDelete = async (cleanedParent: CleanedParent) => {
+    // Find the original parent data for deletion
+    const originalParent = parents.find(p => p.id === cleanedParent.id);
+    if (originalParent) {
+      console.log("Deleting parent:", originalParent);
+    }
   };
 
   const handleAddNew = () => {
     console.log("Add new parent");
-    router.push('/users/admin/manage/parents/add');
+    router.push('/admin/manage/parents/add');
   };
 
   const handleBulkUpload = () => {
     console.log("Bulk uploading CSV...");
-    router.push('/users/admin/data-upload');
+    router.push('/admin/data-upload');
   };
 
   return (

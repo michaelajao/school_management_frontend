@@ -25,9 +25,13 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isClient, setIsClient] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
+    // Mark that we're now on the client side
+    setIsClient(true);
+    
     // Check if user data exists in localStorage
     const checkAuth = async () => {
       try {
@@ -68,7 +72,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } as User;
       
       // Store in localStorage
-      localStorage.setItem("user", JSON.stringify(mockUser));
+      if (typeof window !== "undefined") {
+        localStorage.setItem("user", JSON.stringify(mockUser));
+      }
       setUser(mockUser);
       
       // Redirect based on role
@@ -101,14 +107,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       // *** FIX: Create and set user object after signup ***
       const mockUser = {
-        id: `user-${Date.now()}`, // Simple unique ID for mock
+        id: `user-${Math.random().toString(36).substr(2, 9)}`, // Generate a random string ID instead of Date.now()
         name: email.split('@')[0],
         email,
         role,
       } as User;
 
       // Store in localStorage and update state
-      localStorage.setItem("user", JSON.stringify(mockUser));
+      if (typeof window !== "undefined") {
+        localStorage.setItem("user", JSON.stringify(mockUser));
+      }
       setUser(mockUser);
       // *** END FIX ***
 
@@ -127,7 +135,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const logout = () => {
-    localStorage.removeItem("user");
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("user");
+    }
     setUser(null);
     router.push("/auth/signin"); // Redirect to signin on logout
   };
@@ -136,11 +146,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     <AuthContext.Provider
       value={{
         user,
-        loading,
+        loading: loading || !isClient, // Keep loading until client-side hydration is complete
         login,
         signup,
         logout,
-        isAuthenticated: !!user,
+        isAuthenticated: !!user && isClient,
       }}
     >
       {children}

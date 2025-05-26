@@ -56,47 +56,47 @@ export const sideBarSettings: SideBarType[] = [
 // --- Admin 
 export const adminSideBar: SideBarType[] = [
   {
-    href: '/users/admin',
+    href: '/admin',
     label: 'Dashboard',
     icon: LayoutDashboard
   },
   {
-    href: '/users/admin/manage/parents',
+    href: '/admin/manage/parents',
     label: 'Parent Management',
     icon: UserPlus 
   },
   {
-    href: '/users/admin/manage/students',
+    href: '/admin/manage/students',
     label: 'Student Management',
     icon: FolderKanban
   },
   {
-    href: '/users/admin/manage/staff',
+    href: '/admin/manage/staff',
     label: 'Staff Management',
     icon: PencilRuler
   },
   {
-    href: '/users/admin/manage/academics/classes',
+    href: '/admin/manage/academics/classes',
     label: 'Academic Management',
     icon: BookMinus 
   },
   {
-    href: '/users/admin/manage/timetable-and-attendace',
+    href: '/admin/manage/timetable-and-attendace',
     label: 'Timetable & Attendance',
     icon:  CalendarDays,
   },
   {
-    href: '/users/admin/finance',
+    href: '/admin/finance',
     label: 'Finance & Fee Management',
     icon: FolderOpen 
   },
   {
-    href: '/users/admin/communications',
+    href: '/admin/communications',
     label: 'Communications',
     icon: MessageSquareMore 
   },
   {
-    href: '/users/admin/reports',
+    href: '/admin/reports',
     label: 'Reports & Analysis',
     icon: BookOpen 
   },
@@ -114,6 +114,15 @@ export type Student = {
   class: string;
   studentId: string;
   outstandingFees: number;
+};
+
+export type Class = {
+  id: string;
+  class: string;
+  teacher: string;
+  assistant: string;
+  count: number;
+  type: string;
 };
 
 export type Parent = {

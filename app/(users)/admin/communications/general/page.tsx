@@ -1,8 +1,12 @@
-
+<<<<<<< Updated upstream:app/dashboard/communication/page.tsx
 // Communications.jsx (Server Component)
 import { CommunicationsClient } from "@/components/admin/annoucement/Communication";
 import { SummaryCard } from "@/components/admin/parents/SummaryCard";
-import { DashboardMetrics } from '@/components/shared/DashboardMetrics'
+=======
+"use client"
+import { GeneraltList } from "@/components/admin/annoucement/general"
+import { useAuth } from "@/contexts/auth-context"
+>>>>>>> Stashed changes:app/admin/communications/general/page.tsx
 
 // Mock data - in a real app this would come from your database
 const dummyAnnouncements = {
@@ -91,45 +95,45 @@ const dummyEvents = [
   },
 ];
 
+<<<<<<< Updated upstream:app/dashboard/communication/page.tsx
 const links = {
   "my-announcement": "/dashboard/communication/announcement",
   general: "/dashboard/communication/general",
   classroom: "/dashboard/communication/classroom",
   events: "/dashboard/communication/events",
 };
+=======
+  return <GeneraltList />
+}
+>>>>>>> Stashed changes:app/admin/communications/general/page.tsx
 
 export default function Communications() {
-
-  const communicationsMetrics = [
-    {
-      icon: "/icons/megaphone-line.svg",
-      label: "Announcements Created",
-      value: 10,
-      primaryColor: "#008080",
-      secondaryColor: "#BDFAFF4D"
-    },
-    {
-      icon: "/icons/mail-line.svg",
-      label: "Unread Messages",
-      value: 20,
-      primaryColor: "#28C76F",
-      secondaryColor: "#28C76F33"
-    },
-    {
-      icon: "/icons/color-filter-line.svg",
-      label: "Upcoming Events",
-      value: 40,
-      primaryColor: "#FF9F43",
-      secondaryColor: "#FFAB5A33"
-    }
-  ]
-
-
-
   return (
     <div className="space-y-6 p-6">
       {/* Top Stats */}
-      <DashboardMetrics metrics={communicationsMetrics} />
+      <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 my-4">
+        <SummaryCard
+          label="Announcements Created"
+          value={10}
+          icon={"/megaphone-line.svg"}
+          textColor="#008080"
+          bgColor="#BDFAFF4D"
+        />
+        <SummaryCard
+          label="Unread Messages"
+          value={20}
+          icon={"/mail-line.svg"}
+          textColor="#FF9F43"
+          bgColor="#FFAB5A33"
+        />
+        <SummaryCard
+          label="Upcoming Events"
+          value={40}
+          icon={"/color-filter-line.svg"}
+          textColor="#6A24FF"
+          bgColor="#6A24FF26"
+        />
+      </section>
 
       {/* Pass data to client component */}
       <CommunicationsClient

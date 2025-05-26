@@ -10,7 +10,7 @@ import Attendance from "@/components/shared/Attendance";
 const StaffDashboardPage = () => {
   const router = useRouter();
   const attendance = () => {
-    router.push("/dashboard/users/staff/attendancerecords");
+    router.push("/dashboard/staff/attendancerecords");
 
   }
   const staffMetrics = [

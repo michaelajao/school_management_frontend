@@ -11,7 +11,7 @@ export default function AddParent() {
   const handleAdd = (data: any) => {
     // Call your add API or mutation here
     console.log("Adding parent:", data);
-    router.push("/users/admin/manage/parents");
+    router.push("/admin/manage/parents");
   };
 
   return (

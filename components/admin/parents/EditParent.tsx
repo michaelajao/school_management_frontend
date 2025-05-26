@@ -14,7 +14,7 @@ export default function EditParent() {
   const handleEdit = (data: any) => {
     // Call your update API or mutation here
     console.log("Editing parent:", data);
-    router.push("/users/admin/manage/parents");
+    router.push("/admin/manage/parents");
   };
 
   if (!selectedParent) {

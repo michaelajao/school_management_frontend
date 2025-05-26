@@ -114,10 +114,10 @@ A feature-rich, role-based school management system front-end built with Next.js
 ## Routes (and corresponding folder structure)
 
 ```
-   /users/admin      # Admin home dashboard
-   /users/admin/communications  # See and manage comms for admin
-   /users/admin/manage/academics # Admin manage academics view
-   /users/admin/manage/academics # Admin manage academics view
+   /admin      # Admin home dashboard
+   /admin/communications  # See and manage comms for admin
+   /admin/manage/academics # Admin manage academics view
+   /admin/manage/academics # Admin manage academics view
 
 ```
 

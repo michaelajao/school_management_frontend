@@ -1,4 +1,4 @@
-// File: app/dashboard/users/students/page.tsx (Server Component)
+// File: app/dashboard/students/page.tsx (Server Component)
 import { getParents } from "@/lib/utils";
 import { parents, studentColumns, studentRows } from "@/lib/fakeData";
 import StudentManagementClient from "@/components/admin/students/StudentManagementClient";

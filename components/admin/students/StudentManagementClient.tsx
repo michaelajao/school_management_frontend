@@ -52,7 +52,7 @@ export default function StudentManagementClient({
   ]
 
   const handlenewStudent = useCallback(() => {
-    router.push("/users/admin/manage/students/addnew");
+    router.push("/admin/manage/students/addnew");
   }, [router]);
 
   const handleDeleteStudent = useCallback(async (row: { id: any; }) => {
@@ -78,7 +78,7 @@ export default function StudentManagementClient({
   }, []);
 
   const handleViewStudent = useCallback((row: { id: any; }) => {
-    router.push(`/users/admin/manage/students/${row.id}`);
+    router.push(`/admin/manage/students/${row.id}`);
   }, [router]);
 
   return (

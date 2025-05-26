@@ -15,7 +15,7 @@ export default function ManageStaffPage() {
 
   const router = useRouter();
   const editstaff = () => {
-    router.push("/users/admin/manage/staff/editstaff");
+    router.push("/admin/manage/staff/editstaff");
   }
 
 

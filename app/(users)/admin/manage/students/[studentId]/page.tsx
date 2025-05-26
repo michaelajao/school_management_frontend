@@ -1,4 +1,4 @@
-// File: app/dashboard/users/students/[studentId]/page.tsx (Server Component)
+// File: app/dashboard/students/[studentId]/page.tsx (Server Component)
 
 import StudentProfileClient from "@/components/admin/students/StudentProfileClient";
 

@@ -1,4 +1,10 @@
-import { Parent } from "./utils";
+import { Parent, Student } from "./utils";
+
+export const students: Student[] = [
+    { name: "Nathan Martin", class: "JSS2", studentId: "STU001", outstandingFees: 0 },
+    { name: "Sophia Martin", class: "SS1", studentId: "STU002", outstandingFees: 5000 }
+
+]
 
 export const parents: Parent[]  = [
   {
@@ -365,4 +371,42 @@ export const studentRows: StudentRow[] = [
   { id: "29", name: "Franklin Akhabue", studentId: "STU-2025-0148", class: "Year 8B", gender: "Male" },
   { id: "30", name: "Ore Gabriels", studentId: "STU-2025-0148", class: "Year 12B", gender: "Female" },
 ]
+
+//classes fake data
+export type ClassRow = {
+  id: string;
+  class: string;
+  teacher: string;
+  assistant: string;
+  count: number;
+  type: string;
+};
+
+export const classColumns: { accessor: keyof ClassRow; header: string }[] = [
+  { accessor: "class", header: "Class" },
+  { accessor: "teacher", header: "Class Teacher" },
+  { accessor: "assistant", header: "Assistant Teacher" },
+  { accessor: "count", header: "Students Count" },
+  { accessor: "type", header: "Classification" },
+];
+
+export const classRows: ClassRow[] = [
+  { id: 'year-7A', class: 'Year 7A', teacher: 'Anthony Allen', assistant: 'Samuel Olera', count: 20, type: 'Science' },
+  { id: 'year-7B', class: 'Year 7B', teacher: 'Samuel Olera', assistant: 'Betty Jacobs', count: 20, type: 'Commercial' },
+  { id: 'year-7C', class: 'Year 7C', teacher: 'Susan Oyii', assistant: 'Anthony Allen', count: 20, type: 'Art' },
+  { id: 'year-8A', class: 'Year 8A', teacher: 'Kore Ogbei', assistant: '', count: 20, type: 'Science' },
+  { id: 'year-8B', class: 'Year 8B', teacher: 'Michael Aigboka', assistant: 'Annabella Adu', count: 20, type: 'Art' },
+  { id: 'year-8C', class: 'Year 8C', teacher: 'Eduard Cole', assistant: '', count: 20, type: 'Commercial' },
+  { id: 'year-9A', class: 'Year 9A', teacher: 'Justin Ogbo', assistant: 'Michael Aigboka', count: 20, type: 'Art' },
+  { id: 'year-9B', class: 'Year 9B', teacher: 'Kore Ogbei', assistant: '', count: 20, type: 'Science' },
+  { id: 'year-9C', class: 'Year 9C', teacher: 'Eduard Cole', assistant: '', count: 20, type: 'Commercial' },
+  { id: 'year-10A', class: 'Year 10A', teacher: 'Elizabeth Arii', assistant: '', count: 20, type: 'Science' },
+  { id: 'year-10B', class: 'Year 10B', teacher: 'Kore Ogbei', assistant: '', count: 20, type: 'Art' },
+  { id: 'year-10C', class: 'Year 10C', teacher: 'Susan Oyii', assistant: 'Justin Ogbo', count: 20, type: 'Science' },
+  { id: 'year-11A', class: 'Year 11A', teacher: 'Samuel Olera', assistant: 'Susan Oyii', count: 20, type: 'Commercial' },
+  { id: 'year-11B', class: 'Year 11B', teacher: 'Kore Ogbei', assistant: 'Betty Jacobs', count: 20, type: 'Art' },
+  { id: 'year-11C', class: 'Year 11C', teacher: 'Eduard Cole', assistant: 'Michael Aigboka', count: 20, type: 'Science' },
+  { id: 'year-12A', class: 'Year 12A', teacher: 'Michael Aigboka', assistant: 'Eduard Cole', count: 20, type: 'Commercial' },
+  { id: 'year-12B', class: 'Year 12B', teacher: 'Michael Aigboka', assistant: 'Kore Ogbei', count: 20, type: 'Science' },
+];
 

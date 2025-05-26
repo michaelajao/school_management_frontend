@@ -1,4 +1,4 @@
-// File: app/dashboard/users/students/[studentId]/edit/page.tsx (Server Component)
+// File: app/dashboard/students/[studentId]/edit/page.tsx (Server Component)
 
 import StudentEditFormClient from "@/components/admin/students/StudentEditFormClient";
 

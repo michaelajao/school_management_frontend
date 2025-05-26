@@ -226,7 +226,9 @@ export function GeneraltList() {
                   />
                 </div>
                 <div>
-                  
+                  <DialogTitle className="text-lg font-medium">
+                    Important Classroom Change Announcement!
+                  </DialogTitle>
                   <p className="text-sm text-gray-600">Principal's Office</p>
                 </div>
               </div>
@@ -290,9 +292,6 @@ export function GeneraltList() {
           </DialogHeader>
 
           <div className="p-6 text-gray-700 max-h-96 overflow-y-auto">
-            <DialogTitle className="text-lg font-medium mb-0.5">
-                    Important Classroom Change Announcement!
-                  </DialogTitle>
             <div className="space-y-4 text-sm">
              {
               selected && (

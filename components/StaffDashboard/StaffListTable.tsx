@@ -106,16 +106,16 @@ const StaffListTable = () => {
     const router = useRouter();
 
     const managestaff = () => {
-        router.push("/users/admin/manage/staff/managestaff");
+        router.push("/admin/manage/staff/managestaff");
     }
 
     const addstaff = () => {
-        router.push("/users/admin/manage/staff/addstaff");
+        router.push("/admin/manage/staff/addstaff");
     }
 
     const handleBulkUpload = () => {
         console.log("Bulk uploading CSV...");
-        router.push('/users/admin/data-upload');
+        router.push('/admin/data-upload');
     };
 
 

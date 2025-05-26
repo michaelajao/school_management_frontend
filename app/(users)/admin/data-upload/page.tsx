@@ -14,14 +14,14 @@ export default function DataUploadPage() {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/users/admin">
+              <BreadcrumbLink href="/admin">
                 <Home className="h-4 w-4 mr-1" />
                 Dashboard
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href="/users/admin/data-upload">
+              <BreadcrumbLink href="/admin/data-upload">
                 Data Upload
               </BreadcrumbLink>
             </BreadcrumbItem>

@@ -70,7 +70,7 @@ export default function MessagingAppClient({
     if (inputMessage.trim() === '') return;
     
     const newMessage: Message = {
-      id: Date.now().toString(),
+      id: Math.random().toString(36).substr(2, 9), // Use random string instead of Date.now()
       text: inputMessage,
       sender: 'user',
       timestamp: new Date(),

@@ -60,9 +60,6 @@ const ClassManagement: React.FC = () => {
                     <p className="text-gray-600">Manage Class and Info</p>
                 </div>
 
-                {/* Search & Actions */}
-                <SearchAndActions />
-
                 {/* Class Table */}
                 <ClassTables />
             </div>

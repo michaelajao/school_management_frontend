@@ -209,6 +209,9 @@ export function AnnouncementListClient({ viewers, modalContent }: AnnouncementLi
                   />
                 </div>
                 <div>
+                  <DialogTitle className="text-lg font-medium">
+                    {modalContent.title}
+                  </DialogTitle>
                   <p className="text-sm text-gray-600">Principal&apos;s Office</p>
                 </div>
               </div>
@@ -276,9 +279,6 @@ export function AnnouncementListClient({ viewers, modalContent }: AnnouncementLi
           </DialogHeader>
 
           <div className="p-6 text-gray-700 max-h-96 overflow-y-auto">
-            <DialogTitle className="text-lg font-medium mb-0.5">
-              {modalContent.title}
-            </DialogTitle>
             <div className="space-y-4 text-sm">
               {modalContent.content.map((paragraph, index) => (
                 <p key={index}>
