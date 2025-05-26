@@ -103,11 +103,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       // NOTE: In a real app, the backend would handle user creation and 
       // potentially send back a token or confirm the next step.
-      // We are simulating the step *after* initial signup confirmation.
-
-      // *** FIX: Create and set user object after signup ***
+      // We are simulating the step *after* initial signup confirmation.      // *** FIX: Create and set user object after signup ***
       const mockUser = {
-        id: `user-${Math.random().toString(36).substr(2, 9)}`, // Generate a random string ID instead of Date.now()
+        id: `user-${email.replace(/[^a-zA-Z0-9]/g, '')}-${role}`, // Generate a deterministic ID based on email and role
         name: email.split('@')[0],
         email,
         role,
@@ -141,7 +139,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(null);
     router.push("/auth/signin"); // Redirect to signin on logout
   };
-
   return (
     <AuthContext.Provider
       value={{
@@ -153,7 +150,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isAuthenticated: !!user && isClient,
       }}
     >
-      {children}
+      {isClient ? children : <div>Loading...</div>}
     </AuthContext.Provider>
   );
 }
