@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { CustomButton } from '@/components/shared/CustomButton.'
 
 import {
   DropdownMenu,
@@ -19,13 +20,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
+import { ChevronLeft, ChevronRight, MoreHorizontal, Search, SlidersHorizontal, Upload, Plus } from "lucide-react";
 
 import { DeleteModal } from "../StaffDashboard/DeleteModal"; // adjust path as needed
 
-type Column<T> = {
+export type Column<T> = {
   accessor: keyof T;
   header: string;
+  cell?: (row: T) => React.ReactNode;
 };
 
 type ActionHandlers<T> = {
@@ -40,7 +42,7 @@ type GenericTableProps<T> = {
   totalCount: number;
   pageSize?: number;
   onBulkUpload?: () => void;
-  addNewTrigger?: () => void; 
+  addNewTrigger?: () => void;
   actionHandlers?: ActionHandlers<T>;
 };
 
@@ -58,7 +60,7 @@ export function GenericTable<T extends Record<string, any>>({
   const { onEdit, onView, onDelete } = actionHandlers;
 
   // State for delete modal
-   // Delete modal handling
+  // Delete modal handling
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<T | null>(null);
 
@@ -83,7 +85,7 @@ export function GenericTable<T extends Record<string, any>>({
   // Filter rows based on search query
   const filteredRows = useMemo(() => {
     if (!searchQuery.trim()) return rows;
-    
+
     return rows.filter((row) =>
       columns.some((col) => {
         const value = row[col.accessor];
@@ -108,35 +110,79 @@ export function GenericTable<T extends Record<string, any>>({
   }, [totalPages]);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 my-6">
       {/* Delete Modal */}
       {deleteModalOpen && itemToDelete && (
         <DeleteModal
-        title="user"
-        deleteaction={handleDelete}
-        onCancel={handleCloseDeleteModal}
-        
+          title="user"
+          deleteaction={handleDelete}
+          onCancel={handleCloseDeleteModal}
+
         // isOpen={deleteModalOpen && !!itemToDelete}
         // onClose={handleCloseDeleteModal}
-      />
+        />
       )}
 
-      <div className="flex flex-wrap gap-2 justify-between">
-        <Input
-          placeholder="Search by any column"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="max-w-sm"
-        />
-        <div className="flex gap-2">
-          <Button variant="outline">Filter</Button>
-           <Button onClick={addNewTrigger} disabled={!addNewTrigger}>
-          Add New
-        </Button>
+      <div className="flex flex-col md:flex-row space-y-5 md:space-y-0 gap-4">
+        {/* Search bar */}
+        <div className="relative md:w-[45%]">
+          <Search className="absolute left-3 top-6.5 -translate-y-1/2 text-gray-400 w-4 h-4" />
+          <Input
+            placeholder="Search by any column"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10 py-6"
+          />
+        </div>
+
+        <div className="flex flex-col md:flex-row md:w-[55%] gap-2 space-y-3">
+
+          {/* Filter */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <div className="relative md:w-4/12">
+                <SlidersHorizontal
+                  className="absolute left-[35%] md:left-5 top-4.25 w-4 h-4"
+                  color="#388889"
+                />
+                <Button
+                  className="cursor-pointer w-full p-6 text-sm text-[#656E77] bg-[#E1E1E1]"
+                  variant="outline">
+                  Filter
+                </Button>
+              </div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              {/* Filter Params */}
+              <DropdownMenuItem>
+                A
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Add new */}
+          <CustomButton
+            variant="outline"
+            size="sm"
+            icon={<Plus />}
+            className="cursor-pointer p-6 bg-transparent text-[#388889] border border-[#388889]"
+            onClick={addNewTrigger}
+            disabled={!addNewTrigger}
+          >
+            Add New
+          </CustomButton>
+
+          {/* Bulk upload */}
           {onBulkUpload && (
-            <Button variant="secondary" onClick={onBulkUpload}>
-              Bulk Upload (CSV)
-            </Button>
+            <CustomButton
+              variant="default"
+              size="sm"
+              icon={<Upload />}
+              className="p-6"
+              onClick={onBulkUpload}
+            >
+              Bulk Upload
+            </CustomButton>
           )}
         </div>
       </div>
@@ -157,9 +203,17 @@ export function GenericTable<T extends Record<string, any>>({
                 <TableRow key={idx}>
                   {columns.map((col) => (
                     <TableCell key={String(col.accessor)}>
+                      {col.cell ? col.cell(row) : String(row[col.accessor] ?? "")}
+                    </TableCell>
+                  ))}
+
+                  {/* 
+                  {columns.map((col) => (
+                    <TableCell key={String(col.accessor)}>
                       {String(row[col.accessor] ?? "")}
                     </TableCell>
                   ))}
+                  */}
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -199,7 +253,7 @@ export function GenericTable<T extends Record<string, any>>({
         </Table>
       </div>
 
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col md:flex-row items-center justify-between space-y-4">
         <span className="text-sm">
           Showing {paginatedRows.length} from {totalCount} data
         </span>
@@ -235,27 +289,27 @@ export function GenericTable<T extends Record<string, any>>({
                     1
                   </Button>
                 )}
-                
+
                 {currentPage > 3 && <span className="flex items-center px-2">...</span>}
-                
+
                 {currentPage > 1 && (
                   <Button size="sm" variant="outline" onClick={() => changePage(currentPage - 1)}>
                     {currentPage - 1}
                   </Button>
                 )}
-                
+
                 <Button size="sm" variant="default">
                   {currentPage}
                 </Button>
-                
+
                 {currentPage < totalPages && (
                   <Button size="sm" variant="outline" onClick={() => changePage(currentPage + 1)}>
                     {currentPage + 1}
                   </Button>
                 )}
-                
+
                 {currentPage < totalPages - 2 && <span className="flex items-center px-2">...</span>}
-                
+
                 {currentPage < totalPages - 1 && (
                   <Button size="sm" variant="outline" onClick={() => changePage(totalPages)}>
                     {totalPages}

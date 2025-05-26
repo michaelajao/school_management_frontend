@@ -111,6 +111,16 @@ A feature-rich, role-based school management system front-end built with Next.js
 # Configuration files (next.config.ts, tailwind.config.ts, tsconfig.json, etc.)
 ```
 
+## Routes (and corresponding folder structure)
+
+```
+   /users/admin      # Admin home dashboard
+   /users/admin/communications  # See and manage comms for admin
+   /users/admin/manage/academics # Admin manage academics view
+   /users/admin/manage/academics # Admin manage academics view
+
+```
+
 ---
 
 ## Key Flows

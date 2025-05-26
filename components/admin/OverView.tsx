@@ -22,14 +22,14 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 
-import { AlarmClock, ChevronRight, GraduationCap, IdCard, Plus, Users } from "lucide-react";
-import { SummaryCard } from "./parents/SummaryCard";
-import { PiPercentBold } from "react-icons/pi";
+import { ChevronRight, GraduationCap, Plus } from "lucide-react";
 
-import { ChevronRight, GraduationCap, IdCard, Plus } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import Link from "next/link";
-import { Checkbox } from "@radix-ui/react-checkbox";
+import { DashboardMetrics } from '@/components/shared/DashboardMetrics'
+import { CustomButton } from "@/components/shared/CustomButton.";
+
+
 
 const attendanceData = [
   { month: "Jan", value: 70 },
@@ -60,13 +60,6 @@ const financialData = [
   { month: "May", income: 0, expenses: 0 },
   { month: "Jun", income: 0, expenses: 0 },
 ];
-  { month: "Jan", income: 290000, expenses: 190000 },
-  { month: "Feb", income: 210000, expenses: 140000 },
-  { month: "Mar", income: 120000, expenses: 140000 },
-  { month: "Apr", income: 90000, expenses: 40000 },
-  { month: "May", income: 0, expenses: 0 },
-  { month: "Jun", income: 0, expenses: 0 },
-];
 
 const formatYAxis = (value: number) => {
   if (value >= 1000) {
@@ -74,12 +67,6 @@ const formatYAxis = (value: number) => {
   }
   return `${value}`;
 };
-  if (value >= 1000) {
-    return `${value / 1000}k`;
-  }
-  return `${value}`;
-};
-
 
 /**
  * A custom tooltip component for recharts.
@@ -153,165 +140,162 @@ const events = [
 const AdminDashboard = () => {
   const [selectedRole, setSelectedRole] = useState('Subject Teacher');
 
+  const dashboardMetrics = [
+    {
+      icon: GraduationCap,
+      value: 1250,
+      label: 'Total Students',
+      primaryColor: '#008080',
+      secondaryColor: '#BDFAFF4D',
+    },
+    {
+      icon: '/icons/pass-valid-line.svg',
+      value: 78,
+      label: "Total Staff",
+      primaryColor: "#FF9F43",
+      secondaryColor: "#FFAB5A33",
+    },
+    {
+      icon: '/icons/secure-payment.svg',
+      value: 78,
+      label: "Total Fees Paid (%)",
+      primaryColor: "#28C76F",
+      secondaryColor: "#28C76F33"
+    },
+    {
+      icon: '/icons/alarm-warning-line.svg',
+      value: 5,
+      label: "Pending Approvals",
+      primaryColor: "#EF1A36",
+      secondaryColor: "#FFDDDE80"
+    }
+  ]
+
   const handleRoleChange = (role: React.SetStateAction<string>) => {
     setSelectedRole(role);
   };
   return (
     <>
-      {/* Header Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
-        <Card>
-          <CardContent className="p-4 text-center flex flex-row justify-around items-center">
-            <span className="bg-[#BDFAFF] bg-opacity-30 rounded-full p-2">
-              <GraduationCap size={40} color="#008080" />
-            </span>{" "}
-            <span>
-              <p className="text-xl text-[#008080] font-bold">1,250</p>
-              <p className=" text-sm text-[#008080]">Total Students</p>
-            </span>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 text-center flex flex-row justify-around items-center">
-            <span className="bg-[#FFAB5A33] bg-opacity-30 rounded-full p-2">
-              <IdCard size={40} color="#FF9F43" />
-            </span>
-            <span>
-              <p className="text-xl font-bold text-[#FF9F43]">78</p>
-              <p className="text-sm text-[#FF9F43]">Total Staff</p>
-            </span>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 text-center flex flex-row justify-around items-center">
-            <span className="bg-[#28C76F33] bg-opacity-30 rounded-full p-2">
-              <IdCard size={40} color="#28C76F" />
-              <IdCard size={40} color="#28C76F" />
-            </span>
-            <span>
-              <p className="text-xl font-bold text-[#28C76F]">78%</p>
-              <p className=" text-sm text-[#28C76F]">Total Fee Paid</p>
-            </span>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 text-center flex flex-row justify-around items-center">
-            <span className="bg-[#FFDDDE80] bg-opacity-60 rounded-full p-2">
-            <span className="bg-[#FFDDDE80] bg-opacity-60 rounded-full p-2">
-              <IdCard size={40} color="#EF1A36" />
-            </span>
-            <span className="text-[#EF1A36]">
-              <p className="text-xl font-bold ">5</p>
-              <p className="text-xs">Pending Approvals</p>
-            </span>
-          </CardContent>
-        </Card>
+      {/* Welcome message */}
+      <div>
+        <h1 className="font-semibold text-2xl">Dashboard</h1>
+        <p className="text-gray-500">Welcome, {'test'}</p>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
+
+      {/* Header Stats */}
+      <div className="my-6">
+        <DashboardMetrics metrics={dashboardMetrics} />
+      </div>
+
+      {/* grid grid-cols-1 md:grid-cols-2 gap-2 w-full */}
+      <div className="flex flex-col md:flex-row gap-4">
+        <div className="md:w-[55%]">
           {/* Action Buttons */}
-          <div className="flex gap-4 flex-wrap mb-6">
+          <div className="flex flex-wrap justify-between mb-6 space-y-4">
             <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="outline" className="text-[#FF9F43] rounded-r-none border-r-0">
-            Add New User
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent className="bg-white w-56 z-10 px-4 py-2 space-y-2 shadow-2xl rounded-b-2xl">
-          <DropdownMenuItem className="flex items-center hover:bg-gray-50">
-            <div className="w-5 h-5 rounded-full border border-cyan-500 flex items-center justify-center mr-2">
-              {selectedRole === 'Subject Teacher' && (
-                <div className="w-3 h-3 bg-cyan-500 rounded-full"></div>
-              )}
-            </div>
-            <Link 
-              href="/dashboard/users/staff/addstaff"
-              onClick={() => handleRoleChange('Subject Teacher')}
-              className="flex-1"
-            >
-              Subject Teacher
-            </Link>
-          </DropdownMenuItem>
-          
-          <DropdownMenuItem className="flex items-center hover:bg-gray-50">
-            <div className="w-5 h-5 rounded-full border border-gray-300 flex items-center justify-center mr-2">
-              {selectedRole === 'Class Teacher' && (
-                <div className="w-3 h-3 bg-cyan-500 rounded-full"></div>
-              )}
-            </div>
-            <Link 
-              href="/dashboard/users/staff/addstaff"
-              onClick={() => handleRoleChange('Class Teacher')}
-              className="flex-1"
-            >
-              Class Teacher
-            </Link>
-          </DropdownMenuItem>
-          
-          <DropdownMenuItem className="flex items-center hover:bg-gray-50">
-            <div className="w-5 h-5 rounded-full border border-gray-300 flex items-center justify-center mr-2">
-              {selectedRole === 'Parent' && (
-                <div className="w-3 h-3 bg-cyan-500 rounded-full"></div>
-              )}
-            </div>
-            <Link 
-              href="/dashboard/users/parents/add"
-              onClick={() => handleRoleChange('Parent')}
-              className="flex-1"
-            >
-              Parent
-            </Link>
-          </DropdownMenuItem>
-          
-          <DropdownMenuItem className="flex items-center hover:bg-gray-50">
-            <div className="w-5 h-5 rounded-full border border-gray-300 flex items-center justify-center mr-2">
-              {selectedRole === 'Student' && (
-                <div className="w-3 h-3 bg-cyan-500 rounded-full"></div>
-              )}
-            </div>
-            <Link 
-              href="/dashboard/users/students"
-              onClick={() => handleRoleChange('Student')}
-              className="flex-1"
-            >
-              Student
-            </Link>
-          </DropdownMenuItem>
-          
-          <DropdownMenuItem className="flex items-center hover:bg-gray-50">
-            <div className="w-5 h-5 rounded-full border border-gray-300 flex items-center justify-center mr-2">
-              {selectedRole === 'Admin' && (
-                <div className="w-3 h-3 bg-cyan-500 rounded-full"></div>
-              )}
-            </div>
-            <Link 
-              href="/dashboard/users/staff/addstaff"
-              onClick={() => handleRoleChange('Admin')}
-              className="flex-1"
-            >
-              Admin
-            </Link>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-            <Button variant="outline" className="text-[#28C76F]">
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="flex justify-between p-5 w-38">
+                  <span className="text-xs text-gray-700">Add New User</span>
+                  <img
+                    className="w-2.5 h-2.5"
+                    src="/icons/down-arrow.svg"
+                    alt="down arrow" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="text-xs bg-white w-56 z-10 px-4 py-2 space-y-2 shadow-2xl rounded-b-2xl">
+                <DropdownMenuItem className="flex items-center hover:bg-gray-50">
+                  <div className="w-5 h-5 rounded-full border border-cyan-500 flex items-center justify-center mr-2">
+                    {selectedRole === 'Subject Teacher' && (
+                      <div className="w-3 h-3 bg-cyan-500 rounded-full"></div>
+                    )}
+                  </div>
+                  <Link
+                    href="/users/admin/manage/staff/addstaff"
+                    onClick={() => handleRoleChange('Subject Teacher')}
+                    className="flex-1"
+                  >
+                    Subject Teacher
+                  </Link>
+                </DropdownMenuItem>
+
+                <DropdownMenuItem className="flex items-center hover:bg-gray-50">
+                  <div className="w-5 h-5 rounded-full border border-gray-300 flex items-center justify-center mr-2">
+                    {selectedRole === 'Class Teacher' && (
+                      <div className="w-3 h-3 bg-cyan-500 rounded-full"></div>
+                    )}
+                  </div>
+                  <Link
+                    href="/users/admin/manage/staff/addstaff"
+                    onClick={() => handleRoleChange('Class Teacher')}
+                    className="flex-1"
+                  >
+                    Class Teacher
+                  </Link>
+                </DropdownMenuItem>
+
+                <DropdownMenuItem className="flex items-center hover:bg-gray-50">
+                  <div className="w-5 h-5 rounded-full border border-gray-300 flex items-center justify-center mr-2">
+                    {selectedRole === 'Parent' && (
+                      <div className="w-3 h-3 bg-cyan-500 rounded-full"></div>
+                    )}
+                  </div>
+                  <Link
+                    href="/users/admin/manage/parents/add"
+                    onClick={() => handleRoleChange('Parent')}
+                    className="flex-1"
+                  >
+                    Parent
+                  </Link>
+                </DropdownMenuItem>
+
+                <DropdownMenuItem className="flex items-center hover:bg-gray-50">
+                  <div className="w-5 h-5 rounded-full border border-gray-300 flex items-center justify-center mr-2">
+                    {selectedRole === 'Student' && (
+                      <div className="w-3 h-3 bg-cyan-500 rounded-full"></div>
+                    )}
+                  </div>
+                  <Link
+                    href="/users/admin/manage/students"
+                    onClick={() => handleRoleChange('Student')}
+                    className="flex-1"
+                  >
+                    Student
+                  </Link>
+                </DropdownMenuItem>
+
+                <DropdownMenuItem className="flex items-center hover:bg-gray-50">
+                  <div className="w-5 h-5 rounded-full border border-gray-300 flex items-center justify-center mr-2">
+                    {selectedRole === 'Admin' && (
+                      <div className="w-3 h-3 bg-cyan-500 rounded-full"></div>
+                    )}
+                  </div>
+                  <Link
+                    href="/users/admin/manage/staff/addstaff"
+                    onClick={() => handleRoleChange('Admin')}
+                    className="flex-1"
+                  >
+                    Admin
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <Button variant="outline" className="text-[#28C76F] border border-[#28c76f] text-xs p-5 w-42">
               Assign Class Teacher
             </Button>
-            <Button variant="outline" className="text-[#8B5CF6]">
+            <Button variant="outline" className="text-[#8B5CF6] border border-[#8B5CF6] text-xs p-5 w-42">
               Update Payment Record
             </Button>
           </div>
 
           {/* Attendance Summary & Staff Attendance */}
-          <div className=" ">
+          <div className="">
             <Card className="md:col-span-2 mb-10">
-              <CardHeader>
-                <CardTitle>Attendance Summary</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex justify-between mb-4">
+              <CardHeader className="flex flex-col md:flex-row justify-between items-center space-y-4">
+                <CardTitle className="font-thin font-lg">Attendance Summary</CardTitle>
+                <div className="flex gap-4">
                   <Select defaultValue="monthly">
-                    <SelectTrigger className="w-[120px]">
+                    <SelectTrigger className="w-[100px]">
                       <SelectValue placeholder="Monthly" />
                     </SelectTrigger>
                     <SelectContent>
@@ -321,7 +305,7 @@ const AdminDashboard = () => {
                     </SelectContent>
                   </Select>
                   <Select defaultValue="students">
-                    <SelectTrigger className="w-[120px]">
+                    <SelectTrigger className="w-[100px]">
                       <SelectValue placeholder="Students" />
                     </SelectTrigger>
                     <SelectContent>
@@ -331,6 +315,8 @@ const AdminDashboard = () => {
                     </SelectContent>
                   </Select>
                 </div>
+              </CardHeader>
+              <CardContent>
 
                 <div className="h-52 w-full overflow-auto">
                   <ResponsiveContainer width="100%" height="100%">
@@ -403,7 +389,7 @@ const AdminDashboard = () => {
                 </div>
               </CardContent>
             </Card>
-            <Card className="md:col-span-2 mb-10">
+            <Card className="md:col-span-2 mb-10 py-14">
               <CardHeader>
                 <CardTitle>Financial Summary</CardTitle>
               </CardHeader>
@@ -471,19 +457,19 @@ const AdminDashboard = () => {
           </div>
         </div>
 
-        <div>
+        <div className="md:w-[45%]">
           {/* Financial Summary */}
           <div className=" mb-10">
             <Card>
-              <CardHeader>
+              <CardHeader className="text-center">
                 <CardTitle>Staff Attendance</CardTitle>
                 <p className="text-sm text-muted-foreground">
                   March 23, 2025 10:41AM
                 </p>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-6 flex flex-col items-center">
                 <Select>
-                  <SelectTrigger>
+                  <SelectTrigger className="p-6 w-4/5 border border-gray-500 !bg-white focus:!bg-white hover:!bg-white">
                     <SelectValue placeholder="Select Staff" />
                   </SelectTrigger>
                   <SelectContent>
@@ -492,11 +478,21 @@ const AdminDashboard = () => {
                     <SelectItem value="staff3">Staff 3</SelectItem>
                   </SelectContent>
                 </Select>
-
-                <Button className="w-full">Time In</Button>
-                <Button className="w-full" variant="outline">
+                
+                <CustomButton
+                  variant="default"
+                  size="lg"
+                  className="w-4/5 text-sm"
+                >
+                  Time In
+                </CustomButton>
+                <CustomButton
+                  variant="default"
+                  size="lg"
+                  className="w-4/5 text-sm  bg-[#B6B6B6] text-black"
+                >
                   Time Out
-                </Button>
+                </CustomButton>
               </CardContent>
             </Card>
           </div>
@@ -504,7 +500,7 @@ const AdminDashboard = () => {
           <div className="grid grid-cols-1 gap-4">
             {/* Upcoming Events Card */}
             <Card className="border border-gray-200 shadow-sm rounded-md">
-              <CardHeader className="flex flex-row justify-between items-center pb-4 pt-4 px-6">
+              <CardHeader className="flex flex-row justify-between items-center pb-4 px-6">
                 <CardTitle className="text-lg font-bold">
                   Upcoming Events
                 </CardTitle>
@@ -516,7 +512,7 @@ const AdminDashboard = () => {
                   <span>Create Event</span>
                 </Button>
               </CardHeader>
-              <CardContent className="px-6 pb-4">
+              <CardContent className="px-6">
                 <ul className="space-y-4">
                   {events.map((event) => (
                     <li key={event.id} className="flex items-start gap-3">
@@ -541,7 +537,7 @@ const AdminDashboard = () => {
 
             {/* Announcements Card */}
             <Card className="border border-gray-200 shadow-sm rounded-md">
-              <CardHeader className="flex flex-row justify-between items-center pb-4 pt-4 px-6">
+              <CardHeader className="flex flex-col md:flex-row justify-between items-center pb-4 pt-4 px-6 space-y-4">
                 <CardTitle className="text-lg font-bold">
                   Announcements
                 </CardTitle>

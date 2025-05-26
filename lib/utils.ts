@@ -56,47 +56,47 @@ export const sideBarSettings: SideBarType[] = [
 // --- Admin 
 export const adminSideBar: SideBarType[] = [
   {
-    href: '/dashboard',
+    href: '/users/admin',
     label: 'Dashboard',
     icon: LayoutDashboard
   },
   {
-    href: '/dashboard/users/parents',
+    href: '/users/admin/manage/parents',
     label: 'Parent Management',
     icon: UserPlus 
   },
   {
-    href: '/dashboard/users/students',
+    href: '/users/admin/manage/students',
     label: 'Student Management',
     icon: FolderKanban
   },
   {
-    href: '/dashboard/users/staff',
+    href: '/users/admin/manage/staff',
     label: 'Staff Management',
     icon: PencilRuler
   },
   {
-    href: '/dashboard/academics/classes',
+    href: '/users/admin/manage/academics/classes',
     label: 'Academic Management',
     icon: BookMinus 
   },
   {
-    href: '/dashboard/timetable-and-attendance',
+    href: '/users/admin/manage/timetable-and-attendace',
     label: 'Timetable & Attendance',
     icon:  CalendarDays,
   },
   {
-    href: '/dashboard/finance',
+    href: '/users/admin/finance',
     label: 'Finance & Fee Management',
     icon: FolderOpen 
   },
   {
-    href: '/dashboard/communication',
+    href: '/users/admin/communications',
     label: 'Communications',
     icon: MessageSquareMore 
   },
   {
-    href: '/dashboard/reports',
+    href: '/users/admin/reports',
     label: 'Reports & Analysis',
     icon: BookOpen 
   },
