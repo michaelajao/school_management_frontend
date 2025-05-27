@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Search, Filter, Send, Paperclip, Users } from 'lucide-react';
+import { Search, Filter, Send, Users } from 'lucide-react';
 
 interface Message {
   id: string;
@@ -215,10 +215,10 @@ export default function GeneralCommunicationsPage() {
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-semibold">Recent Messages</h2>
           <div className="flex gap-2">
-            <button className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+            <button aria-label="Search messages" className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50">
               <Search className="w-4 h-4" />
             </button>
-            <button className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+            <button aria-label="Filter messages" className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50">
               <Filter className="w-4 h-4" />
             </button>
           </div>
