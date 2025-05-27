@@ -72,6 +72,23 @@ export default function AttendancePage() {
   const [absenceNote, setAbsenceNote] = useState("");
   const router = useRouter();
 
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedStudent) {
+      alert("Please select a student");
+      return;
+    }
+    if (!absenceNote.trim()) {
+      alert("Please add a note");
+      return;
+    }
+    // Handle form submission logic here
+    console.log("Sending notification to:", selectedStudent, "with note:", absenceNote);
+    alert("Notification sent successfully!");
+    setSelectedStudent("");
+    setAbsenceNote("");
+  };
+
   return (
     <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
       {/* Attendance Record Section */}
@@ -118,7 +135,7 @@ export default function AttendancePage() {
             </thead>
             <tbody>
               {attendanceData.map((row, idx) => (
-                <tr onClick={() => {router.push('/dashboard/academics/classes/view_class_performance/individual')}} key={idx} className="border-b cursor-pointer">
+                <tr onClick={() => {router.push('/admin/manage/academics/classes/view_class_performance/individual')}} key={idx} className="border-b cursor-pointer">
                   <td className="px-4 py-3 flex items-center gap-2">
                     <Image src={row.avatar} alt="avatar" width={24} height={24} className="rounded-full" />
                     {row.student}
@@ -163,7 +180,7 @@ export default function AttendancePage() {
               <ChevronDown size={16} />
               Filter
             </button>
-            <button onClick={() => {router.push('/dashboard/academics/classes/view_class_performance/individual')}} className="bg-[#028A82] text-white px-4 py-2 rounded-lg text-sm hover:opacity-90">
+            <button onClick={() => {router.push('/admin/manage/academics/classes/view_class_performance/individual')}} className="bg-[#028A82] text-white px-4 py-2 rounded-lg text-sm hover:opacity-90">
               {/* <Download size={16} className="inline mr-1" /> */}
               View Attendance Record
             </button>
@@ -207,28 +224,31 @@ export default function AttendancePage() {
       <div className="bg-white rounded-2xl shadow p-6 space-y-4">
         <h2 className="text-lg font-semibold">Parent Absence Notification</h2>
 
-        <form className="space-y-4">
-          <div>
-            <label className="block text-sm mb-1 text-gray-600">Select Student</label>
+        <form onSubmit={handleFormSubmit} className="space-y-4">          <div>
+            <label htmlFor="student-select" className="block text-sm mb-1 text-gray-600">Select Student</label>
             <select
+              id="student-select"
               value={selectedStudent}
               onChange={(e) => setSelectedStudent(e.target.value)}
               className="w-full border px-3 py-2 rounded-lg text-sm"
+              aria-label="Select a student for notification"
             >
-              <option>Select Student</option>
+              <option value="">Select Student</option>
               <option value="Emeka Okafor">Emeka Okafor</option>
               <option value="Kemi Adebayo">Kemi Adebayo</option>
+              <option value="Ifeanyi Eze">Ifeanyi Eze</option>
+              <option value="Tolu Fatunmise">Tolu Fatunmise</option>
             </select>
-          </div>
-
-          <div>
-            <label className="block text-sm mb-1 text-gray-600">Add Note</label>
+          </div>          <div>
+            <label htmlFor="absence-note" className="block text-sm mb-1 text-gray-600">Add Note</label>
             <textarea
+              id="absence-note"
               rows={4}
               value={absenceNote}
               onChange={(e) => setAbsenceNote(e.target.value)}
               className="w-full border px-3 py-2 rounded-lg text-sm"
               placeholder="Write message here"
+              aria-label="Absence note for parent notification"
             ></textarea>
           </div>
 

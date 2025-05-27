@@ -3,12 +3,13 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { AuthApiService, type User as ApiUser, type LoginCredentials, type RegisterData } from "@/lib/api";
 
 type User = {
   id: string;
   name: string;
   email: string;
-  role: "admin" | "teacher" | "student" | "parent" | "superadmin"; // Added superadmin
+  role: "admin" | "teacher" | "student" | "parent" | "superadmin";
 };
 
 type AuthContextType = {
@@ -27,7 +28,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [isClient, setIsClient] = useState(false);
   const router = useRouter();
-
   useEffect(() => {
     // Mark that we're now on the client side
     setIsClient(true);
@@ -35,16 +35,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Check if user data exists in localStorage
     const checkAuth = async () => {
       try {
-        const userData = localStorage.getItem("user");
-        if (!userData) {
+        // Check if user is authenticated using the API service
+        if (!AuthApiService.isAuthenticated()) {
           setLoading(false);
           return;
         }
-        
-        setUser(JSON.parse(userData));
+
+        const storedUser = AuthApiService.getStoredUser();
+        if (storedUser) {
+          // Convert API user to local user format
+          const localUser: User = {
+            id: storedUser.id,
+            name: `${storedUser.firstName} ${storedUser.lastName}`,
+            email: storedUser.email,
+            role: storedUser.role.toLowerCase() === 'super_admin' ? 'superadmin' : 
+                  storedUser.role.toLowerCase() as User['role'],
+          };
+          setUser(localUser);
+        }
+
+        // Optionally verify token with backend
+        try {
+          await AuthApiService.getProfile();
+        } catch (error) {
+          console.error("Token verification failed:", error);
+          // Token is invalid, clear auth data
+          await AuthApiService.logout();
+          setUser(null);
+        }
       } catch (error) {
         console.error("Auth check failed:", error);
-        localStorage.removeItem("user");
+        await AuthApiService.logout();
+        setUser(null);
       } finally {
         setLoading(false);
       }
@@ -52,33 +74,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     
     checkAuth();
   }, []);
-
   const login = async (email: string, password: string) => {
     setLoading(true);
     try {
-      // This is a mock implementation
-      // Replace with actual API call when backend is ready
+      // Use real API for login
+      const credentials: LoginCredentials = { email, password };
+      const response = await AuthApiService.login(credentials);
       
-      // Mock successful login for now
-      const mockUser = {
-        id: "user-1",
-        name: email.split('@')[0],
-        email,
-        // Updated mock role assignment to include superadmin
-        role: email.includes('superadmin') ? 'superadmin' :
-              email.includes('admin') ? 'admin' : 
-              email.includes('teacher') ? 'teacher' : 
-              email.includes('parent') ? 'parent' : 'student',
-      } as User;
+      // Convert API user to local user format
+      const localUser: User = {
+        id: response.user.id,
+        name: `${response.user.firstName} ${response.user.lastName}`,
+        email: response.user.email,
+        role: response.user.role.toLowerCase() === 'super_admin' ? 'superadmin' : 
+              response.user.role.toLowerCase() as User['role'],
+      };
       
-      // Store in localStorage
-      if (typeof window !== "undefined") {
-        localStorage.setItem("user", JSON.stringify(mockUser));
-      }
-      setUser(mockUser);
+      setUser(localUser);
       
       // Redirect based on role
-      router.push(`/dashboard/${mockUser.role}`);
+      router.push(`/dashboard/${localUser.role}`);
       
     } catch (error) {
       console.error("Login failed:", error);
@@ -87,57 +102,52 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(false);
     }
   };
-
   const signup = async (email: string, password: string) => {
     setLoading(true);
     try {
-      // Mock signup - will be replaced with actual API implementation
-      console.log("Signup attempt with:", email, password);
-      
-      // Determine mock role based on email (temporary)
-      // Updated mock role assignment to include superadmin
-      const role = email.includes('superadmin') ? 'superadmin' :
-                   email.includes('admin') ? 'admin' : 
-                   email.includes('teacher') ? 'teacher' : 
-                   email.includes('parent') ? 'parent' : 'student';
-
-      // NOTE: In a real app, the backend would handle user creation and 
-      // potentially send back a token or confirm the next step.
-      // We are simulating the step *after* initial signup confirmation.      // *** FIX: Create and set user object after signup ***
-      const mockUser = {
-        id: `user-${email.replace(/[^a-zA-Z0-9]/g, '')}-${role}`, // Generate a deterministic ID based on email and role
-        name: email.split('@')[0],
+      // For now, we'll create a basic registration with default role
+      // In a real app, you might want to collect more information during signup
+      const registerData: RegisterData = {
         email,
-        role,
-      } as User;
+        password,
+        firstName: email.split('@')[0], // Temporary: extract name from email
+        lastName: 'User', // Default last name
+        role: 'STUDENT', // Default role, could be determined by signup flow
+      };
 
-      // Store in localStorage and update state
-      if (typeof window !== "undefined") {
-        localStorage.setItem("user", JSON.stringify(mockUser));
-      }
-      setUser(mockUser);
-      // *** END FIX ***
+      const response = await AuthApiService.register(registerData);
+      
+      // Convert API user to local user format
+      const localUser: User = {
+        id: response.user.id,
+        name: `${response.user.firstName} ${response.user.lastName}`,
+        email: response.user.email,
+        role: response.user.role.toLowerCase() === 'super_admin' ? 'superadmin' : 
+              response.user.role.toLowerCase() as User['role'],
+      };
 
-      // Redirect to payment gateway
+      setUser(localUser);
+
+      // Redirect to payment gateway or onboarding
       const redirectPath = `/paymentGateway`;
       console.log(`Redirecting to: ${redirectPath}`);
       router.push(redirectPath);
       
     } catch (error) {
       console.error("Signup failed:", error);
-      // Re-throw the error so the AuthForm can display a generic message
       throw error; 
     } finally {
       setLoading(false);
     }
   };
-
-  const logout = () => {
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("user");
+  const logout = async () => {
+    try {
+      await AuthApiService.logout();
+    } catch (error) {
+      console.error("Logout error:", error);
     }
     setUser(null);
-    router.push("/auth/signin"); // Redirect to signin on logout
+    router.push("/auth/signin");
   };
   return (
     <AuthContext.Provider

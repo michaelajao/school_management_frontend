@@ -34,10 +34,79 @@ interface MessagingAppClientProps {
 }
 
 export default function MessagingAppClient({
-  initialContacts,
-  initialGroups,
-  initialAllContacts,
-  initialMessages
+  initialContacts = [
+    {
+      id: 'contact-0',
+      name: 'John Doe',
+      avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face',
+      lastMessage: 'Hey there! How are you?',
+      isOnline: true
+    },
+    {
+      id: 'contact-1',
+      name: 'Jane Smith',
+      avatar: 'https://images.unsplash.com/photo-1494790108755-2616b5b1d81c?w=32&h=32&fit=crop&crop=face',
+      lastMessage: 'See you tomorrow!',
+      isOnline: false
+    },
+    {
+      id: 'contact-2',
+      name: 'Mike Johnson',
+      avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=32&h=32&fit=crop&crop=face',
+      lastMessage: 'Thanks for the help',
+      isOnline: true
+    }
+  ],
+  initialGroups = [
+    { id: 'group-1', name: 'Work Team', members: 5 },
+    { id: 'group-2', name: 'Family', members: 8 }
+  ],
+  initialAllContacts = [
+    {
+      id: 'contact-0',
+      name: 'John Doe',
+      avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face',
+      lastMessage: 'Hey there! How are you?',
+      isOnline: true
+    },
+    {
+      id: 'contact-1',
+      name: 'Jane Smith',
+      avatar: 'https://images.unsplash.com/photo-1494790108755-2616b5b1d81c?w=32&h=32&fit=crop&crop=face',
+      lastMessage: 'See you tomorrow!',
+      isOnline: false
+    },
+    {
+      id: 'contact-2',
+      name: 'Mike Johnson',
+      avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=32&h=32&fit=crop&crop=face',
+      lastMessage: 'Thanks for the help',
+      isOnline: true
+    },
+    {
+      id: 'contact-3',
+      name: 'Sarah Wilson',
+      avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=32&h=32&fit=crop&crop=face',
+      lastMessage: 'Let\'s catch up soon',
+      isOnline: false
+    }
+  ],
+  initialMessages = [
+    {
+      id: 'msg-1',
+      text: 'Hey there! How are you?',
+      sender: 'other',
+      timestamp: new Date(Date.now() - 60000),
+      contactId: 'contact-0'
+    },
+    {
+      id: 'msg-2',
+      text: 'I\'m doing great, thanks for asking!',
+      sender: 'user',
+      timestamp: new Date(Date.now() - 30000),
+      contactId: 'contact-0'
+    }
+  ]
 }: MessagingAppClientProps) {
   // State management (client-side interactivity)
   const [contacts, setContacts] = useState<Contact[]>(initialContacts);
@@ -110,17 +179,18 @@ export default function MessagingAppClient({
           <button 
             className="text-gray-500 px-4 py-2 ml-auto"
             onClick={() => setShowNewChatModal(true)}
+            aria-label="New Chat"
           >
             <span className="flex items-center">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
               </svg>
             </span>
           </button>
-          <button className="text-gray-500 px-4 py-2">
+          <button className="text-gray-500 px-4 py-2" aria-label="Desktop App">
             <span className="flex items-center">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
                 <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
                 <line x1="8" y1="21" x2="16" y2="21"></line>
                 <line x1="12" y1="17" x2="12" y2="21"></line>
@@ -145,6 +215,7 @@ export default function MessagingAppClient({
               <button 
                 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
                 onClick={() => setSearchQuery('')}
+                aria-label="Clear search"
               >
                 ✕
               </button>
@@ -253,20 +324,23 @@ export default function MessagingAppClient({
       
       {/* New Chat Modal */}
       {showNewChatModal && (
-        <div className="fixed inset-0 bg-opacity-30 backdrop-blur flex items-start justify-center z-50">
-          <div className="bg-white rounded-lg w-80 mt-20 overflow-hidden">
+        <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur flex items-start justify-center z-50">
+          <div className="bg-white rounded-lg w-80 mt-20 overflow-hidden shadow-lg">
             {/* Modal Header */}
-            <div className="p-4 border-b border-gray-200">
-              <div className="flex justify-between items-center">
-                <h3 className="text-lg font-medium">New Chat</h3>
-                <button 
-                  onClick={() => setShowNewChatModal(false)}
-                  className="text-gray-500"
-                >
-                  <X size={18} />
-                </button>
-              </div>
-              <div className="mt-2 relative">
+            <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+              <h3 className="text-lg font-medium">New Chat</h3>
+              <button 
+                onClick={() => setShowNewChatModal(false)}
+                className="text-gray-500 hover:text-gray-700"
+                aria-label="Close"
+              >
+                <X size={18} />
+              </button>
+            </div>
+            
+            {/* Search Input */}
+            <div className="p-4">
+              <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                 <input
                   type="text"
@@ -280,7 +354,7 @@ export default function MessagingAppClient({
             </div>
             
             {/* Frequently Contacted */}
-            <div className="px-4 py-2">
+            <div className="px-4 pb-4">
               <h4 className="text-sm text-gray-500 mb-2">Frequently contacted</h4>
               
               {/* Groups */}

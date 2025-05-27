@@ -15,6 +15,15 @@ import {
 import { CustomButton } from '@/components/shared/CustomButton.';
 import { GenericTable } from '@/components/ui/GenericTable';
 
+interface StaffMember {
+    name: string;
+    image?: string;
+    email: string;
+    role: string;
+    assigned: string;
+    imageUrl: string;
+}
+
 const staffData = [
     {
         name: "Amy Johnson",
@@ -118,14 +127,12 @@ const StaffListTable = () => {
         router.push('/admin/data-upload');
     };
 
-
-
     // For generic table
     const columns = [
   {
-    accessor: "name",
+    accessor: "name" as const,
     header: "Name",
-    cell: (row) => (
+    cell: (row: StaffMember) => (
       <div className="flex items-center gap-2">
         <img
           src={row.imageUrl}
@@ -139,20 +146,24 @@ const StaffListTable = () => {
     ),
   },
   {
-    accessor: "email",
+    accessor: "email" as const,
     header: "Email",
   },
   {
-    accessor: "role",
+    accessor: "role" as const,
     header: "Role",
-    cell: (row) => (
-      <select className="bg-blue-50 text-blue-700 text-sm px-2 py-1 rounded-lg border border-blue-200">
+    cell: (row: StaffMember) => (
+      <select 
+        className="bg-blue-50 text-blue-700 text-sm px-2 py-1 rounded-lg border border-blue-200"
+        title="Staff role selection"
+        aria-label="Staff role"
+      >
         <option>{row.role}</option>
       </select>
     ),
   },
   {
-    accessor: "assigned",
+    accessor: "assigned" as const,
     header: "Assigned",
   },
 ];
@@ -290,10 +301,10 @@ const StaffListTable = () => {
                     </CustomButton>
                 </div>
             </div>
-            */}
-            <GenericTable 
+            */}            <GenericTable 
                 columns={columns} 
                 rows={rows}
+                totalCount={staffData.length}
                 addNewTrigger={addstaff}
                 onBulkUpload={handleBulkUpload}
                 actionHandlers={{
