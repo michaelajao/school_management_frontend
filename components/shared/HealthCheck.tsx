@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { config } from '@/lib/api/config';
-import api from '@/lib/api/config';
+import { config } from '@/lib/config';
+import api from '@/lib/api';
 
 interface HealthStatus {
   status: 'checking' | 'connected' | 'disconnected';
@@ -17,18 +17,18 @@ interface HealthStatus {
 export function HealthCheck() {
   const [healthStatus, setHealthStatus] = useState<HealthStatus>({ status: 'checking' });
 
-  useEffect(() => {
-    const checkBackendHealth = async () => {
+  useEffect(() => {    const checkBackendHealth = async () => {
       try {
         setHealthStatus({ status: 'checking' });
         
-        const response = await api.get('/health', { timeout: 5000 });
+        // For staging, test with JSONPlaceholder API
+        const response = await api.get('/posts/1', { timeout: 5000 });
         
         setHealthStatus({
           status: 'connected',
           backendInfo: {
-            version: response.data?.version || 'unknown',
-            environment: response.data?.environment || 'unknown',
+            version: '1.0.0-staging',
+            environment: config.environment,
             timestamp: new Date().toISOString(),
           }
         });
