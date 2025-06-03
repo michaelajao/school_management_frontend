@@ -12,8 +12,8 @@ import {
     DropdownMenuRadioItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { CustomButton } from '../generalComp/custom-button.';
-
+import { CustomButton } from '@/components/shared/CustomButton.';
+import { GenericTable } from '@/components/ui/GenericTable';
 
 const staffData = [
     {
@@ -102,23 +102,74 @@ const staffData = [
 ];
 
 const StaffListTable = () => {
+    const [position, setPosition] = useState("subject-teacher")
     const router = useRouter();
+
     const managestaff = () => {
-        router.push("/dashboard/users/staff/managestaff");
+        router.push("/admin/manage/staff/managestaff");
     }
 
     const addstaff = () => {
-        router.push("/dashboard/users/staff/addstaff");
+        router.push("/admin/manage/staff/addstaff");
     }
 
-    const [position, setPosition] = useState("subject-teacher")
+    const handleBulkUpload = () => {
+        console.log("Bulk uploading CSV...");
+        router.push('/admin/data-upload');
+    };
+
+
+
+    // For generic table
+    const columns = [
+  {
+    accessor: "name",
+    header: "Name",
+    cell: (row) => (
+      <div className="flex items-center gap-2">
+        <img
+          src={row.imageUrl}
+          alt={row.name}
+          className="w-8 h-8 rounded-full object-cover"
+        />
+        <span className="text-xs md:text-sm px-2 md:px-0">
+          {row.name}
+        </span>
+      </div>
+    ),
+  },
+  {
+    accessor: "email",
+    header: "Email",
+  },
+  {
+    accessor: "role",
+    header: "Role",
+    cell: (row) => (
+      <select className="bg-blue-50 text-blue-700 text-sm px-2 py-1 rounded-lg border border-blue-200">
+        <option>{row.role}</option>
+      </select>
+    ),
+  },
+  {
+    accessor: "assigned",
+    header: "Assigned",
+  },
+];
+
+    const rows = staffData;
+
+
     return (
-        <div>
-            <div className="min-h-screen bg-[#fff] rounded-md mt-6 px-4">
+        <div className='bg-[#fff] rounded-md mt-4 p-4'>
+            <div>
                 <p className="text-2xl font-bold py-0.5">Staff Lists</p>
                 <h3 className="mb-5">
                     Create, update, delete and assign roles to staff
                 </h3>
+            </div>
+            {/* 
+            <div className="">
                 <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-4  mx-0 px-1 relative ">
                     <div className="w-full relative">
                         <input
@@ -239,6 +290,16 @@ const StaffListTable = () => {
                     </CustomButton>
                 </div>
             </div>
+            */}
+            <GenericTable 
+                columns={columns} 
+                rows={rows}
+                addNewTrigger={addstaff}
+                onBulkUpload={handleBulkUpload}
+                actionHandlers={{
+                    onView: managestaff,
+                }}
+                 />
         </div>
     )
 }

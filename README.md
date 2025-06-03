@@ -8,35 +8,246 @@ A feature-rich, role-based school management system front-end built with Next.js
 
 - [School Management Frontend](#school-management-frontend)
   - [Table of Contents](#table-of-contents)
+  - [Project Status](#project-status)
+    - [🟢 Fully Implemented Features](#-fully-implemented-features)
+      - [Core Infrastructure](#core-infrastructure)
+      - [User Onboarding \& Registration](#user-onboarding--registration)
+      - [Payment \& Pricing System](#payment--pricing-system)
+      - [Dashboard \& Navigation](#dashboard--navigation)
+    - [🟡 Partially Implemented Features](#-partially-implemented-features)
+      - [Admin Management (UI Complete, Logic Placeholder)](#admin-management-ui-complete-logic-placeholder)
+      - [Data Management](#data-management)
+    - [🔴 Placeholder/Disabled Features](#-placeholderdisabled-features)
+      - [Academic Management](#academic-management)
+      - [Advanced Features](#advanced-features)
+      - [Communication System](#communication-system)
+      - [Staff \& Student Management](#staff--student-management)
+    - [🔧 Technical Implementation Status](#-technical-implementation-status)
+      - [API Integration](#api-integration)
+      - [Security \& Authentication](#security--authentication)
+      - [Data Management](#data-management-1)
+    - [📋 Next Steps for Development](#-next-steps-for-development)
+      - [High Priority](#high-priority)
+      - [Medium Priority](#medium-priority)
+      - [Low Priority](#low-priority)
+    - [🎯 Feature Completion Overview](#-feature-completion-overview)
   - [Features](#features)
+    - [Core Functionality](#core-functionality)
+    - [Administrative Features](#administrative-features)
+    - [UI/UX Features](#uiux-features)
   - [Tech Stack](#tech-stack)
   - [Prerequisites](#prerequisites)
   - [Getting Started](#getting-started)
   - [Folder Structure](#folder-structure)
+  - [Routes Structure](#routes-structure)
   - [Key Flows](#key-flows)
     - [Onboarding](#onboarding)
-    - [Payment & Pricing](#payment--pricing)
-  - [UI Component Library & Styling](#ui-component-library--styling)
-  - [State Management & Context](#state-management--context)
+    - [Payment \& Pricing](#payment--pricing)
+  - [UI Component Library \& Styling](#ui-component-library--styling)
+  - [State Management \& Context](#state-management--context)
   - [Custom Hooks](#custom-hooks)
   - [Responsiveness](#responsiveness)
   - [Testing](#testing)
+  - [Available Scripts](#available-scripts)
+  - [Role-Based Features](#role-based-features)
+    - [Superadmin](#superadmin)
+    - [Admin](#admin)
+    - [Teacher](#teacher)
+    - [Parent](#parent)
+    - [Student](#student)
+  - [Environment Variables](#environment-variables)
+  - [API Routes](#api-routes)
+    - [User Management](#user-management)
+    - [Class Management](#class-management)
+  - [Deployment](#deployment)
+    - [Vercel (Recommended)](#vercel-recommended)
+    - [Manual Deployment](#manual-deployment)
+    - [Docker Deployment](#docker-deployment)
+  - [Performance Considerations](#performance-considerations)
+  - [Security Features](#security-features)
+  - [Troubleshooting](#troubleshooting)
+    - [Common Issues](#common-issues)
+    - [Getting Help](#getting-help)
+  - [Future Enhancements](#future-enhancements)
   - [Contributing](#contributing)
   - [License](#license)
+
+## Project Status
+
+This section provides a comprehensive overview of the current implementation status across all features and modules of the school management system.
+
+### 🟢 Fully Implemented Features
+
+#### Core Infrastructure
+
+- ✅ **Next.js 15 App Router Structure** - Complete routing setup with role-based access
+- ✅ **Authentication System** - Mock authentication with localStorage persistence
+- ✅ **Theme System** - Light/dark mode support with next-themes
+- ✅ **Component Library** - Full Shadcn UI integration with custom components
+- ✅ **Responsive Design** - Mobile, tablet, and desktop layouts
+- ✅ **Form Validation** - Custom useFormValidation hook with error handling
+
+#### User Onboarding & Registration
+
+- ✅ **Multi-Role Registration** - Complete onboarding flows for all user types
+- ✅ **School Registration** - Full school setup with branding and configuration
+- ✅ **Profile Management** - User profile creation and editing
+- ✅ **Country/Region Selection** - Integrated location selectors
+
+#### Payment & Pricing System
+
+- ✅ **Pricing Plans Display** - Subscription plans with feature comparison
+- ✅ **Mock Payment Processing** - Complete payment flow simulation
+- ✅ **Payment State Management** - Zustand store for pricing flow
+- ✅ **Success/Failure Handling** - Payment confirmation and error states
+
+#### Dashboard & Navigation
+
+- ✅ **Role-Based Dashboards** - Tailored interfaces for each user type
+- ✅ **Sidebar Navigation** - Responsive navigation with role-specific menus
+- ✅ **Header Components** - User profile, notifications, and settings
+- ✅ **Layout System** - Consistent page layouts across the application
+
+### 🟡 Partially Implemented Features
+
+#### Admin Management (UI Complete, Logic Placeholder)
+
+- 🟡 **User Management Interface** - Complete UI with mock data, needs backend integration
+- 🟡 **Analytics Dashboard** - Charts and metrics display, needs real data integration
+- 🟡 **School Settings** - Configuration interface built, needs data persistence
+- 🟡 **Communication Hub** - Announcement interface ready, needs messaging system
+
+#### Data Management
+
+- 🟡 **Data Import/Export** - UI components built, file processing needs implementation
+- 🟡 **Bulk Operations** - Interface ready, backend operations needed
+- 🟡 **Data Validation** - Frontend validation complete, server-side validation needed
+
+### 🔴 Placeholder/Disabled Features
+
+#### Academic Management
+
+- ❌ **Attendance Management** (`components/admin/AttendanceManagement.tsx`) - Disabled with placeholder UI
+- ❌ **Timetable Management** (`components/admin/TimetableManagement.tsx`) - Disabled with placeholder UI  
+- ❌ **Assignments Management** (`components/admin/AssignmentsManagement.tsx`) - Disabled with placeholder UI
+- ❌ **Grade Management** - Interface exists but functionality disabled
+- ❌ **Curriculum Management** - Placeholder implementation
+
+#### Advanced Features
+
+- ❌ **Class Attendance Tracking** (`app/(users)/admin/manage/academics/classes/view_class_attendance/`) - Multiple placeholder pages
+- ❌ **Performance Analytics** - Charts displayed with mock data only
+- ❌ **Report Generation** - Interface present but report generation disabled
+- ❌ **Calendar Integration** - Calendar components exist but event management disabled
+
+#### Communication System
+
+- ❌ **Real-time Messaging** - Basic UI implemented, WebSocket integration needed
+- ❌ **Notification System** - Toast notifications work, but persistent notifications placeholder
+- ❌ **Email Integration** - Interface exists but email sending disabled
+- ❌ **Parent-Teacher Communication** - Chat interface placeholder
+
+#### Staff & Student Management
+
+- ❌ **Staff Performance Tracking** - Dashboard exists but metrics are mock
+- ❌ **Student Progress Monitoring** - Charts and graphs show placeholder data
+- ❌ **Behavior Management** - Interface built but tracking disabled
+- ❌ **Health Records** - Forms exist but data handling placeholder
+
+### 🔧 Technical Implementation Status
+
+#### API Integration
+
+- ❌ **Backend API Calls** - All API routes are mock implementations
+- ❌ **Database Integration** - No real database connections
+- ❌ **File Upload System** - UI components ready, upload logic placeholder
+- ❌ **Real-time Features** - WebSocket connections not implemented
+
+#### Security & Authentication
+
+- 🟡 **Route Protection** - Basic role-based access implemented
+- ❌ **JWT Authentication** - Currently using mock localStorage authentication
+- ❌ **Permission System** - Fine-grained permissions not implemented
+- ❌ **Audit Logging** - User action tracking placeholder
+
+#### Data Management
+
+- ❌ **CRUD Operations** - Most forms exist but don't persist data
+- ❌ **Search & Filtering** - UI components present but search logic disabled
+- ❌ **Data Synchronization** - Real-time data updates not implemented
+- ❌ **Backup & Recovery** - No data backup systems
+
+### 📋 Next Steps for Development
+
+#### High Priority
+
+1. **Backend API Integration** - Connect frontend forms to real API endpoints
+2. **Database Setup** - Implement data persistence for all management features
+3. **Authentication System** - Replace mock auth with real JWT-based system
+4. **Enable Academic Management** - Activate attendance, timetable, and assignment features
+
+#### Medium Priority
+
+1. **Real-time Features** - Implement WebSocket connections for live updates
+2. **File Upload System** - Complete document and media upload functionality
+3. **Advanced Analytics** - Connect charts to real data sources
+4. **Communication System** - Build complete messaging and notification system
+
+#### Low Priority
+
+1. **Mobile App Integration** - Prepare APIs for mobile client
+2. **Third-party Integrations** - Connect with external services
+3. **Advanced Reporting** - Build comprehensive report generation
+4. **Performance Optimization** - Optimize for large-scale deployment
+
+### 🎯 Feature Completion Overview
+
+| Module | UI Complete | Logic Complete | Backend Ready | Status |
+|--------|-------------|----------------|---------------|---------|
+| Authentication | ✅ | 🟡 | ❌ | 70% |
+| User Management | ✅ | ❌ | ❌ | 40% |
+| School Setup | ✅ | ✅ | ❌ | 80% |
+| Payment System | ✅ | ✅ | ❌ | 90% |
+| Dashboard | ✅ | 🟡 | ❌ | 60% |
+| Academic Management | 🟡 | ❌ | ❌ | 20% |
+| Communication | 🟡 | ❌ | ❌ | 30% |
+| Analytics | ✅ | ❌ | ❌ | 40% |
+| Staff Management | ✅ | ❌ | ❌ | 35% |
+
+**Overall Project Completion: ~50%**
+
+The frontend infrastructure and user experience flows are largely complete, but most business logic and backend integrations are placeholders awaiting implementation.
 
 ---
 
 ## Features
 
-- Multi-role onboarding (Superadmin, Admin, Teacher, Parent, Student) with dedicated forms.
-- Mock payment and subscription pricing flows using Zustand for state persistence.
-- Dynamic forms featuring a reusable validation hook (`useFormValidation`) for clear error handling.
-- Country and region selectors (`react-country-region-selector`) integrated with form styling.
-- Consistent and accessible design system powered by Shadcn UI (Radix UI primitives + Tailwind CSS).
-- Light/Dark theme support via `next-themes`.
-- Responsive layout adapting to mobile, tablet, and desktop views.
-- Simulated authentication flow using React Context and `localStorage`.
-- Toast notifications for user feedback via Sonner.
+### Core Functionality
+- Multi-role onboarding (Superadmin, Admin, Teacher, Parent, Student) with dedicated forms
+- Role-based dashboards with tailored functionality for each user type
+- Mock payment and subscription pricing flows using Zustand for state persistence
+- Simulated authentication flow using React Context and `localStorage`
+- Dynamic forms featuring a reusable validation hook (`useFormValidation`) for clear error handling
+
+### Administrative Features
+- **School Management**: Complete school setup and configuration
+- **User Management**: Add, edit, delete users across all roles
+- **Class Management**: Create and manage classes, assignments, and timetables
+- **Communication**: Announcements and messaging system
+- **Academic Management**: Course management, grading, and performance tracking
+- **Attendance Management**: Track and manage student attendance
+- **Staff Management**: Comprehensive staff information and role management
+- **Data Import/Export**: Bulk data operations for efficient management
+
+### UI/UX Features
+- Consistent and accessible design system powered by Shadcn UI (Radix UI primitives + Tailwind CSS)
+- Light/Dark theme support via `next-themes`
+- Responsive layout adapting to mobile, tablet, and desktop views
+- Country and region selectors (`react-country-region-selector`) integrated with form styling
+- Toast notifications for user feedback via Sonner
+- Advanced data visualization with charts and analytics
+- Modal dialogs for streamlined workflows
+- Search and filtering capabilities
 
 ---
 
@@ -92,23 +303,108 @@ A feature-rich, role-based school management system front-end built with Next.js
 ## Folder Structure
 
 ```
-/app                 # Next.js App Router (routes, layouts, pages)
-/components          # Reusable UI components & feature-specific views
-  /auth              # Authentication related components
-  /Home              # Components for the main landing page
-  /modal             # Modal dialog components
-  /onboarding        # Onboarding flow components (registration, role-specific forms)
-  /PricingView       # Pricing page components
-  /ui                # Base Shadcn UI components (Button, Card, Input, etc.)
-  theme-provider.tsx # Provider for next-themes
-  theme-switcher.tsx # Component to toggle theme
-/contexts            # React context providers (AuthContext)
-/hooks               # Custom React hooks (useFormValidation, useMobile)
-/lib                 # Utility functions (e.g., cn for class merging)
-/store               # Zustand state management stores (usePricingStore)
-/_tests_             # Unit and integration tests using Jest & RTL
-/public              # Static assets (images, icons, fonts)
-# Configuration files (next.config.ts, tailwind.config.ts, tsconfig.json, etc.)
+/app                     # Next.js App Router (routes, layouts, pages)
+  /(users)/             # Protected user routes
+    /admin/             # Admin-specific routes
+    /superadmin/        # Superadmin-specific routes
+  /api/                 # API route handlers
+    /classes/           # Class management endpoints
+    /users/             # User management endpoints
+  /auth/                # Authentication pages
+    /signin/            # Sign-in page
+    /signup/            # Sign-up page
+  /dashboard/           # Dashboard routes
+    /superadmin/        # Superadmin analytics dashboard
+  /mockPayment/         # Mock payment processing page
+  /onboarding/          # Onboarding flow pages
+    /admin/             # Admin onboarding
+    /parent/            # Parent onboarding
+    /student/           # Student onboarding
+    /teacher/           # Teacher onboarding
+  /paymentGateway/      # Pricing and subscription page
+  /register/            # Registration flows
+    /school/            # School registration
+
+/components              # Reusable UI components & feature-specific views
+  /admin/               # Admin-specific components
+    *.tsx               # Various admin management components
+    /annoucement/       # Admin announcement components
+    /parents/           # Parent management components
+    /students/          # Student management components
+  /auth/                # Authentication related components
+  /dashboard/           # Dashboard components
+  /Home/                # Landing page components
+  /layout/              # Layout components (Header, Sidebar, etc.)
+    /sidebar/           # Sidebar navigation components
+  /modal/               # Modal dialog components
+  /onboarding/          # Onboarding flow components
+  /PricingView/         # Pricing page components
+  /shared/              # Shared/common components
+  /StaffDashboard/      # Staff management components
+  /superadmin/          # Superadmin-specific components
+  /ui/                  # Base Shadcn UI components (Button, Card, Input, etc.)
+  theme-provider.tsx    # Provider for next-themes
+  theme-switcher.tsx    # Component to toggle theme
+
+/contexts               # React context providers
+  auth-context.tsx      # Authentication context
+
+/hooks                  # Custom React hooks
+  use-mobile.ts         # Mobile/responsive detection hook
+  useFormValidation.ts  # Form validation hook
+
+/lib                    # Utility functions and configurations
+  fakeData.ts          # Mock data for development
+  utils.ts             # Utility functions (cn class merger, etc.)
+  validatePassword.ts   # Password validation utilities
+
+/store                  # Zustand state management stores
+  parentStore.ts        # Parent-specific state management
+  usePricingStore.ts    # Pricing flow state management
+
+/_tests_                # Unit and integration tests using Jest & RTL
+  Home.test.tsx         # Home page tests
+  Onboarding.test.tsx   # Onboarding flow tests
+
+/public                 # Static assets (images, icons, fonts)
+  /icons/               # Icon assets
+  *.jpg, *.svg          # Various static images and assets
+
+# Configuration files
+components.json         # Shadcn UI configuration
+eslint.config.mjs      # ESLint configuration
+jest.config.js         # Jest testing configuration
+jest.setup.ts          # Jest setup file
+next.config.ts         # Next.js configuration
+package.json           # Dependencies and scripts
+postcss.config.mjs     # PostCSS configuration
+tailwind.config.ts     # Tailwind CSS configuration
+tsconfig.json          # TypeScript configuration
+```
+
+## Routes Structure
+
+```
+/                           # Landing page
+/auth/signin               # User sign-in page
+/auth/signup               # User registration page
+/onboarding                # Initial user registration flow
+/onboarding/admin          # Admin/Superadmin onboarding
+/onboarding/teacher        # Teacher onboarding
+/onboarding/parent         # Parent onboarding
+/onboarding/student        # Student onboarding
+/paymentGateway           # Subscription pricing plans
+/mockPayment              # Mock payment processing
+/register/school          # School registration
+
+# Protected User Routes
+/(users)/admin            # Admin dashboard home
+/(users)/superadmin       # Superadmin dashboard home
+/dashboard/superadmin     # Superadmin analytics dashboard
+
+# API Routes
+/api/users                # User management endpoints
+/api/classes              # Class management endpoints
 ```
 
 ---
@@ -169,6 +465,200 @@ A feature-rich, role-based school management system front-end built with Next.js
 - **Jest**: The primary testing framework, configured in `jest.config.js` and `jest.setup.ts`.
 - **React Testing Library (RTL)**: Used for writing tests that interact with components similarly to how a user would. Encourages accessible and maintainable tests.
 - Sample tests are located in the `_tests_` directory (e.g., `Home.test.tsx`, `Onboarding.test.tsx`). Run tests using `npm test` or `yarn test`.
+
+---
+
+## Available Scripts
+
+In the project directory, you can run:
+
+- **`npm run dev`** - Runs the app in development mode with Turbopack
+- **`npm run build`** - Builds the app for production
+- **`npm start`** - Runs the built app in production mode
+- **`npm run lint`** - Runs ESLint to check code quality
+- **`npm test`** - Launches the test runner in watch mode
+
+---
+
+## Role-Based Features
+
+### Superadmin
+- Complete system overview and analytics
+- School configuration and branding
+- Subscription and payment management
+- Global system settings
+- Multi-school management capabilities
+
+### Admin
+- School-specific dashboard and analytics
+- User management (teachers, parents, students)
+- Class and academic management
+- Communication and announcements
+- Attendance oversight
+- Performance monitoring
+
+### Teacher
+- Class management and assignments
+- Student attendance tracking
+- Grade management
+- Parent-teacher communication
+- Timetable management
+
+### Parent
+- Child's academic progress monitoring
+- Attendance tracking
+- Communication with teachers
+- Fee payment status
+- School announcements
+
+### Student
+- Personal dashboard
+- Assignment submissions
+- Grade viewing
+- Attendance history
+- School announcements
+
+---
+
+## Environment Variables
+
+Create a `.env.local` file in the root directory:
+
+```env
+# Application
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+NEXT_PUBLIC_APP_NAME="School Management System"
+
+# Theme
+NEXT_PUBLIC_DEFAULT_THEME=light
+
+# Mock API (for development)
+NEXT_PUBLIC_MOCK_API=true
+```
+
+---
+
+## API Routes
+
+The application includes mock API routes for development:
+
+### User Management
+- `GET /api/users` - Fetch all users
+- `POST /api/users` - Create new user
+- `PUT /api/users/[id]` - Update user
+- `DELETE /api/users/[id]` - Delete user
+
+### Class Management
+- `GET /api/classes` - Fetch all classes
+- `POST /api/classes` - Create new class
+- `PUT /api/classes/[id]` - Update class
+- `DELETE /api/classes/[id]` - Delete class
+
+---
+
+## Deployment
+
+### Vercel (Recommended)
+
+1. Push your code to GitHub
+2. Connect your repository to [Vercel](https://vercel.com)
+3. Configure environment variables in Vercel dashboard
+4. Deploy automatically on push to main branch
+
+### Manual Deployment
+
+1. Build the project:
+   ```bash
+   npm run build
+   ```
+
+2. Start the production server:
+   ```bash
+   npm start
+   ```
+
+### Docker Deployment
+
+Create a `Dockerfile`:
+
+```dockerfile
+FROM node:18-alpine
+
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+COPY . .
+RUN npm run build
+
+EXPOSE 3000
+CMD ["npm", "start"]
+```
+
+---
+
+## Performance Considerations
+
+- **Image Optimization**: Uses Next.js Image component for automatic optimization
+- **Code Splitting**: Automatic route-based code splitting with Next.js
+- **Bundle Analysis**: Run `npm run build` to see bundle size analysis
+- **Lazy Loading**: Components are lazy-loaded where appropriate
+- **Caching**: Leverages Next.js caching strategies for optimal performance
+
+---
+
+## Security Features
+
+- **Authentication**: Simulated auth with secure localStorage persistence
+- **Role-Based Access**: Route protection based on user roles
+- **Form Validation**: Client-side validation with error handling
+- **XSS Protection**: React's built-in XSS protection
+- **CSRF Protection**: Next.js built-in CSRF protection
+
+---
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Development server won't start**
+   ```bash
+   # Clear cache and reinstall dependencies
+   rm -rf .next node_modules package-lock.json
+   npm install
+   npm run dev
+   ```
+
+2. **Build errors**
+   ```bash
+   # Check TypeScript errors
+   npm run lint
+   # Fix any TypeScript issues before building
+   ```
+
+3. **Styling issues**
+   ```bash
+   # Regenerate Tailwind classes
+   npm run build
+   ```
+
+### Getting Help
+
+- Check the [Next.js Documentation](https://nextjs.org/docs)
+- Review [Tailwind CSS Documentation](https://tailwindcss.com/docs)
+- Consult [Shadcn UI Documentation](https://ui.shadcn.com)
+
+---
+
+## Future Enhancements
+
+- Real-time notifications with WebSockets
+- File upload and document management
+- Advanced reporting and analytics
+- Mobile app integration
+- Multi-language support
+- Real payment gateway integration
+- Calendar and scheduling system
+- Video conferencing integration
 
 ---
 

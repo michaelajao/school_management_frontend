@@ -69,7 +69,7 @@ export default function StudentProfileClient({ studentData, studentId }: Student
               <Button 
                 className="flex-1 bg-teal-600 hover:bg-teal-700 text-white gap-1" 
                 size="sm" 
-                onClick={() => router.push(`/dashboard/users/students/${studentId}/edit`)}
+                onClick={() => router.push(`/admin/manage/students/${studentId}/edit`)}
               >
                 <Mail size={16} />
                 <span>Edit Form</span>

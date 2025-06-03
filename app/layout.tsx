@@ -23,11 +23,10 @@ export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>) {
-  return (
+}>) {  return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ` }
+        className={`${geistSans.variable} ${geistMono.variable}`}
       >
         <AuthProvider>
           {children}

@@ -75,7 +75,7 @@ export default function StudentEditFormClient({
     //   await updateStudent(studentId, updatedData);
       
       // Redirect back to student profile
-      router.push(`/dashboard/users/students/${studentId}`);
+      router.push(`/admin/manage/students/${studentId}`);
     } catch (error) {
       console.error("Error saving student data:", error);
       // Handle error (could set error state and display to user)
@@ -85,11 +85,11 @@ export default function StudentEditFormClient({
   };
 
   const handleCancel = () => {
-    router.push(`/dashboard/users/students/${studentId}`);
+    router.back();
   };
 
   const handleBack = () => {
-    router.push(`/dashboard/users/students/${studentId}`);
+    router.push(`/admin/manage/students/${studentId}`);
   };
 
   const inputStyles =

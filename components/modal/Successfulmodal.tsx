@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useRouter } from "next/navigation";
 
 type SuccessModalProps = {
@@ -32,7 +32,9 @@ export default function SuccessModal({ open, onOpenChange }: SuccessModalProps) 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="text-center">
-        <h2 className="text-2xl font-bold mb-2">Success!</h2>
+        <DialogHeader>
+          <DialogTitle className="text-2xl font-bold mb-2">Success!</DialogTitle>
+        </DialogHeader>
         <p className="mb-4">
           You will be redirected in <span className="font-semibold">{count}</span> second{count !== 1 && "s"}...
         </p>

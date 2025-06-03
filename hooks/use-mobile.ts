@@ -8,8 +8,12 @@ interface UseDeviceOutput {
 const useMobile = (): UseDeviceOutput => {
     const [isMobile, setIsMobile] = useState(false);
     const [isTablet, setIsTablet] = useState(false);
+    const [isClient, setIsClient] = useState(false);
 
     useEffect(() => {
+        // Mark that we're on the client side
+        setIsClient(true);
+        
         const checkDevice = () => {
             const width = window.innerWidth;
             setIsMobile(width < 768); // Mobile breakpoint
@@ -26,7 +30,11 @@ const useMobile = (): UseDeviceOutput => {
         return () => window.removeEventListener('resize', checkDevice);
     }, []);
 
-    return { isMobile, isTablet };
+    // Return false for both during SSR to prevent hydration mismatch
+    return { 
+        isMobile: isClient ? isMobile : false, 
+        isTablet: isClient ? isTablet : false 
+    };
 };
 
 export default useMobile;

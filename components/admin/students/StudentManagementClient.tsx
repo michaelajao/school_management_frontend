@@ -4,8 +4,9 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useCallback } from "react";
-import { SummaryCard } from "@/components/admin/parents/SummaryCard";
 import { GenericTable } from "@/components/ui/GenericTable";
+import { DashboardMetrics } from "@/components/shared/DashboardMetrics";
+import { GraduationCap } from 'lucide-react'
 
 export interface StudentManagementClientProps {
   summaryData: {
@@ -25,8 +26,33 @@ export default function StudentManagementClient({
   const router = useRouter();
   const [globalLoading, setGlobalLoading] = useState(false);
 
+  const studentMetrics = [
+    {
+      icon: GraduationCap,
+      label: "Total Students",
+      value: summaryData.totalParents,
+      primaryColor: "#008080",
+      secondaryColor: "#BDFAFF4D"
+    },
+    {
+      icon: '/icons/people.svg',
+      label: "Male Students",
+      value: summaryData.activeParents,
+      primaryColor: "#FF9F43",
+      secondaryColor: "#FFAB5A33"
+
+    },
+    {
+      icon: '/icons/femalepeople.svg',
+      label: "Female Students",
+      value: summaryData.pendingParents,
+      primaryColor: "#6A24FF",
+      secondaryColor: "#6A24FF26",
+    }
+  ]
+
   const handlenewStudent = useCallback(() => {
-    router.push("/dashboard/users/students/addnew");
+    router.push("/admin/manage/students/addnew");
   }, [router]);
 
   const handleDeleteStudent = useCallback(async (row: { id: any; }) => {
@@ -52,7 +78,7 @@ export default function StudentManagementClient({
   }, []);
 
   const handleViewStudent = useCallback((row: { id: any; }) => {
-    router.push(`/dashboard/users/students/${row.id}`);
+    router.push(`/admin/manage/students/${row.id}`);
   }, [router]);
 
   return (
@@ -63,29 +89,10 @@ export default function StudentManagementClient({
       </section>
 
       {/* Summary Metrics section */}
-      <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 my-4">
-        <SummaryCard
-          label="Total Parent / Guardian"
-          value={summaryData.totalParents}
-          icon={"/graduationcap.svg"}
-          textColor="#008080"
-          bgColor="#BDFAFF4D"
-        />
-        <SummaryCard
-          label="Male Students"
-          value={summaryData.activeParents}
-          icon={"/people.svg"}
-          textColor="#FF9F43"
-          bgColor="#FFAB5A33"
-        />
-        <SummaryCard
-          label="Female Students"
-          value={summaryData.pendingParents}
-          icon={"/femalepeople.svg"}
-          textColor="#6A24FF"
-          bgColor="#6A24FF26"
-        />
-      </section>
+      <div className="my-6">
+        <DashboardMetrics metrics={studentMetrics} />
+      </div>
+
 
       {/* Student Table */}
       <div className="bg-white rounded-xl p-4 space-y-4">
