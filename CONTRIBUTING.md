@@ -1,5 +1,25 @@
 # Contributing
 
+## Current Project Status (June 2025)
+
+🚀 **Latest Updates:**
+- ✅ Backend dependency issues resolved - NestJS server now starts successfully
+- ✅ Authentication system implemented with JWT and role-based access control
+- ✅ API integration layer complete with error handling and interceptors
+- 🟡 Database connection pending - PostgreSQL setup required for full functionality
+- 📚 Updated documentation with comprehensive testing and deployment guides
+
+**Ready for Contributions:**
+- Frontend-backend integration testing
+- Database migration setup and testing
+- UI/UX improvements and responsive design enhancements
+- Test coverage improvements
+- Documentation updates and translations
+
+See [TESTING_GUIDE.md](./TESTING_GUIDE.md) for authentication testing procedures and [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) for setup instructions.
+
+---
+
 ## Table of Contents
 1. [Getting Started](#getting-started)
 2. [Learn More](#learn-more)
