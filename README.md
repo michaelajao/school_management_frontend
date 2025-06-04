@@ -60,7 +60,6 @@ A feature-rich, role-based school management system front-end built with Next.js
     - [User Management](#user-management)
     - [Class Management](#class-management)
   - [Deployment](#deployment)
-    - [Vercel (Recommended)](#vercel-recommended)
     - [Manual Deployment](#manual-deployment)
     - [Docker Deployment](#docker-deployment)
   - [Performance Considerations](#performance-considerations)
@@ -607,13 +606,6 @@ The application includes mock API routes for development:
 ---
 
 ## Deployment
-
-### Vercel (Recommended)
-
-1. Push your code to GitHub
-2. Connect your repository to [Vercel](https://vercel.com)
-3. Configure environment variables in Vercel dashboard
-4. Deploy automatically on push to main branch
 
 ### Manual Deployment
 

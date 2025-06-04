@@ -124,14 +124,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         email: response.user.email,
         role: response.user.role.toLowerCase() === 'super_admin' ? 'superadmin' : 
               response.user.role.toLowerCase() as User['role'],
-      };
+      };      setUser(localUser);
 
-      setUser(localUser);
-
-      // Redirect to payment gateway or onboarding
-      const redirectPath = `/paymentGateway`;
-      console.log(`Redirecting to: ${redirectPath}`);
-      router.push(redirectPath);
+      // Redirect to appropriate dashboard based on role
+      router.push(`/dashboard/${localUser.role}`);
       
     } catch (error) {
       console.error("Signup failed:", error);

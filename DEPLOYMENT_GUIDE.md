@@ -42,7 +42,7 @@ DATABASE_URL=postgresql://user:password@host:port/database
 JWT_SECRET=your-super-secret-jwt-key-here
 NODE_ENV=staging
 PORT=4000
-CORS_ORIGIN=https://your-app-staging.vercel.app
+CORS_ORIGIN=https://your-app-staging-url
 ```
 
 ## Database Setup:
