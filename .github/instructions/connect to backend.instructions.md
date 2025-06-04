@@ -6,7 +6,7 @@ applyTo: '**'
 
 ## Overview for AI Models
 
-You are building a comprehensive, cost-efficient, multi-tenant school management system optimized for African educational markets. This system must support offline functionality, low-bandwidth environments, and provide AI-powered features while maintaining strict security and tenant isolation.
+You are building a comprehensive, cost-efficient, multi-tenant school management system optimized for African educational markets. This system must support offline functionality, low-bandwidth environments, and provide AI-powered features while maintaining strict security and tenant isolation. the back end codebase is also in this same workspace.
 
 ---
 

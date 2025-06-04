@@ -1,10 +1,6 @@
-import HomeIndex from "@/components/Home";
-
+import { redirect } from 'next/navigation';
 
 export default function Home() {
- 
-
-  return (
-    <HomeIndex />
-  );
+  // Redirect directly to authentication since we've removed the landing page
+  redirect('/auth/signin');
 }

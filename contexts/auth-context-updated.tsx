@@ -18,7 +18,7 @@ type User = {
 type AuthContextType = {
   user: User | null;
   loading: boolean;
-  login: (identifier: string, password: string, role: User['role']) => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
   signup: (email: string, password: string) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
@@ -79,18 +79,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     
     checkAuth();
   }, []);
-  const login = async (identifier: string, password: string, role: User['role']) => {
+
+  const login = async (email: string, password: string) => {
     setLoading(true);
     try {
-      // Map frontend role to backend role format
-      const backendRole = role === 'superadmin' ? 'SUPER_ADMIN' : 
-                         role.toUpperCase() as LoginCredentials['role'];
-      
-      const credentials: LoginCredentials = { 
-        identifier, 
-        password, 
-        role: backendRole 
-      };
+      const credentials: LoginCredentials = { email, password };
       const response = await AuthApiService.login(credentials);
       
       // Convert API user to local user format

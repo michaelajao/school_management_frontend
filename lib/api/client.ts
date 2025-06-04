@@ -15,10 +15,9 @@ export interface ApiResponse<T = any> {
 class ApiClient {
   private client: AxiosInstance;
   private static instance: ApiClient;
-
   constructor() {
     this.client = axios.create({
-      baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000',
+      baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:4000',
       timeout: 10000,
       headers: {
         'Content-Type': 'application/json',

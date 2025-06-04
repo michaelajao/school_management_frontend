@@ -90,7 +90,6 @@ export function RoleLoginForm({ role }: RoleLoginFormProps) {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
@@ -102,7 +101,7 @@ export function RoleLoginForm({ role }: RoleLoginFormProps) {
     setIsLoading(true);
     
     try {
-      await login(formData.email, formData.password);
+      await login(formData.email, formData.password, role);
       toast.success(`Welcome back, ${roleDisplayNames[role]}!`);
       
       // Redirect will be handled by the auth context

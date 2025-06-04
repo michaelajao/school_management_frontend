@@ -1,8 +1,9 @@
 import { apiClient } from './client';
 
 export interface LoginCredentials {
-  email: string;
+  identifier: string;
   password: string;
+  role: 'SUPER_ADMIN' | 'ADMIN' | 'TEACHER' | 'STUDENT' | 'PARENT' | 'SCHOOL_MANAGEMENT';
 }
 
 export interface RegisterData {
@@ -16,7 +17,8 @@ export interface RegisterData {
 }
 
 export interface AuthResponse {
-  access_token: string;
+  accessToken: string;
+  refreshToken: string;
   user: User;
 }
 
@@ -25,14 +27,15 @@ export interface User {
   email: string;
   firstName: string;
   lastName: string;
-  role: 'SUPER_ADMIN' | 'ADMIN' | 'TEACHER' | 'STUDENT' | 'PARENT';
+  role: 'SUPER_ADMIN' | 'ADMIN' | 'TEACHER' | 'STUDENT' | 'PARENT' | 'SCHOOL_MANAGEMENT';
   phoneNumber?: string;
   address?: string;
   profilePicture?: string;
-  isActive: boolean;
-  emailVerified: boolean;
-  createdAt: string;
-  updatedAt: string;
+  schoolId?: string;
+  isActive?: boolean;
+  emailVerified?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface RefreshTokenResponse {
@@ -41,9 +44,8 @@ export interface RefreshTokenResponse {
 
 export class AuthApiService {
   private static readonly BASE_PATH = '/auth';
-
   /**
-   * Login user with email and password
+   * Login user with identifier (email/student ID/staff ID) and password
    */
   static async login(credentials: LoginCredentials): Promise<AuthResponse> {
     try {
@@ -53,12 +55,14 @@ export class AuthApiService {
       );
       
       // Store token for future requests
-      if (response.access_token) {
-        apiClient.setAuthToken(response.access_token);
+      if (response.accessToken) {
+        apiClient.setAuthToken(response.accessToken);
         
-        // Store user data
+        // Store user data and tokens
         if (typeof window !== 'undefined') {
           localStorage.setItem('user_data', JSON.stringify(response.user));
+          localStorage.setItem('access_token', response.accessToken);
+          localStorage.setItem('refresh_token', response.refreshToken);
         }
       }
       
@@ -67,25 +71,25 @@ export class AuthApiService {
       console.error('Login error:', error);
       throw error;
     }
-  }
-
-  /**
-   * Register new user
+  }  /**
+   * Register new user (public registration)
    */
   static async register(userData: RegisterData): Promise<AuthResponse> {
     try {
       const response = await apiClient.post<AuthResponse>(
-        `${this.BASE_PATH}/register`,
+        `${this.BASE_PATH}/public-register`,
         userData
       );
       
       // Store token for future requests
-      if (response.access_token) {
-        apiClient.setAuthToken(response.access_token);
+      if (response.accessToken) {
+        apiClient.setAuthToken(response.accessToken);
         
-        // Store user data
+        // Store user data and tokens
         if (typeof window !== 'undefined') {
           localStorage.setItem('user_data', JSON.stringify(response.user));
+          localStorage.setItem('access_token', response.accessToken);
+          localStorage.setItem('refresh_token', response.refreshToken);
         }
       }
       

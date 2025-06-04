@@ -10,12 +10,13 @@ import { AuthLayout } from "@/components/auth/auth-layout";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { validatePassword } from "@/lib/validatePassword";
+import { AuthApiService } from "@/lib/api/auth";
 
 const roles = [
-  { value: "admin", label: "Admin" },
-  { value: "teacher", label: "Teacher" },
-  { value: "student", label: "Student" },
-  { value: "parent", label: "Parent" }
+  { value: "ADMIN", label: "Admin" },
+  { value: "TEACHER", label: "Teacher" },
+  { value: "STUDENT", label: "Student" },
+  { value: "PARENT", label: "Parent" }
 ];
 
 export function CreateAccountForm() {
@@ -101,7 +102,6 @@ export function CreateAccountForm() {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
@@ -113,20 +113,32 @@ export function CreateAccountForm() {
     setIsLoading(true);
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Store user data (in real app, this would be sent to API)
-      localStorage.setItem("userData", JSON.stringify(formData));
+      // Call backend API for registration
+      const registerData = {
+        email: formData.email.trim(),
+        password: formData.password,
+        firstName: formData.firstName.trim(),
+        lastName: formData.lastName.trim(),
+        role: formData.role as 'ADMIN' | 'TEACHER' | 'STUDENT' | 'PARENT',
+        phoneNumber: formData.phone.trim()
+      };
+
+      const response = await AuthApiService.register(registerData);
       
       toast.success("Account created successfully!");
       
-      // Redirect to login page based on role
-      router.push(`/auth/login/${formData.role.toLowerCase()}`);
+      // Redirect to login page
+      router.push("/auth/signin");
       
-    } catch (error) {
+    } catch (error: any) {
       console.error("Account creation error:", error);
-      toast.error("Failed to create account. Please try again.");
+      
+      // Handle specific API errors
+      const errorMessage = error?.response?.data?.message || 
+                          error?.message || 
+                          "Failed to create account. Please try again.";
+      
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
