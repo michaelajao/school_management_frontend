@@ -26,6 +26,24 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Helper function to get correct dashboard path
+const getDashboardPath = (role: User['role']): string => {
+  switch (role) {
+    case 'admin':
+      return '/(users)/admin';
+    case 'teacher':
+      return '/(users)/teacher';
+    case 'student':
+      return '/(users)/student';
+    case 'parent':
+      return '/(users)/parent';
+    case 'superadmin':
+      return '/(users)/superadmin';
+    default:
+      return '/(users)/admin'; // Default fallback
+  }
+};
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -124,10 +142,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       };
       
       setUser(localUser);
-      
-      // Redirect based on returned role (not the requested role)
+        // Redirect based on returned role (not the requested role)
       // This ensures proper redirection if server assigns a different role
-      router.push(`/dashboard/${localUser.role}`);
+      const dashboardPath = getDashboardPath(localUser.role);
+      router.push(dashboardPath);
       
     } catch (error) {
       console.error("Login failed:", error);
@@ -158,11 +176,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         role: response.user.role?.toLowerCase() === 'super_admin' ? 'superadmin' : 
               response.user.role?.toLowerCase() as User['role'] || 'student',
       };
-      
-      setUser(localUser);
+        setUser(localUser);
 
-      // Redirect to dashboard
-      router.push(`/dashboard/${localUser.role}`);
+      // Redirect to dashboard using correct path
+      const dashboardPath = getDashboardPath(localUser.role);
+      router.push(dashboardPath);
       
     } catch (error) {
       console.error("Signup failed:", error);

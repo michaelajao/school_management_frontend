@@ -18,25 +18,21 @@ const roleConfig = {
   admin: {
     title: "Admin Login",
     description: "Access your administrative dashboard",
-    redirectPath: "/dashboard/admin",
     backendRole: "ADMIN"
   },
   teacher: {
     title: "Teacher Login", 
     description: "Access your teaching dashboard",
-    redirectPath: "/dashboard/teacher",
     backendRole: "TEACHER"
   },
   student: {
     title: "Student Login",
     description: "Access your student portal",
-    redirectPath: "/dashboard/student",
     backendRole: "STUDENT"
   },
   parent: {
     title: "Parent Login",
     description: "Monitor your child's progress",
-    redirectPath: "/dashboard/parent",
     backendRole: "PARENT"
   }
 };
