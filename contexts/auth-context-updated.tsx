@@ -78,12 +78,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
     
     checkAuth();
-  }, []);
-
-  const login = async (email: string, password: string) => {
+  }, []);  const login = async (email: string, password: string) => {
     setLoading(true);
     try {
-      const credentials: LoginCredentials = { email, password };
+      const credentials: LoginCredentials = { 
+        identifier: email, 
+        password, 
+        role: 'STUDENT', // Default role, will be determined by backend
+        email: email 
+      };
       const response = await AuthApiService.login(credentials);
       
       // Convert API user to local user format
@@ -97,10 +100,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       setUser(localUser);
       
-      // Redirect based on role
-      router.push(`/dashboard/${localUser.role}`);
-      
-    } catch (error) {
+      // Import and use getDashboardPath helper function from auth-context.tsx
+      const { getDashboardPath } = require("@/contexts/auth-context");
+      router.push(getDashboardPath(localUser.role));
+      } catch (error) {
       console.error("Login failed:", error);
       throw error;
     } finally {
@@ -130,12 +133,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               response.user.role?.toLowerCase() as User['role'] || 'student',
       };
       
-      setUser(localUser);
-
-      // Redirect to dashboard
-      router.push(`/dashboard/${localUser.role}`);
+      setUser(localUser);      // Import getDashboardPath helper function
+      const { getDashboardPath } = require("@/contexts/auth-context");
       
-    } catch (error) {
+      // Redirect to dashboard using helper function
+      router.push(getDashboardPath(localUser.role));
+      } catch (error) {
       console.error("Signup failed:", error);
       throw error; 
     } finally {

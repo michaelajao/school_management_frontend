@@ -46,7 +46,7 @@ export default function ManageClassInfo() {
           <div className="flex justify mb-2">
             <button
               className="bg-green-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700"
-              onClick={() => router.push('/dashboard/academics/classes/create/edit_info')}
+              onClick={() => router.push('/(users)/admin/academics/classes/create/edit_info')}
             >
               Edit Class Info
             </button>

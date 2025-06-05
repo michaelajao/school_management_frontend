@@ -66,10 +66,9 @@ export const PerformanceTable: React.FC = () => {
               </th>
               <th className="py-3 px-4"></th>
             </tr>
-          </thead>
-          <tbody>
+          </thead>          <tbody>
             {performanceData.map((item, index) => (
-              <tr key={index} className="border-b hover:bg-gray-50 cursor-pointer" onClick={() => {router.push('/dashboard/academics/classes/view_class_performance')}}>
+              <tr key={index} className="border-b hover:bg-gray-50 cursor-pointer" onClick={() => {router.push('/(users)/admin/academics/classes/view_class_performance')}}>
                 <td className="py-3 px-4 font-medium whitespace-nowrap">{item.class}</td>
                 <td className="px-4 whitespace-nowrap">{item.term1}</td>
                 <td className="px-4 whitespace-nowrap">{item.term2}</td>

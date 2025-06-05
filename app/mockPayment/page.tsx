@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/auth-context"; // Import useAuth
+import { getDashboardPath } from "@/contexts/auth-context";
 
 export default function PaymentPage() {
   const router = useRouter();
@@ -41,7 +42,7 @@ export default function PaymentPage() {
         router.push(`/onboarding/admin`);
       } else {
         // Handle other roles or default redirect if needed
-        router.push('/dashboard'); 
+        router.push(user?.role ? getDashboardPath(user.role) : '/(users)/admin');
       }
     }, 1000);
   };

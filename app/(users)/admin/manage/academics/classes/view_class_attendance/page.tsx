@@ -136,7 +136,7 @@ const AttendancePage: React.FC = () => {
                 <TableCell className="text-green-600">20</TableCell>
                 <TableCell className="text-red-500">4</TableCell>
                 <TableCell>
-                  <button onClick={() => {router.push('/dashboard/academics/classes/view_class_attendance/individual_attendance')}} className="hover:text-gray-700">
+                  <button onClick={() => {router.push('/(users)/admin/academics/classes/view_class_attendance/individual_attendance')}} className="hover:text-gray-700">
                     <MoreHorizontal className="w-5 h-5 text-gray-500" />
                   </button>
                 </TableCell>

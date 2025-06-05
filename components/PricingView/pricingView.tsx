@@ -9,7 +9,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input"; // Import Input
 import { Label } from "@/components/ui/label"; // Import Label
 import SuccessModal from "../modal/Successfulmodal";
-import { useAuth } from "@/contexts/auth-context"; // Import useAuth
+import { useAuth } from "@/contexts/auth-context";
+import { getDashboardPath } from "@/contexts/auth-context";
 import { toast } from "sonner"; // Import toast
 
 // PRICING_PLANS constant is removed as plan selection is done elsewhere
@@ -68,8 +69,7 @@ export default function PricingView() {
         router.push(`/onboarding/admin`);
       } else {
         // Handle other roles or default redirect if needed
-        // Example: redirect teachers, parents, students to their specific dashboards or a general one
-        router.push(`/dashboard/${user?.role || ''}`);
+        router.push(user?.role ? getDashboardPath(user.role) : '/(users)/admin');
       }
     }, 1000);
   };

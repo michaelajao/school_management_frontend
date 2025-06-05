@@ -86,11 +86,10 @@ const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
 
   return (
     <>
-      {/* Action Buttons */}
-      <div className="flex flex-wrap gap-4">
+      {/* Action Buttons */}      <div className="flex flex-wrap gap-4">
         <Button
           onClick={() =>
-            router.push("/dashboard/communication/announcement/create")
+            router.push("/(users)/admin/communication/announcement/create")
           }
           variant="outline"
           className="border border-primary text-primary"
@@ -100,13 +99,13 @@ const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
         <Button
           variant="outline"
           className="border border-green-600 text-green-600"
-          onClick={() => router.push("/dashboard/communication/message")}
+          onClick={() => router.push("/(users)/admin/communication/message")}
         >
           View All Messages
         </Button>
         <Button
           onClick={() =>
-            router.push("/dashboard/communication/announcement/create-event")
+            router.push("/(users)/admin/communication/announcement/create-event")
           }
           variant="outline"
           className="border border-[#FF9F43] text-[#FF9F43]"
@@ -260,7 +259,7 @@ const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
             {activeTab === "events" ? (
               <Button variant="outline">
                 <Link
-                  href="/dashboard/admin?tab=events&action=create"
+                  href="/(users)/admin?tab=events&action=create"
                   className="flex items-center gap-2"
                 >
                   Create Event

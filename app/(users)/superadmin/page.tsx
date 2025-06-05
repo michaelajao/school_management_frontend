@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useAuth } from "@/contexts/auth-context";
+import { useAuth, getDashboardPath } from "@/contexts/auth-context";
 import { redirect } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -99,10 +99,9 @@ export default function SuperAdminDashboardPage() {
   // Redirect if not superadmin or loading
   if (loading) {
     return <div className="flex h-screen items-center justify-center">Loading...</div>;
-  }
-  if (user?.role !== "superadmin") {
-    // Redirect to their appropriate dashboard or login
-    redirect(user?.role ? `/dashboard/${user.role}` : "/auth/signin");
+  }  if (user?.role !== "superadmin") {
+    // Redirect to their appropriate dashboard or login using getDashboardPath helper
+    redirect(user?.role ? getDashboardPath(user.role) : "/auth/signin");
     return null; // Prevent rendering during redirect
   }
 
@@ -203,12 +202,12 @@ export default function SuperAdminDashboardPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 gap-3">
-              <Link href="/dashboard/superadmin/schools" prefetch={false}>
+              <Link href="/(users)/superadmin/schools" prefetch={false}>
                 <Button className="w-full bg-[#1B5B5E] hover:bg-[#134345]">
                   <School className="mr-2 h-4 w-4" /> Manage Schools
                 </Button>
               </Link>
-              <Link href="/dashboard/superadmin/subscriptions" prefetch={false}>
+              <Link href="/(users)/superadmin/subscriptions" prefetch={false}>
                 <Button variant="outline" className="w-full">
                   <Layers className="mr-2 h-4 w-4" /> Subscription Plans
                 </Button>
@@ -415,9 +414,8 @@ export default function SuperAdminDashboardPage() {
               </TableHeader>
               <TableBody>
                 {schoolsList.map(school => (
-                  <TableRow key={school.id}>
-                    <TableCell className="font-medium">
-                      <Link href={`/dashboard/superadmin/schools/${school.id}`} className="hover:text-[#1B5B5E] hover:underline">
+                  <TableRow key={school.id}>                    <TableCell className="font-medium">
+                      <Link href={`/(users)/superadmin/schools/${school.id}`} className="hover:text-[#1B5B5E] hover:underline">
                         {school.name}
                       </Link>
                     </TableCell>

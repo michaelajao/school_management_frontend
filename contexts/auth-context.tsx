@@ -12,7 +12,7 @@ type User = {
   id: string;
   name: string;
   email: string;
-  role: "admin" | "teacher" | "student" | "parent" | "superadmin";
+  role: "admin" | "teacher" | "student" | "parent" | "superadmin" | "school_management";
 };
 
 type AuthContextType = {
@@ -26,8 +26,8 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Helper function to get correct dashboard path
-const getDashboardPath = (role: User['role']): string => {
+// Helper function to get correct dashboard path - exported for use in other files
+export const getDashboardPath = (role: User['role']): string => {
   switch (role) {
     case 'admin':
       return '/(users)/admin';
@@ -39,6 +39,8 @@ const getDashboardPath = (role: User['role']): string => {
       return '/(users)/parent';
     case 'superadmin':
       return '/(users)/superadmin';
+    case 'school_management':
+      return '/(users)/school_management';
     default:
       return '/(users)/admin'; // Default fallback
   }
