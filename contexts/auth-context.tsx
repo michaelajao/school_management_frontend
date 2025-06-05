@@ -18,7 +18,7 @@ type User = {
 type AuthContextType = {
   user: User | null;
   loading: boolean;
-  login: (identifier: string, password: string, role: User['role']) => Promise<void>;
+  login: (identifier: string, password: string, role?: User['role']) => Promise<void>;
   signup: (email: string, password: string) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
@@ -98,9 +98,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
     
     checkAuth();
-  }, []);  const login = async (email: string, password: string, role: User['role']) => {
+  }, []);  const login = async (identifier: string, password: string, role?: User['role']) => {
     setLoading(true);
     try {
+      // If no role is provided, this is a general login - we'll let the backend determine the role
+      if (!role) {
+        // For general login, we'll use a default role and let the backend override it
+        const credentials: LoginCredentials = { 
+          identifier, 
+          password, 
+          role: 'SCHOOL_MANAGEMENT' // Default - backend will return correct role
+        };
+        
+        const response = await AuthApiService.login(credentials);
+        
+        // Convert API user to local user format
+        const localUser: User = {
+          id: response.user.id,
+          name: `${response.user.firstName} ${response.user.lastName}`.trim(),
+          email: response.user.email,
+          role: response.user.role?.toLowerCase() === 'super_admin' ? 'superadmin' : 
+                response.user.role?.toLowerCase() === 'school_management' ? 'admin' :
+                response.user.role?.toLowerCase() as User['role'] || 'student',
+        };
+        
+        setUser(localUser);
+        
+        // Redirect based on returned role
+        const dashboardPath = getDashboardPath(localUser.role);
+        router.push(dashboardPath);
+        return;
+      }
+      
       // Map frontend role to backend role format
       let backendRole: LoginCredentials['role'];
       
@@ -109,7 +138,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           backendRole = 'SUPER_ADMIN';
           break;
         case 'admin':
-          backendRole = 'ADMIN';
+          backendRole = 'SCHOOL_MANAGEMENT';
           break;
         case 'teacher':
           backendRole = 'TEACHER';
@@ -120,13 +149,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         case 'parent':
           backendRole = 'PARENT';
           break;
+        case 'school_management':
+          backendRole = 'SCHOOL_MANAGEMENT';
+          break;
         default:
           backendRole = 'SCHOOL_MANAGEMENT'; // Default fallback for school management
-      }
-      
+      }      
       // Using identifier field that the AuthApiService will map to the appropriate backend field
       const credentials: LoginCredentials = { 
-        identifier: email, 
+        identifier, 
         password, 
         role: backendRole 
       };

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { AuthLayout } from "@/components/auth/auth-layout";
 import { toast } from "sonner";
 import { validatePassword } from "@/lib/validatePassword";
+import { AuthApiService } from "@/lib/api/auth";
 
 export function ResetPasswordForm() {
   const router = useRouter();
@@ -58,7 +59,6 @@ export function ResetPasswordForm() {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
@@ -76,17 +76,27 @@ export function ResetPasswordForm() {
     setIsLoading(true);
     
     try {
-      // TODO: Connect to API when backend is ready
-      console.log("Reset password with token:", token, "New password:", formData.password);
-      
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await AuthApiService.resetPassword(token, formData.password);
       
       toast.success("Password reset successfully!");
       router.push("/auth/reset-password/success");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Reset password error:", error);
-      toast.error("Failed to reset password. Please try again.");
+      
+      // Extract meaningful error message
+      const errorMessage = error?.response?.data?.message || 
+                          error?.message || 
+                          "Failed to reset password. Please try again.";
+      
+      toast.error(errorMessage);
+      
+      // If token is invalid, redirect to forgot password
+      if (errorMessage.toLowerCase().includes('invalid') || 
+          errorMessage.toLowerCase().includes('expired')) {
+        setTimeout(() => {
+          router.push("/auth/forgot-password");
+        }, 2000);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -154,15 +164,14 @@ export function ResetPasswordForm() {
             {errors.confirmPassword && (
               <p className="text-xs text-red-500">{errors.confirmPassword}</p>
             )}
-          </div>
-
-          <div className="flex items-center space-x-2">
+          </div>          <div className="flex items-center space-x-2">
             <input
               type="checkbox"
               id="showPassword"
               checked={showPassword}
               onChange={(e) => setShowPassword(e.target.checked)}
               className="rounded border-gray-300"
+              aria-label="Show passwords"
             />
             <Label htmlFor="showPassword" className="text-sm">
               Show passwords

@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { AuthLayout } from "@/components/auth/auth-layout";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { AuthApiService } from "@/lib/api/auth";
 
 export function ForgotPasswordForm() {
   const router = useRouter();
@@ -42,9 +43,7 @@ export function ForgotPasswordForm() {
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  };  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
     if (!validateForm()) {
@@ -55,20 +54,27 @@ export function ForgotPasswordForm() {
     setIsLoading(true);
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await AuthApiService.requestPasswordReset(formData.email.trim());
       
       // Store email for confirmation page
-      localStorage.setItem("resetEmail", formData.email);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem("resetEmail", formData.email.trim());
+      }
       
       toast.success("Password reset email sent!");
       
       // Redirect to confirmation page
       router.push("/auth/forgot-password/sent");
       
-    } catch (error) {
+    } catch (error: any) {
       console.error("Forgot password error:", error);
-      toast.error("Failed to send reset email. Please try again.");
+      
+      // Extract meaningful error message
+      const errorMessage = error?.response?.data?.message || 
+                          error?.message || 
+                          "Failed to send reset email. Please try again.";
+      
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }

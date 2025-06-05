@@ -285,6 +285,8 @@ export function CreateAccountForm() {
               checked={false}
               onChange={() => {}}
               className="rounded border-gray-300"
+              aria-label="Show passwords"
+              title="Toggle password visibility"
             />
             <Label htmlFor="showPassword" className="text-sm">
               Show passwords

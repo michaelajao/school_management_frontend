@@ -1,9 +1,9 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { AuthLayout } from "@/components/auth/auth-layout";
-import { User, GraduationCap, Users, UserCheck, AlertCircle } from "lucide-react";
+import { User, GraduationCap, Users, UserCheck } from "lucide-react";
 
 const roles = [
   {
@@ -42,8 +42,6 @@ const roles = [
 
 export function LoginSelectionPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const message = searchParams.get("message");
 
   const handleRoleSelect = (path: string) => {
     router.push(path);
@@ -60,20 +58,6 @@ export function LoginSelectionPage() {
             Select your role to access the appropriate login page
           </p>
         </div>
-
-        {/* Display message if present */}
-        {message && (
-          <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
-            <div className="flex">
-              <div className="flex-shrink-0">
-                <AlertCircle className="h-5 w-5 text-blue-400" />
-              </div>
-              <div className="ml-3">
-                <p className="text-sm text-blue-700">{decodeURIComponent(message)}</p>
-              </div>
-            </div>
-          </div>
-        )}
 
         <div className="space-y-3">
           {roles.map((role) => {
@@ -114,7 +98,9 @@ export function LoginSelectionPage() {
               </button>
             );
           })}
-        </div>        <div className="space-y-4 pt-4 border-t border-gray-200">
+        </div>
+
+        <div className="space-y-4 pt-4 border-t border-gray-200">
           <Button
             onClick={() => router.push("/auth/general-login")}
             variant="outline"
@@ -122,8 +108,9 @@ export function LoginSelectionPage() {
           >
             General Login
           </Button>
-            <Button
-            onClick={() => router.push("/auth/school-admin-registration")}
+          
+          <Button
+            onClick={() => router.push("/onboarding")}
             variant="outline"
             className="w-full border-teal-200 text-teal-700 hover:bg-teal-50"
           >

@@ -11,29 +11,49 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/auth-context";
 
 interface RoleLoginFormProps {
-  role: "admin" | "teacher" | "student" | "parent";
+  role: "admin" | "teacher" | "student" | "parent" | "general";
 }
 
 const roleConfig = {
   admin: {
     title: "Admin Login",
     description: "Access your administrative dashboard",
-    backendRole: "ADMIN"
+    backendRole: "SCHOOL_MANAGEMENT",
+    identifierType: "email",
+    identifierLabel: "Email Address",
+    identifierPlaceholder: "Enter your email address"
   },
   teacher: {
     title: "Teacher Login", 
     description: "Access your teaching dashboard",
-    backendRole: "TEACHER"
+    backendRole: "TEACHER",
+    identifierType: "staffId",
+    identifierLabel: "Staff ID",
+    identifierPlaceholder: "Enter your staff ID"
   },
   student: {
     title: "Student Login",
     description: "Access your student portal",
-    backendRole: "STUDENT"
+    backendRole: "STUDENT",
+    identifierType: "studentId",
+    identifierLabel: "Student ID",
+    identifierPlaceholder: "Enter your student ID"
   },
   parent: {
     title: "Parent Login",
     description: "Monitor your child's progress",
-    backendRole: "PARENT"
+    backendRole: "PARENT",
+    identifierType: "email",
+    identifierLabel: "Email Address",
+    identifierPlaceholder: "Enter your email address"
+  },
+  general: {
+    title: "General Login",
+    description: "Access your account",
+    backendRole: null,
+    identifierType: "email",
+    identifierLabel: "Email Address",
+    identifierPlaceholder: "Enter your email address"
   }
 };
 
@@ -41,20 +61,19 @@ export function RoleLoginForm({ role }: RoleLoginFormProps) {
   const router = useRouter();
   const { login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState({
-    email: "",
+  const [showPassword, setShowPassword] = useState(false);  const [formData, setFormData] = useState({
+    identifier: "",
     password: ""
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const config = roleConfig[role];
-
   const roleDisplayNames = {
     admin: "Administrator",
     teacher: "Teacher",
     student: "Student",
-    parent: "Parent"
+    parent: "Parent",
+    general: "User"
   };
 
   const handleChange = (name: string, value: string) => {
@@ -69,15 +88,16 @@ export function RoleLoginForm({ role }: RoleLoginFormProps) {
       });
     }
   };
-
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
     
-    // Email validation
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/^\S+@\S+\.\S+$/.test(formData.email.trim())) {
-      newErrors.email = "Please enter a valid email address";
+    // Identifier validation based on role
+    if (!formData.identifier.trim()) {
+      newErrors.identifier = `${config.identifierLabel} is required`;
+    } else if (config.identifierType === "email" && !/^\S+@\S+\.\S+$/.test(formData.identifier.trim())) {
+      newErrors.identifier = "Please enter a valid email address";
+    } else if ((config.identifierType === "studentId" || config.identifierType === "staffId") && formData.identifier.trim().length < 3) {
+      newErrors.identifier = `${config.identifierLabel} must be at least 3 characters`;
     }
     
     // Password validation
@@ -89,7 +109,7 @@ export function RoleLoginForm({ role }: RoleLoginFormProps) {
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  };const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
     if (!validateForm()) {
@@ -98,10 +118,14 @@ export function RoleLoginForm({ role }: RoleLoginFormProps) {
     }
     
     setIsLoading(true);
-    
-    try {
+      try {
       // Use the role from props to ensure consistent authentication
-      await login(formData.email, formData.password, role);
+      if (role === "general") {
+        // For general login, we need to determine the role from the backend
+        await login(formData.identifier, formData.password);
+      } else {
+        await login(formData.identifier, formData.password, role);
+      }
       
       // Show role-specific welcome message
       toast.success(`Welcome back, ${roleDisplayNames[role]}!`);
@@ -146,21 +170,20 @@ export function RoleLoginForm({ role }: RoleLoginFormProps) {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="email">Email Address</Label>
+        <form onSubmit={handleSubmit} className="space-y-4">          <div className="space-y-2">
+            <Label htmlFor="identifier">{config.identifierLabel}</Label>
             <Input
-              id="email"
-              name="email"
-              type="email"
-              placeholder="Enter your email address"
-              value={formData.email}
-              onChange={(e) => handleChange("email", e.target.value)}
+              id="identifier"
+              name="identifier"
+              type={config.identifierType === "email" ? "email" : "text"}
+              placeholder={config.identifierPlaceholder}
+              value={formData.identifier}
+              onChange={(e) => handleChange("identifier", e.target.value)}
               disabled={isLoading}
-              className={errors.email ? "border-red-500" : ""}
+              className={errors.identifier ? "border-red-500" : ""}
             />
-            {errors.email && (
-              <p className="text-xs text-red-500">{errors.email}</p>
+            {errors.identifier && (
+              <p className="text-xs text-red-500">{errors.identifier}</p>
             )}
           </div>
 

@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
+import { AuthApiService } from "@/lib/api/auth";
 
 export default function ParentOnboardingPage() {
   const router = useRouter();
@@ -21,55 +22,71 @@ export default function ParentOnboardingPage() {
     confirmPassword: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [inviteToken, setInviteToken] = useState<string | null>(null);
 
   useEffect(() => {
     const emailFromQuery = searchParams.get("email");
-    if (emailFromQuery) {
+    const tokenFromQuery = searchParams.get("token");
+
+    if (emailFromQuery && tokenFromQuery) {
       setFormData((prev) => ({ ...prev, email: emailFromQuery }));
+      setInviteToken(tokenFromQuery);
     } else {
-      toast.error("Invalid onboarding link: Email missing.");
+      toast.error("Invalid onboarding link. Please contact your school administrator.");
+      router.push("/auth/signin");
     }
-  }, [searchParams]);
+  }, [searchParams, router]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
-
   const submitOnboarding = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
+    
     try {
       const requiredFields: (keyof typeof formData)[] = ['firstName', 'lastName', 'email', 'relationshipToStudent', 'password', 'confirmPassword'];
       const missingFields = requiredFields.filter(field => !formData[field]);
 
       if (missingFields.length > 0) {
         toast.error(`Please fill in all required fields: ${missingFields.join(', ')}`);
-        setIsSubmitting(false);
         return;
       }
 
       if (formData.password !== formData.confirmPassword) {
         toast.error("Passwords do not match.");
-        setIsSubmitting(false);
         return;
       }
       
-      if (formData.password.length < 6) {
-          toast.error("Password must be at least 6 characters long.");
-          setIsSubmitting(false);
-          return;
+      if (formData.password.length < 8) {
+        toast.error("Password must be at least 8 characters long.");
+        return;
       }
 
-      const { confirmPassword, ...submissionData } = formData; 
-      console.log("Submitting Parent Onboarding Data:", submissionData);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      if (!inviteToken) {
+        toast.error("Invalid invitation token.");
+        return;
+      }
+
+      // Submit parent registration with proper API call
+      const registrationData = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        password: formData.password,
+        inviteToken: inviteToken,
+        relationshipToStudent: formData.relationshipToStudent
+      };
+
+      await AuthApiService.completeParentInviteRegistration(registrationData);
       
       toast.success("Account setup successful! Please log in.");
       router.push("/auth/signin");
-    } catch (error) {
-      toast.error("Failed to complete setup. Please try again.");
-      console.error("Onboarding error:", error);
+    } catch (error: any) {
+      console.error("Parent onboarding error:", error);
+      const errorMessage = error?.response?.data?.message || error?.message || "Failed to complete setup. Please try again.";
+      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
     }

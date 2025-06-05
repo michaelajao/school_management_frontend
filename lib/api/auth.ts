@@ -184,25 +184,23 @@ export class AuthApiService {
       throw error;
     }
   }
-
   /**
    * Request password reset
    */
   static async requestPasswordReset(email: string): Promise<void> {
     try {
-      await apiClient.post(`${this.BASE_PATH}/forgot-password`, { email });
+      await apiClient.post(`${this.BASE_PATH}/reset-password`, { email });
     } catch (error) {
       console.error('Request password reset error:', error);
       throw error;
     }
   }
-
   /**
    * Reset password with token
    */
   static async resetPassword(token: string, newPassword: string): Promise<void> {
     try {
-      await apiClient.post(`${this.BASE_PATH}/reset-password`, {
+      await apiClient.post(`${this.BASE_PATH}/update-password`, {
         token,
         newPassword,
       });
@@ -260,6 +258,151 @@ export class AuthApiService {
       throw error;
     }
   }
+  /**
+   * Complete teacher invite registration
+   */  static async completeInviteRegistration(registrationData: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    staffId: string;
+    password: string;
+    phone?: string;
+    address?: string;
+    inviteToken: string;
+    subRole?: string;
+    firstLogin?: boolean;
+  }): Promise<AuthResponse> {
+    try {
+      const response = await apiClient.post<AuthResponse>(
+        `${this.BASE_PATH}/complete-invite-registration`,
+        registrationData
+      );
+      
+      // Store token for future requests
+      if (response.accessToken) {
+        apiClient.setAuthToken(response.accessToken);
+        
+        // Store user data and tokens
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('user_data', JSON.stringify(response.user));
+          localStorage.setItem('auth_token', response.accessToken);
+          localStorage.setItem('refresh_token', response.refreshToken);
+        }
+      }
+      
+      return response;
+    } catch (error) {
+      console.error('Complete invite registration error:', error);
+      throw error;
+    }
+  }
+  
+  /**
+   * Complete student invite registration
+   */
+  static async completeStudentInviteRegistration(registrationData: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    studentId: string;
+    password: string;
+    inviteToken: string;
+    phone?: string;
+    class?: string;
+    gender?: string;
+    address?: string;
+    birthdate?: string;
+    firstLogin?: boolean;
+  }): Promise<AuthResponse> {
+    try {
+      const response = await apiClient.post<AuthResponse>(
+        `${this.BASE_PATH}/complete-student-invite-registration`,
+        registrationData
+      );
+      
+      // Store token for future requests
+      if (response.accessToken) {
+        apiClient.setAuthToken(response.accessToken);
+        
+        // Store user data and tokens
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('user_data', JSON.stringify(response.user));
+          localStorage.setItem('auth_token', response.accessToken);
+          localStorage.setItem('refresh_token', response.refreshToken);
+        }
+      }
+      
+      return response;    } catch (error) {
+      console.error('Complete student invite registration error:', error);
+      throw error;
+    }
+  }
+  
+  /**
+   * Complete parent invite registration
+   */
+  static async completeParentInviteRegistration(registrationData: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
+    inviteToken: string;
+    phone?: string;
+    address?: string;
+    gender?: string;
+    occupation?: string;
+    relationshipToStudent?: string;
+    studentId?: string;
+    firstLogin?: boolean;
+  }): Promise<AuthResponse> {
+    try {
+      const response = await apiClient.post<AuthResponse>(
+        `${this.BASE_PATH}/complete-parent-invite-registration`,
+        registrationData
+      );
+      
+      // Store token for future requests
+      if (response.accessToken) {
+        apiClient.setAuthToken(response.accessToken);
+        
+        // Store user data and tokens
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('user_data', JSON.stringify(response.user));
+          localStorage.setItem('auth_token', response.accessToken);
+          localStorage.setItem('refresh_token', response.refreshToken);
+        }
+      }
+      
+      return response;
+    } catch (error) {
+      console.error('Complete parent invite registration error:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Validate invite token
+   */
+  static async validateInviteToken(token: string): Promise<{
+    valid: boolean;
+    invite?: {
+      email: string;
+      role: string;
+      schoolId: string;
+      token: string;
+    };
+  }> {
+    try {
+      const response = await apiClient.get(`/invites/validate/${token}`);
+      return {
+        valid: true,
+        invite: response
+      };
+    } catch (error) {
+      console.error('Validate invite token error:', error);
+      return { valid: false };
+    }
+  }
 
   /**
    * Get stored user data from localStorage
@@ -288,8 +431,47 @@ export class AuthApiService {
 
   /**
    * Check if user is authenticated
-   */
-  static isAuthenticated(): boolean {
+   */  static isAuthenticated(): boolean {
     return !!this.getStoredToken() && !!this.getStoredUser();
+  }
+
+  /**
+   * Create a new school and admin account
+   */
+  static async createSchoolAndAdmin(data: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
+    schoolName: string;
+    schoolAlias: string;
+    country: string;
+    website?: string;
+    phone?: string;
+    adminRole?: string;
+  }): Promise<AuthResponse> {
+    try {
+      const response = await apiClient.post<AuthResponse>(
+        `${this.BASE_PATH}/create-school-admin`,
+        data
+      );
+      
+      // Store token for future requests
+      if (response.accessToken) {
+        apiClient.setAuthToken(response.accessToken);
+        
+        // Store user data and tokens
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('user_data', JSON.stringify(response.user));
+          localStorage.setItem('auth_token', response.accessToken);
+          localStorage.setItem('refresh_token', response.refreshToken);
+        }
+      }
+      
+      return response;
+    } catch (error) {
+      console.error('School admin creation error:', error);
+      throw error;
+    }
   }
 }
