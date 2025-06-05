@@ -1,12 +1,14 @@
 import { apiClient } from './client';
 import type { User } from './auth';
 
+export type UserRole = 'SUPER_ADMIN' | 'ADMIN' | 'TEACHER' | 'STUDENT' | 'PARENT' | 'SCHOOL_MANAGEMENT';
+
 export interface CreateUserData {
   email: string;
   password: string;
   firstName: string;
   lastName: string;
-  role: 'ADMIN' | 'TEACHER' | 'STUDENT' | 'PARENT';
+  role: UserRole;
   phoneNumber?: string;
   address?: string;
   dateOfBirth?: string;
@@ -65,6 +67,54 @@ export class UsersApiService {
       return await apiClient.get<PaginatedUsers>(url);
     } catch (error) {
       console.error('Get users error:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get all student users
+   */
+  static async getStudents(page: number = 1, limit: number = 10): Promise<PaginatedUsers> {
+    try {
+      return await apiClient.get<PaginatedUsers>(`${this.BASE_PATH}/students?page=${page}&limit=${limit}`);
+    } catch (error) {
+      console.error('Get students error:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get all parent users
+   */
+  static async getParents(page: number = 1, limit: number = 10): Promise<PaginatedUsers> {
+    try {
+      return await apiClient.get<PaginatedUsers>(`${this.BASE_PATH}/parents?page=${page}&limit=${limit}`);
+    } catch (error) {
+      console.error('Get parents error:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Create a new student user
+   */
+  static async createStudentUser(userData: CreateUserData & { studentId: string; class?: string; parentIds?: string[] }): Promise<{ user: User; student: any }> {
+    try {
+      return await apiClient.post<{ user: User; student: any }>(`${this.BASE_PATH}/students`, userData);
+    } catch (error) {
+      console.error('Create student user error:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Create a new parent user
+   */
+  static async createParentUser(userData: CreateUserData & { relationshipToStudent: string; studentId?: string }): Promise<{ user: User; parent: any }> {
+    try {
+      return await apiClient.post<{ user: User; parent: any }>(`${this.BASE_PATH}/parents`, userData);
+    } catch (error) {
+      console.error('Create parent user error:', error);
       throw error;
     }
   }

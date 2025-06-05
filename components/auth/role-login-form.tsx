@@ -157,7 +157,7 @@ export function RoleLoginForm({ role }: RoleLoginFormProps) {
   };
 
   return (
-    <AuthLayout showBackButton backHref="/auth/signin">
+    <AuthLayout showBackButton backHref="/">
       <div className="space-y-6">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900">{config.title}</h1>

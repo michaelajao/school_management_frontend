@@ -14,6 +14,7 @@ import {
   BookOpen,
   UserCog,
   LogOut,
+  TestTube,
 } from "lucide-react";
 import React from "react";
 
@@ -99,6 +100,11 @@ export const adminSideBar: SideBarType[] = [
     href: '/admin/reports',
     label: 'Reports & Analysis',
     icon: BookOpen 
+  },
+  {
+    href: '/test-endpoints',
+    label: 'Test Endpoints',
+    icon: TestTube 
   },
 ];
 
