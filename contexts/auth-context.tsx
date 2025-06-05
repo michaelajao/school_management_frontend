@@ -82,8 +82,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setLoading(true);
     try {
       // Map frontend role to backend role format
-      const backendRole = role === 'superadmin' ? 'SUPER_ADMIN' : 
-                         role.toUpperCase() as LoginCredentials['role'];
+      let backendRole: LoginCredentials['role'];
+      
+      switch (role) {
+        case 'superadmin':
+          backendRole = 'SUPER_ADMIN';
+          break;
+        case 'admin':
+          backendRole = 'ADMIN';
+          break;
+        case 'teacher':
+          backendRole = 'TEACHER';
+          break;
+        case 'student':
+          backendRole = 'STUDENT';
+          break;
+        case 'parent':
+          backendRole = 'PARENT';
+          break;
+        default:
+          backendRole = 'SCHOOL_MANAGEMENT'; // Default fallback for school management
+      }
       
       // Using identifier field that the AuthApiService will map to the appropriate backend field
       const credentials: LoginCredentials = { 
@@ -100,6 +119,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         name: `${response.user.firstName} ${response.user.lastName}`.trim(),
         email: response.user.email,
         role: response.user.role?.toLowerCase() === 'super_admin' ? 'superadmin' : 
+              response.user.role?.toLowerCase() === 'school_management' ? 'admin' :
               response.user.role?.toLowerCase() as User['role'] || 'student',
       };
       

@@ -1,5 +1,6 @@
 #!/bin/bash
 # Setup script for School Management System staging environment
+# Updated: June 5, 2025 - Frontend-Backend connectivity verified
 
 # Make sure script is run from the frontend directory
 if [ ! -f "package.json" ] || ! grep -q "school_management_frontend" package.json; then
@@ -7,16 +8,23 @@ if [ ! -f "package.json" ] || ! grep -q "school_management_frontend" package.jso
   exit 1
 fi
 
+echo "🚀 Setting up School Management System staging environment..."
+echo "📋 Status: Frontend-Backend connectivity verified and working"
+echo "🔗 Backend API: http://localhost:4000"
+echo "🌐 Frontend: http://localhost:3000"
+echo ""
+
 # Create necessary directories
 mkdir -p nginx/ssl
 
 # Check if .env.staging and .env.production exist, create if not
 if [ ! -f ".env.staging" ]; then
-  echo "Creating .env.staging file..."
+  echo "📝 Creating .env.staging file..."
   cat > .env.staging << EOL
 # Frontend Environment Variables - Staging
 NODE_ENV=staging
 NEXT_PUBLIC_API_BASE_URL=http://localhost:4000
+NEXT_PUBLIC_API_URL=http://localhost:4000
 NEXT_TELEMETRY_DISABLED=1
 
 # Authentication

@@ -55,9 +55,12 @@ export class AuthApiService {
     try {
       // Transform credentials to match backend expectations
       // Backend expects one of: email, studentId, or staffID
+      // Convert role from UPPER_CASE to lower_case format expected by backend
+      const backendRole = credentials.role.toLowerCase();
+      
       const loginPayload = {
         password: credentials.password,
-        role: credentials.role,
+        role: backendRole,
         // Route the identifier to the appropriate field based on role
         email: credentials.role === 'STUDENT' || credentials.role === 'PARENT' || 
                credentials.role === 'SUPER_ADMIN' || credentials.identifier.includes('@') 

@@ -18,22 +18,26 @@ const roleConfig = {
   admin: {
     title: "Admin Login",
     description: "Access your administrative dashboard",
-    redirectPath: "/dashboard/admin"
+    redirectPath: "/dashboard/admin",
+    backendRole: "ADMIN"
   },
   teacher: {
     title: "Teacher Login", 
     description: "Access your teaching dashboard",
-    redirectPath: "/dashboard/teacher"
+    redirectPath: "/dashboard/teacher",
+    backendRole: "TEACHER"
   },
   student: {
     title: "Student Login",
     description: "Access your student portal",
-    redirectPath: "/dashboard/student"
+    redirectPath: "/dashboard/student",
+    backendRole: "STUDENT"
   },
   parent: {
     title: "Parent Login",
     description: "Monitor your child's progress",
-    redirectPath: "/dashboard/parent"
+    redirectPath: "/dashboard/parent",
+    backendRole: "PARENT"
   }
 };
 
@@ -179,13 +183,13 @@ export function RoleLoginForm({ role }: RoleLoginFormProps) {
             {errors.password && (
               <p className="text-xs text-red-500">{errors.password}</p>
             )}
-          </div>
-
-          <div className="flex items-center justify-between">
+          </div>          <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <input
                 type="checkbox"
                 id="showPassword"
+                title="Show password"
+                aria-label="Show password"
                 checked={showPassword}
                 onChange={(e) => setShowPassword(e.target.checked)}
                 className="rounded border-gray-300"
