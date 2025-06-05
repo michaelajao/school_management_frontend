@@ -2,13 +2,12 @@
 
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Users, BookOpen, CalendarDays, ClipboardList, 
-  TrendingUp, Bell, MessageSquare, Award 
-} from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import { CalendarDays, ArrowRight, BookOpenText, CheckCircle, MessageSquare, PieChart, User2 } from "lucide-react";
 
 const TeacherDashboard = () => {
   const [selectedClass, setSelectedClass] = useState("Class 10A");
@@ -62,6 +61,38 @@ const TeacherDashboard = () => {
     { subject: "Physics Lab", class: "9B", time: "11:00 AM - 12:00 PM", status: "today" },
     { subject: "Chemistry", class: "11C", time: "2:00 PM - 3:00 PM", status: "today" },
     { subject: "Mathematics", class: "10B", time: "9:00 AM - 10:00 AM", status: "tomorrow" },
+  ];
+
+  const scheduleData = [
+    { time: "8:30 AM - 9:30 AM", subject: "Mathematics | Year 7 | Room 5", current: false },
+    { time: "9:30 AM - 10:30 AM", subject: "Mathematics | Year 8 | Room 6", current: true },
+    { time: "10:30 AM - 11:30 AM", subject: "Physics | Year 9 | Physics Lab", current: false },
+    { time: "12:30 PM - 1:30 PM", subject: "Mathematics | Year 7 | Room 5", current: false },
+    { time: "1:30 PM - 2:30 PM", subject: "Mathematics | Year 7 | Room 5", current: false },
+  ];
+
+  const assignmentsData = [
+    { class: "Year 7B", subject: "Mathematics", title: "Algebra Homework", dueDate: "28 March 2025", submitted: "28 / 30", pendingReview: 4, status: "Graded" },
+    { class: "Year 8C", subject: "Physics", title: "Newton\'s Laws Worksheet", dueDate: "30 March 2025", submitted: "25 / 25", pendingReview: 0, status: "Graded" },
+    { class: "Year 9A", subject: "Chemistry", title: "Periodic Table Quiz", dueDate: "02 April 2025", submitted: "20 / 22", pendingReview: 22, status: "Pending Grade" },
+  ];
+
+  const studentProgressData = [
+    { name: "Adebayo Oluwatobi", class: "Year 7B", overallScore: 85, attendance: 95, lastActivity: "Submitted Algebra Homework" },
+    { name: "Chidinma Okoro", class: "Year 8C", overallScore: 78, attendance: 92, lastActivity: "Viewed Newton\'s Laws lesson" },
+    { name: "Musa Ibrahim", class: "Year 9A", overallScore: 92, attendance: 98, lastActivity: "Scored 95% on Periodic Table Quiz" },
+  ];
+
+  const announcementsData = [
+      { title: "Cultural Day is this Friday! Don\'t forget to dress accordingly.", time: "07 Jun 2025, 12:33PM", type: "event" },
+      { title: "School closes early tomorrow - Check your updated timetable.", time: "07 Jun 2025, 12:33PM", type: "info" },
+      { title: "Library hours extended from next week.", time: "07 Jun 2025, 12:33PM", type: "info" },
+  ];
+
+  const messagesData = [
+      { sender: "Martha Akabue", message: "Hi Mr Samuel, Franklin says he didn\'t get any project this...", time: "07 Jun 2025, 12:33PM", unread: true },
+      { sender: "Franklin Akabue", message: "Hi Mr Samuel, my mum wants to speak with you", time: "07 Jun 2025, 12:33PM", unread: false },
+      { sender: "Franklin Akabue", message: "Hi Mr Samuel, Ileft my project in school, con I submit it...", time: "07 Jun 2025, 12:33PM", unread: false },
   ];
 
   return (
@@ -247,6 +278,108 @@ const TeacherDashboard = () => {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Pending Assignments */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center justify-between">
+            Assignments
+            <div className="flex items-center gap-2">
+                <Button variant="ghost" size="sm">&lt; March 2025 &gt;</Button>
+                <Button variant="link" size="sm" className="text-sm">See all assignments <ArrowRight className="h-3 w-3 ml-1"/></Button>
+            </div>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Class</TableHead>
+                <TableHead>Subject</TableHead>
+                <TableHead>Title</TableHead>
+                <TableHead>Due Date</TableHead>
+                <TableHead>Submission Received</TableHead>
+                <TableHead>Pending Submission</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Action</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {assignmentsData.map((assignment, index) => (
+                <TableRow key={index}>
+                  <TableCell>{assignment.class}</TableCell>
+                  <TableCell>{assignment.subject}</TableCell>
+                  <TableCell>{assignment.title}</TableCell>
+                  <TableCell>{assignment.dueDate}</TableCell>
+                  <TableCell>{assignment.submitted}</TableCell>
+                  <TableCell>
+                    <Badge variant={assignment.pendingReview > 0 ? "destructive" : "default"}>
+                      {assignment.pendingReview}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={assignment.status === "Graded" ? "secondary" : "outline"}
+                        className={`${assignment.status === "Graded" ? "bg-green-100 text-green-700" : "bg-orange-100 text-orange-700"}`}
+                    >
+                        {assignment.status === "Graded" && <CheckCircle className="h-3 w-3 mr-1"/>}
+                        {assignment.status}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Button variant="link" size="sm" className="text-blue-600">View Details</Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+
+      {/* Student Progress Overview - Simplified, more details can be a separate page */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Student Progress Overview</CardTitle>
+          <CardDescription>Quick look at student performance metrics.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Student Name</TableHead>
+                <TableHead>Class</TableHead>
+                <TableHead>Overall Score</TableHead>
+                <TableHead>Attendance</TableHead>
+                <TableHead>Last Activity</TableHead>
+                <TableHead>Action</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {studentProgressData.map((student, index) => (
+                <TableRow key={index}>
+                  <TableCell className="font-medium">{student.name}</TableCell>
+                  <TableCell>{student.class}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <Progress value={student.overallScore} className="w-24 h-2" />
+                      <span>{student.overallScore}%</span>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                     <div className="flex items-center gap-2">
+                      <Progress value={student.attendance} className="w-24 h-2" indicatorClassName={student.attendance < 80 ? "bg-red-500" : "bg-green-500"} />
+                      <span>{student.attendance}%</span>
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-sm text-muted-foreground">{student.lastActivity}</TableCell>
+                  <TableCell>
+                    <Button variant="link" size="sm" className="text-blue-600">View Profile</Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
     </div>
   );
 };

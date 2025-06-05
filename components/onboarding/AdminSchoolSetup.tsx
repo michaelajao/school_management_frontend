@@ -100,12 +100,14 @@ export default function AdminOnboardingView() {
     setIsSubmitting(true);
     try {
       // Simulated API call
-      await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate network delay
-      // In a real app, you would send formData (including the logo file) to your backend here
+      await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate network delay      // In a real app, you would send formData (including the logo file) to your backend here
       console.log("Submitting data:", formData);
       localStorage.setItem("superAdminOnboardingData", JSON.stringify({ ...formData, logo: logoPreview })); // Store preview URL for demo
       toast.success("Setup completed successfully!");
-      router.push("/dashboard/admin");
+      
+      // Use the getDashboardPath helper function
+      const { getDashboardPath } = require("@/contexts/auth-context");
+      router.push(getDashboardPath("admin"));
     } catch (error) {
       console.error("Setup failed:", error);
       toast.error("Setup failed. Please try again.");
