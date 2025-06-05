@@ -2,26 +2,70 @@
 
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
 import { AuthLayout } from "@/components/auth/auth-layout";
 import { toast } from "sonner";
-import { validatePassword } from "@/lib/validatePassword";
 import { AuthApiService } from "@/lib/api/auth";
+import { Loader2 } from "lucide-react";
 
 export function ResetPasswordForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
-  
   const [isLoading, setIsLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     password: "",
     confirmPassword: ""
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validatePassword = (password: string): string[] => {
+    const errors: string[] = [];
+    const minLength = 8;
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumbers = /\d/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+    if (password.length < minLength) {
+      errors.push(`Password must be at least ${minLength} characters long`);
+    }
+    if (!hasUpperCase) {
+      errors.push('Password must contain at least one uppercase letter');
+    }
+    if (!hasLowerCase) {
+      errors.push('Password must contain at least one lowercase letter');
+    }
+    if (!hasNumbers) {
+      errors.push('Password must contain at least one number');
+    }
+    if (!hasSpecialChar) {
+      errors.push('Password must contain at least one special character');
+    }
+
+    return errors;
+  };
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+    
+    // Password validation
+    const passwordErrors = validatePassword(formData.password);
+    if (passwordErrors.length > 0) {
+      newErrors.password = passwordErrors[0]; // Show first error
+    }
+    
+    // Confirm password validation
+    if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match";
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleChange = (name: string, value: string) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -36,93 +80,59 @@ export function ResetPasswordForm() {
     }
   };
 
-  const validateForm = () => {
-    const newErrors: Record<string, string> = {};
-    
-    // Password validation
-    if (!formData.password) {
-      newErrors.password = "Password is required";
-    } else {
-      const { valid, errors: passwordErrors } = validatePassword(formData.password);
-      if (!valid) {
-        newErrors.password = passwordErrors[0];
-      }
-    }
-    
-    // Confirm password validation
-    if (!formData.confirmPassword) {
-      newErrors.confirmPassword = "Please confirm your password";
-    } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match";
-    }
-    
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
-    if (!validateForm()) {
-      toast.error("Please fix the errors before proceeding");
-      return;
-    }
-    
     if (!token) {
-      toast.error("Invalid reset token. Please request a new password reset.");
+      toast.error("Invalid reset link. Please request a new password reset.");
       router.push("/auth/forgot-password");
       return;
     }
     
+    if (!validateForm()) {
+      return;
+    }
+    
+    if (isSubmitting) {
+      return;
+    }
+    
+    setIsSubmitting(true);
     setIsLoading(true);
     
     try {
       await AuthApiService.resetPassword(token, formData.password);
-      
-      toast.success("Password reset successfully!");
-      router.push("/auth/reset-password/success");
+      toast.success("Password reset successful! You can now log in with your new password.");
+      router.push("/auth/signin");
     } catch (error: any) {
       console.error("Reset password error:", error);
       
-      // Extract meaningful error message
-      const errorMessage = error?.response?.data?.message || 
-                          error?.message || 
-                          "Failed to reset password. Please try again.";
-      
-      toast.error(errorMessage);
-      
-      // If token is invalid, redirect to forgot password
-      if (errorMessage.toLowerCase().includes('invalid') || 
-          errorMessage.toLowerCase().includes('expired')) {
-        setTimeout(() => {
-          router.push("/auth/forgot-password");
-        }, 2000);
+      if (error?.response?.status === 429) {
+        toast.error("Too many attempts. Please try again later.");
+      } else if (error?.response?.status === 400) {
+        const errorData = error.response.data;
+        if (errorData.errors) {
+          // Show all password validation errors
+          errorData.errors.forEach((err: string) => {
+            toast.error(err);
+          });
+        } else {
+          toast.error(errorData.message || "Invalid password format");
+        }
+      } else if (error?.response?.status === 401) {
+        toast.error("Invalid or expired reset link. Please request a new password reset.");
+        router.push("/auth/forgot-password");
+      } else {
+        toast.error("Failed to reset password. Please try again.");
       }
     } finally {
       setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 
-  if (!token) {
-    return (
-      <AuthLayout>
-        <div className="space-y-6 text-center">
-          <h1 className="text-2xl font-bold text-gray-900">Invalid Reset Link</h1>
-          <p className="text-gray-600">
-            This password reset link is invalid or has expired.
-          </p>
-          <Button 
-            onClick={() => router.push("/auth/forgot-password")}
-            className="w-full bg-teal-600 hover:bg-teal-700"
-          >
-            Request New Reset Link
-          </Button>
-        </div>
-      </AuthLayout>
-    );
-  }
-
   return (
-    <AuthLayout>
+    <AuthLayout showBackButton>
       <div className="space-y-6">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900">Reset Password</h1>
@@ -137,55 +147,65 @@ export function ResetPasswordForm() {
             <Input
               id="password"
               name="password"
-              type={showPassword ? "text" : "password"}
+              type="password"
               placeholder="Enter your new password"
               value={formData.password}
               onChange={(e) => handleChange("password", e.target.value)}
               disabled={isLoading}
-              className={errors.password ? "border-red-500" : ""}
+              className={`${errors.password ? "border-red-500" : ""} transition-colors`}
+              aria-invalid={!!errors.password}
+              aria-describedby={errors.password ? "password-error" : undefined}
             />
             {errors.password && (
-              <p className="text-xs text-red-500">{errors.password}</p>
+              <p className="text-xs text-red-500" id="password-error">{errors.password}</p>
             )}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="confirmPassword">Confirm New Password</Label>
+            <Label htmlFor="confirmPassword">Confirm Password</Label>
             <Input
               id="confirmPassword"
               name="confirmPassword"
-              type={showPassword ? "text" : "password"}
+              type="password"
               placeholder="Confirm your new password"
               value={formData.confirmPassword}
               onChange={(e) => handleChange("confirmPassword", e.target.value)}
               disabled={isLoading}
-              className={errors.confirmPassword ? "border-red-500" : ""}
+              className={`${errors.confirmPassword ? "border-red-500" : ""} transition-colors`}
+              aria-invalid={!!errors.confirmPassword}
+              aria-describedby={errors.confirmPassword ? "confirm-password-error" : undefined}
             />
             {errors.confirmPassword && (
-              <p className="text-xs text-red-500">{errors.confirmPassword}</p>
+              <p className="text-xs text-red-500" id="confirm-password-error">{errors.confirmPassword}</p>
             )}
-          </div>          <div className="flex items-center space-x-2">
-            <input
-              type="checkbox"
-              id="showPassword"
-              checked={showPassword}
-              onChange={(e) => setShowPassword(e.target.checked)}
-              className="rounded border-gray-300"
-              aria-label="Show passwords"
-            />
-            <Label htmlFor="showPassword" className="text-sm">
-              Show passwords
-            </Label>
           </div>
 
           <Button 
             type="submit" 
-            className="w-full bg-teal-600 hover:bg-teal-700" 
-            disabled={isLoading}
+            className="w-full bg-teal-600 hover:bg-teal-700 transition-colors" 
+            disabled={isLoading || isSubmitting}
           >
-            {isLoading ? "Resetting..." : "Reset Password"}
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Resetting Password...
+              </>
+            ) : (
+              "Reset Password"
+            )}
           </Button>
         </form>
+
+        <div className="text-center text-sm text-gray-600">
+          Remember your password?{" "}
+          <button
+            onClick={() => router.push("/auth/signin")}
+            className="text-teal-600 hover:text-teal-700 font-medium transition-colors"
+            disabled={isLoading}
+          >
+            Back to sign in
+          </button>
+        </div>
       </div>
     </AuthLayout>
   );

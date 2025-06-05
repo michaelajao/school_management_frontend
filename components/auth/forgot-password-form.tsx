@@ -9,6 +9,7 @@ import { AuthLayout } from "@/components/auth/auth-layout";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { AuthApiService } from "@/lib/api/auth";
+import { Loader2 } from "lucide-react";
 
 export function ForgotPasswordForm() {
   const router = useRouter();
@@ -17,6 +18,7 @@ export function ForgotPasswordForm() {
     email: ""
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (name: string, value: string) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -43,14 +45,20 @@ export function ForgotPasswordForm() {
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
     if (!validateForm()) {
-      toast.error("Please enter a valid email address");
       return;
     }
     
+    if (isSubmitting) {
+      return;
+    }
+    
+    setIsSubmitting(true);
     setIsLoading(true);
     
     try {
@@ -61,7 +69,7 @@ export function ForgotPasswordForm() {
         localStorage.setItem("resetEmail", formData.email.trim());
       }
       
-      toast.success("Password reset email sent!");
+      toast.success("Password reset email sent! Please check your inbox.");
       
       // Redirect to confirmation page
       router.push("/auth/forgot-password/sent");
@@ -69,14 +77,22 @@ export function ForgotPasswordForm() {
     } catch (error: any) {
       console.error("Forgot password error:", error);
       
-      // Extract meaningful error message
-      const errorMessage = error?.response?.data?.message || 
+      // Handle specific error cases
+      if (error?.response?.status === 429) {
+        toast.error("Too many attempts. Please try again later.");
+      } else if (error?.response?.status === 404) {
+        toast.error("No account found with this email address.");
+      } else {
+        // Extract meaningful error message
+        const errorMessage = error?.response?.data?.message || 
                           error?.message || 
                           "Failed to send reset email. Please try again.";
-      
-      toast.error(errorMessage);
+        
+        toast.error(errorMessage);
+      }
     } finally {
       setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -101,19 +117,28 @@ export function ForgotPasswordForm() {
               value={formData.email}
               onChange={(e) => handleChange("email", e.target.value)}
               disabled={isLoading}
-              className={errors.email ? "border-red-500" : ""}
+              className={`${errors.email ? "border-red-500" : ""} transition-colors`}
+              aria-invalid={!!errors.email}
+              aria-describedby={errors.email ? "email-error" : undefined}
             />
             {errors.email && (
-              <p className="text-xs text-red-500">{errors.email}</p>
+              <p className="text-xs text-red-500" id="email-error">{errors.email}</p>
             )}
           </div>
 
           <Button 
             type="submit" 
-            className="w-full bg-teal-600 hover:bg-teal-700" 
-            disabled={isLoading}
+            className="w-full bg-teal-600 hover:bg-teal-700 transition-colors" 
+            disabled={isLoading || isSubmitting}
           >
-            {isLoading ? "Sending..." : "Send Reset Link"}
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Sending...
+              </>
+            ) : (
+              "Send Reset Link"
+            )}
           </Button>
         </form>
 
@@ -121,7 +146,8 @@ export function ForgotPasswordForm() {
           Remember your password?{" "}
           <button
             onClick={() => router.push("/auth/signin")}
-            className="text-teal-600 hover:text-teal-700 font-medium"
+            className="text-teal-600 hover:text-teal-700 font-medium transition-colors"
+            disabled={isLoading}
           >
             Back to sign in
           </button>
