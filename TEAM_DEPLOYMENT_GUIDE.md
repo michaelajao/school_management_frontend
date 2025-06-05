@@ -1,5 +1,9 @@
 # School Management System - Team Deployment Guide
 
+## Multi-Repository Workspace Setup
+
+This guide covers the integrated development environment for teams working with separate frontend and backend repositories.
+
 ## Quick Start
 
 ### Prerequisites
@@ -10,37 +14,67 @@
 
 ### Initial Setup
 
-1. **Clone the repositories:**
+1. **Create a workspace directory and clone both repositories:**
    ```bash
-   git clone <frontend-repo-url>
-   git clone <backend-repo-url>
+   # Create workspace directory
+   mkdir school_management_workspace
+   cd school_management_workspace
+   
+   # Clone both repositories
+   git clone <frontend-repo-url> school_management_frontend
+   git clone <backend-repo-url> school_management_backend
+   
+   # Copy the docker-compose file to workspace level
+   # (This should be provided separately or created)
    ```
 
 2. **Create environment files:**
    ```bash
    # In frontend directory
+   cd school_management_frontend
    cp .env.template .env.local
    
    # In backend directory
+   cd ../school_management_backend
    cp .env.template .env
+   
+   # Return to workspace directory
+   cd ..
    ```
 
-3. **Start the development environment:**
+3. **Start the integrated development environment:**
    ```bash
-   # Using Docker (recommended)
+   # From workspace directory (containing both repos)
    docker-compose -f docker-compose.staging.yml up --build
    
-   # Or using local setup
-   ./setup-staging.sh  # For Linux/Mac
-   # OR
-   .\setup-staging.ps1  # For Windows
+   # Or use helper scripts (if available)
+   ./start-staging.ps1  # For Windows
    ```
+
+## Repository Structure
+
+```
+workspace/
+├── school_management_frontend/     # Frontend repository
+│   ├── app/                       # Next.js app router
+│   ├── components/                # React components
+│   ├── .git/                      # Frontend git history
+│   └── package.json               # Frontend dependencies
+├── school_management_backend/      # Backend repository
+│   ├── src/                       # NestJS source code
+│   ├── .git/                      # Backend git history
+│   └── package.json               # Backend dependencies
+├── docker-compose.staging.yml     # Integrated environment
+├── start-staging.ps1              # Helper script (Windows)
+├── stop-staging.ps1               # Helper script (Windows)
+└── README.md                      # Workspace documentation
+```
 
 ## Development Environment
 
 ### Using Docker (Recommended)
 
-1. **Start all services:**
+1. **Start all services (from workspace directory):**
    ```bash
    docker-compose -f docker-compose.staging.yml up -d
    ```
@@ -63,23 +97,90 @@
 4. **Stop services:**
    ```bash
    docker-compose -f docker-compose.staging.yml down
+   
+   # Or use helper script
+   ./stop-staging.ps1  # For Windows
    ```
 
-### Local Development
+### Local Development (Repository-Specific)
 
-1. **Backend setup:**
-   ```bash
-   cd ../school_management_backend
-   npm install
-   npm run start:dev
-   ```
+**Frontend Development:**
+```bash
+cd school_management_frontend
+npm install
+npm run dev
+# Runs on http://localhost:3000
+```
 
-2. **Frontend setup:**
-   ```bash
-   cd ../school_management_frontend
-   npm install
-   npm run dev
-   ```
+**Backend Development:**
+```bash
+cd school_management_backend
+npm install
+npm run start:dev
+# Runs on http://localhost:4000
+```
+
+## Team Workflow
+
+### Repository Management
+
+1. **Frontend Team:**
+   - Work in `school_management_frontend/` directory
+   - Maintain separate Git history
+   - Independent deployment pipeline
+   - Focus on UI/UX and frontend features
+
+2. **Backend Team:**
+   - Work in `school_management_backend/` directory
+   - Maintain separate Git history
+   - Independent deployment pipeline
+   - Focus on API and business logic
+
+3. **Integration Testing:**
+   - Use workspace-level Docker Compose
+   - Test API integration
+   - Coordinate feature development
+
+### Git Workflow
+
+Each repository follows independent Git workflows:
+
+**Frontend Repository:**
+```bash
+cd school_management_frontend
+git checkout -b feature/new-frontend-feature
+# Make changes
+git commit -m "Add new frontend feature"
+git push origin feature/new-frontend-feature
+# Create PR in frontend repository
+```
+
+**Backend Repository:**
+```bash
+cd school_management_backend
+git checkout -b feature/new-api-endpoint
+# Make changes
+git commit -m "Add new API endpoint"
+git push origin feature/new-api-endpoint
+# Create PR in backend repository
+```
+
+### Coordination Between Teams
+
+1. **API Changes:**
+   - Backend team updates API documentation
+   - Frontend team updates integration accordingly
+   - Test integration using workspace environment
+
+2. **Environment Variables:**
+   - Coordinate environment variable changes
+   - Update both repository configurations
+   - Test in integrated environment
+
+3. **Database Schema:**
+   - Backend team manages database migrations
+   - Frontend team updates data models
+   - Test with shared database in workspace
 
 ## Testing Accounts
 
@@ -94,26 +195,6 @@
 ### Student Access
 - Email: student@schoolsms.staging
 - Password: staging123
-
-## Development Workflow
-
-1. **Branch Strategy:**
-   - `main` - Production code
-   - `staging` - Staging environment
-   - `develop` - Development branch
-   - Feature branches: `feature/feature-name`
-
-2. **Code Review Process:**
-   - Create feature branch from `develop`
-   - Submit PR to `develop`
-   - After review, merge to `develop`
-   - Regular merges from `develop` to `staging`
-   - Production releases from `staging` to `main`
-
-3. **Testing Requirements:**
-   - Unit tests for new features
-   - E2E tests for critical paths
-   - Manual testing checklist completed
 
 ## Common Tasks
 
@@ -163,84 +244,82 @@
 
 1. **Port Conflicts:**
    ```bash
-   # Check if ports are in use
-   netstat -tulpn | grep LISTEN
+   # Check if ports are in use (Windows)
+   netstat -ano | findstr "3000\|4000\|5432\|6379\|8080\|8081"
    
    # Kill process using port
-   kill -9 <PID>
+   taskkill /PID <PID> /F
    ```
 
-2. **Database Connection Issues:**
-   - Check if PostgreSQL is running: `docker-compose -f docker-compose.staging.yml ps`
-   - Verify credentials in `.env` file
-   - Check logs: `docker-compose -f docker-compose.staging.yml logs postgres`
+2. **Repository Sync Issues:**
+   - Ensure both repositories are up to date
+   - Check for conflicting environment variables
+   - Verify API endpoint compatibility
 
-3. **Frontend API Connection:**
-   - Verify `NEXT_PUBLIC_API_BASE_URL` in `.env.local`
-   - Check CORS settings in backend
-   - Verify network connectivity
-
-4. **Docker Issues:**
+3. **Docker Issues:**
    ```bash
-   # Reset Docker
+   # Reset Docker environment
    docker-compose -f docker-compose.staging.yml down
    docker system prune -f
    docker-compose -f docker-compose.staging.yml up -d
    ```
 
+4. **Cross-Repository Communication:**
+   - Verify CORS settings in backend
+   - Check API base URL in frontend
+   - Ensure network connectivity between containers
+
+## Deployment
+
+### Development/Staging
+Use the workspace Docker Compose setup for integrated development and testing.
+
+### Production
+Each repository deploys independently:
+
+**Frontend:**
+- Vercel (recommended for Next.js)
+- Netlify
+- Railway
+
+**Backend:**
+- Railway
+- Render
+- Heroku
+
 ## Security Guidelines
 
 1. **Environment Variables:**
-   - Never commit `.env` files
-   - Use strong passwords
-   - Rotate secrets regularly
+   - Never commit `.env` files to either repository
+   - Use different secrets for each environment
+   - Coordinate secret management between teams
 
-2. **Database Security:**
-   - Use strong passwords
-   - Limit database access
-   - Regular backups
+2. **Repository Access:**
+   - Manage access permissions per repository
+   - Use branch protection rules
+   - Require code reviews for both repositories
 
-3. **API Security:**
-   - Use HTTPS in production
-   - Implement rate limiting
-   - Validate all inputs
+## Quick Commands Reference
 
-## Deployment Checklist
+```bash
+# Workspace-level commands (from workspace directory)
+docker-compose -f docker-compose.staging.yml up -d     # Start all services
+docker-compose -f docker-compose.staging.yml down      # Stop all services
+docker-compose -f docker-compose.staging.yml logs -f   # View logs
 
-### Before Deployment
-- [ ] All tests passing
-- [ ] Environment variables configured
-- [ ] Database migrations ready
-- [ ] Security review completed
-- [ ] Performance testing done
+# Frontend-specific commands
+cd school_management_frontend
+npm run dev                                             # Start frontend only
+npm run build                                           # Build frontend
+npm run test                                            # Test frontend
 
-### After Deployment
-- [ ] Health checks passing
-- [ ] Logs monitored
-- [ ] Database connections verified
-- [ ] API endpoints tested
-- [ ] Frontend functionality verified
+# Backend-specific commands
+cd school_management_backend
+npm run start:dev                                       # Start backend only
+npm run build                                           # Build backend
+npm run test                                            # Test backend
+```
 
-## Support and Resources
+---
 
-### Internal Resources
-- Documentation: `/docs` directory
-- API Documentation: http://localhost:4000/api/docs
-- Issue Tracker: [GitHub Issues]
-
-### External Resources
-- Docker Documentation: https://docs.docker.com
-- Next.js Documentation: https://nextjs.org/docs
-- NestJS Documentation: https://docs.nestjs.com
-
-## Team Contacts
-
-### Technical Leads
-- Backend Lead: [Name] - [Email]
-- Frontend Lead: [Name] - [Email]
-- DevOps Lead: [Name] - [Email]
-
-### Support Channels
-- Slack Channel: #school-management-support
-- Email: support@schoolsms.com
-- Emergency Contact: [Phone Number] 
+**Note:** This guide assumes a multi-repository workspace setup where frontend and backend teams work independently but can integrate for testing and development. 

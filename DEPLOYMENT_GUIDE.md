@@ -9,10 +9,64 @@ This guide covers deployment for both frontend (Next.js) and backend (NestJS) co
 - Node.js >= 18
 - PostgreSQL database
 - Git repository access
+- Docker and Docker Compose (for staging)
 
-## Backend Deployment
+## Local Development Setup
 
-### Option 1: Railway (Recommended for staging)
+### Quick Start with Docker (Recommended)
+
+1. **Clone the repository:**
+   ```bash
+   git clone <repository-url>
+   cd school_management_system
+   ```
+
+2. **Start the staging environment:**
+   ```bash
+   # Using Docker Compose
+   docker-compose -f docker-compose.staging.yml up -d
+   
+   # Or using helper script
+   ./start-staging.ps1  # Windows
+   ```
+
+3. **Access the services:**
+   - Frontend: http://localhost:3000
+   - Backend API: http://localhost:4000
+   - Database Admin: http://localhost:8080
+   - Redis Commander: http://localhost:8081
+
+### Manual Setup
+
+1. **Backend setup:**
+   ```bash
+   cd school_management_backend
+   npm install
+   
+   # Create .env file with database configuration
+   cp .env.template .env
+   
+   # Start development server
+   npm run start:dev
+   ```
+
+2. **Frontend setup:**
+   ```bash
+   cd school_management_frontend
+   npm install
+   
+   # Create .env.local file
+   echo "NEXT_PUBLIC_API_BASE_URL=http://localhost:4000" > .env.local
+   
+   # Start development server
+   npm run dev
+   ```
+
+## Production Deployment
+
+### Backend Deployment
+
+#### Option 1: Railway (Recommended for staging)
 
 1. **Install Railway CLI:**
    ```bash
@@ -22,7 +76,7 @@ This guide covers deployment for both frontend (Next.js) and backend (NestJS) co
 2. **Login and Initialize:**
    ```bash
    railway login
-   cd ../school_management_backend
+   cd school_management_backend
    railway init
    ```
 
@@ -30,7 +84,7 @@ This guide covers deployment for both frontend (Next.js) and backend (NestJS) co
    ```bash
    railway add DATABASE_URL
    railway add JWT_SECRET
-   railway add NODE_ENV=staging
+   railway add NODE_ENV=production
    railway add PORT=4000
    railway add CORS_ORIGIN=https://your-frontend-url.com
    ```
@@ -40,7 +94,7 @@ This guide covers deployment for both frontend (Next.js) and backend (NestJS) co
    railway up
    ```
 
-### Option 2: Render (Production Ready)
+#### Option 2: Render (Production Ready)
 
 1. Connect your GitHub repository to Render
 2. Create a new Web Service
@@ -49,7 +103,7 @@ This guide covers deployment for both frontend (Next.js) and backend (NestJS) co
    - Start Command: `npm run start:prod`
    - Environment: Node
 
-### Option 3: Vercel (Serverless)
+#### Option 3: Vercel (Serverless)
 
 1. Install Vercel CLI:
    ```bash
@@ -58,21 +112,22 @@ This guide covers deployment for both frontend (Next.js) and backend (NestJS) co
 
 2. Deploy from backend directory:
    ```bash
-   cd ../school_management_backend
+   cd school_management_backend
    vercel --prod
    ```
 
-## Frontend Deployment
+### Frontend Deployment
 
-### Option 1: Vercel (Recommended)
+#### Option 1: Vercel (Recommended)
 
 1. **Install Vercel CLI:**
    ```bash
    npm install -g vercel
    ```
 
-2. **Deploy:**
+2. **Deploy from frontend directory:**
    ```bash
+   cd school_management_frontend
    vercel --prod
    ```
 
@@ -83,7 +138,7 @@ This guide covers deployment for both frontend (Next.js) and backend (NestJS) co
    NEXT_PUBLIC_APP_URL=https://your-frontend-url.com
    ```
 
-### Option 2: Netlify
+#### Option 2: Netlify
 
 1. Connect GitHub repository to Netlify
 2. Build settings:
@@ -97,7 +152,7 @@ This guide covers deployment for both frontend (Next.js) and backend (NestJS) co
 ```env
 DATABASE_URL=postgresql://user:password@host:port/database
 JWT_SECRET=your-super-secret-jwt-key-minimum-32-characters
-NODE_ENV=staging
+NODE_ENV=production
 PORT=4000
 CORS_ORIGIN=https://your-frontend-url.com
 
@@ -140,40 +195,35 @@ NEXT_PUBLIC_SENTRY_DSN=your-sentry-dsn
 2. Create database: `createdb school_management`
 3. Use connection string: `postgresql://postgres:password@localhost:5432/school_management`
 
-## Quick Setup Commands
+## Docker Deployment
 
-### Backend Setup:
+### Staging Environment
+
+The project includes a complete Docker Compose setup for staging:
+
 ```bash
-# Navigate to backend directory
-cd ../school_management_backend
+# Start all services
+docker-compose -f docker-compose.staging.yml up -d
 
-# Install dependencies
-npm install
+# Stop all services
+docker-compose -f docker-compose.staging.yml down
 
-# Set up environment variables (create .env file)
-# Copy .env.example to .env and fill in values
+# View logs
+docker-compose -f docker-compose.staging.yml logs -f
 
-# Run database migrations
-npm run typeorm:migration:run
-
-# Start development server
-npm run start:dev
+# Reset everything
+docker-compose -f docker-compose.staging.yml down -v
+docker-compose -f docker-compose.staging.yml up -d
 ```
 
-### Frontend Setup:
-```bash
-# Navigate to frontend directory (this directory)
-cd school_management_frontend
+### Production Docker Setup
 
-# Install dependencies
-npm install
+For production, you can use the staging compose file as a base and modify:
 
-# Create .env.local file with API URL
-echo "NEXT_PUBLIC_API_URL=http://localhost:4000" > .env.local
-
-# Start development server
-npm run dev
-```
+1. Change environment variables to production values
+2. Use production database URLs
+3. Enable SSL/TLS
+4. Configure proper secrets management
 
 ## Production Checklist
 
@@ -184,6 +234,8 @@ npm run dev
 - [ ] CORS_ORIGIN points to frontend URL
 - [ ] Health check endpoint accessible
 - [ ] Error logging configured
+- [ ] SSL/TLS enabled
+- [ ] Rate limiting configured
 
 ### Frontend
 - [ ] API_URL points to backend
@@ -191,6 +243,8 @@ npm run dev
 - [ ] Environment variables set
 - [ ] Analytics configured (if needed)
 - [ ] SEO metadata updated
+- [ ] Performance optimized
+- [ ] Error tracking enabled
 
 ## Troubleshooting
 
@@ -198,24 +252,52 @@ npm run dev
 - **Port conflicts**: Change PORT in environment variables
 - **Database connection**: Verify DATABASE_URL format and credentials
 - **CORS errors**: Ensure CORS_ORIGIN matches frontend URL
-- **Migration errors**: Check database permissions and existing tables
+- **JWT errors**: Verify JWT_SECRET is set and secure
 
 ### Common Frontend Issues
-- **API connection failed**: Verify NEXT_PUBLIC_API_URL is correct
-- **Build errors**: Check for TypeScript errors with `npm run type-check`
-- **Hydration errors**: Ensure server and client rendering match
+- **API connection**: Verify NEXT_PUBLIC_API_URL is correct
+- **Build errors**: Check for TypeScript errors and missing dependencies
+- **Environment variables**: Ensure all required variables are set
+- **Routing issues**: Verify Next.js app router configuration
 
-## Monitoring & Maintenance
+### Docker Issues
+- **Port conflicts**: Check if ports 3000, 4000, 5432, 6379, 8080, 8081 are available
+- **Permission errors**: Ensure Docker has proper permissions
+- **Network issues**: Check Docker network configuration
+- **Volume issues**: Clear Docker volumes if database issues persist
 
-### Recommended Tools
-- **Error Tracking**: Sentry for both frontend and backend
-- **Performance**: Vercel Analytics for frontend, PM2 for backend
-- **Database**: Native monitoring tools from your database provider
-- **Uptime**: UptimeRobot or similar service
+## Monitoring and Maintenance
 
-### Regular Maintenance
-- Monitor database size and performance
-- Update dependencies monthly
-- Review error logs weekly
-- Backup database regularly
-- Monitor API response times
+### Health Checks
+- Backend: `GET /health`
+- Frontend: Check if page loads correctly
+- Database: Connection test via pgAdmin
+
+### Logs
+```bash
+# View application logs
+docker-compose -f docker-compose.staging.yml logs -f backend
+docker-compose -f docker-compose.staging.yml logs -f frontend
+
+# View database logs
+docker-compose -f docker-compose.staging.yml logs -f postgres
+```
+
+### Backup
+```bash
+# Database backup
+docker-compose -f docker-compose.staging.yml exec postgres pg_dump -U school_admin school_management_db > backup.sql
+
+# Restore database
+docker-compose -f docker-compose.staging.yml exec -T postgres psql -U school_admin school_management_db < backup.sql
+```
+
+## Security Considerations
+
+1. **Environment Variables**: Never commit `.env` files to version control
+2. **Database Security**: Use strong passwords and limit access
+3. **API Security**: Implement rate limiting and input validation
+4. **SSL/TLS**: Always use HTTPS in production
+5. **Secrets Management**: Use proper secrets management in production
+6. **Regular Updates**: Keep dependencies updated
+7. **Monitoring**: Implement proper logging and monitoring
