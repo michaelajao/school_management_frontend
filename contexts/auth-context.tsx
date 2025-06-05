@@ -78,19 +78,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
     
     checkAuth();
-  }, []);
-  const login = async (identifier: string, password: string, role: User['role']) => {
+  }, []);  const login = async (email: string, password: string, role: User['role']) => {
     setLoading(true);
     try {
       // Map frontend role to backend role format
       const backendRole = role === 'superadmin' ? 'SUPER_ADMIN' : 
                          role.toUpperCase() as LoginCredentials['role'];
       
+      // Using identifier field that the AuthApiService will map to the appropriate backend field
       const credentials: LoginCredentials = { 
-        identifier, 
+        identifier: email, 
         password, 
         role: backendRole 
       };
+      
       const response = await AuthApiService.login(credentials);
       
       // Convert API user to local user format
@@ -104,7 +105,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       setUser(localUser);
       
-      // Redirect based on role
+      // Redirect based on returned role (not the requested role)
+      // This ensures proper redirection if server assigns a different role
       router.push(`/dashboard/${localUser.role}`);
       
     } catch (error) {

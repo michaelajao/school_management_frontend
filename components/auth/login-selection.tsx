@@ -11,36 +11,39 @@ const roles = [
     label: "Admin",
     description: "School administrators and management",
     icon: UserCheck,
-    color: "bg-blue-50 hover:bg-blue-100 border-blue-200"
+    color: "bg-blue-50 hover:bg-blue-100 border-blue-200",
+    path: "/auth/login/admin" // Direct path to admin login
   },
   {
     value: "teacher", 
     label: "Teacher",
     description: "Teaching staff and educators",
     icon: GraduationCap,
-    color: "bg-green-50 hover:bg-green-100 border-green-200"
+    color: "bg-green-50 hover:bg-green-100 border-green-200",
+    path: "/auth/login/teacher" // Direct path to teacher login
   },
   {
     value: "student",
     label: "Student", 
     description: "Students and learners",
     icon: User,
-    color: "bg-purple-50 hover:bg-purple-100 border-purple-200"
+    color: "bg-purple-50 hover:bg-purple-100 border-purple-200",
+    path: "/auth/login/student" // Direct path to student login
   },
   {
     value: "parent",
     label: "Parent",
     description: "Parents and guardians",
     icon: Users,
-    color: "bg-orange-50 hover:bg-orange-100 border-orange-200"
+    color: "bg-orange-50 hover:bg-orange-100 border-orange-200",
+    path: "/auth/login/parent" // Direct path to parent login
   }
 ];
 
 export function LoginSelectionPage() {
   const router = useRouter();
-
-  const handleRoleSelect = (role: string) => {
-    router.push(`/auth/login/${role}`);
+  const handleRoleSelect = (role: typeof roles[number]) => {
+    router.push(role.path);
   };
 
   return (
@@ -59,7 +62,7 @@ export function LoginSelectionPage() {
             return (
               <button
                 key={role.value}
-                onClick={() => handleRoleSelect(role.value)}
+                onClick={() => handleRoleSelect(role)}
                 className={`w-full p-4 border-2 rounded-lg text-left transition-all ${role.color}`}
               >
                 <div className="flex items-center space-x-3">

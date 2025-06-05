@@ -12,7 +12,15 @@ import { toast } from "sonner";
 import { Checkbox } from "../ui/checkbox";
 import { validatePassword } from "@/lib/validatePassword";
 import { usePricingStore } from "@/store/usePricingStore"; 
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
+// Define roles for the dropdown
+const roles = [
+  { value: "admin", label: "Admin" },
+  { value: "teacher", label: "Teacher" },
+  { value: "student", label: "Student" },
+  { value: "parent", label: "Parent" }
+];
 
 type AuthFormProps = {
   type: "signin" | "signup";
@@ -23,15 +31,14 @@ export function AuthForm({ type }: AuthFormProps) {
   const { login, signup } = useAuth();
   const setUserEmail = usePricingStore((state) => state.setUserEmail); 
   const [isLoading, setIsLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState({
+  const [showPassword, setShowPassword] = useState(false);  const [formData, setFormData] = useState({
     email: "",
     password: "",
-    confirmPassword: ""
+    confirmPassword: "",
+    role: "student" // Default role
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     
@@ -43,6 +50,49 @@ export function AuthForm({ type }: AuthFormProps) {
         return newErrors;
       });
     }
+  };
+  
+  // Handle role selection specifically
+  const handleRoleChange = (value: string) => {
+    setFormData((prev) => ({ ...prev, role: value }));
+    
+    if (errors.role) {
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors.role;
+        return newErrors;
+      });
+    }
+  };
+
+  // Add role selection in the signin form after password field
+  const renderRoleSelection = () => {
+    if (type !== "signin") return null;
+    
+    return (
+      <div className="space-y-2">
+        <Label htmlFor="role">Role</Label>
+        <Select 
+          value={formData.role} 
+          onValueChange={(value) => handleRoleChange(value)} 
+          disabled={isLoading}
+        >
+          <SelectTrigger className={errors.role ? "border-red-500" : ""}>
+            <SelectValue placeholder="Select your role" />
+          </SelectTrigger>
+          <SelectContent>
+            {roles.map((role) => (
+              <SelectItem key={role.value} value={role.value}>
+                {role.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        {errors.role && (
+          <p className="text-xs text-red-500 mt-1">{errors.role}</p>
+        )}
+      </div>
+    );
   };
 
   const validateForm = () => {
@@ -66,16 +116,21 @@ export function AuthForm({ type }: AuthFormProps) {
       if (!valid) {
         newErrors.password = errors[0]
       }
-}
+    }
+    
     // Confirm password validation for signup
     if (type === "signup" && formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = "Passwords do not match";
     }
     
+    // Role validation for signin
+    if (type === "signin" && !formData.role) {
+      newErrors.role = "Please select a role";
+    }
+    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
@@ -89,14 +144,21 @@ export function AuthForm({ type }: AuthFormProps) {
         setUserEmail(formData.email); // Set the email in the pricing store
         toast.success("Account created successfully!");
       } else {
-        await login(formData.email, formData.password);
+        // Pass the role to login for role-specific authentication
+        const role = formData.role as "admin" | "teacher" | "student" | "parent" | "superadmin";
+        await login(formData.email, formData.password, role);
         toast.success("Welcome back!");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Authentication error:", error);
-      toast.error("Authentication failed. Please check your credentials and try again.");
+      
+      // Provide more descriptive error messages when available
+      const errorMessage = error?.response?.data?.message || 
+        "Authentication failed. Please check your credentials and try again.";
+        
+      toast.error(errorMessage);
       setErrors({
-        form: "Authentication failed. Please check your credentials and try again."
+        form: errorMessage
       });
     } finally {
       setIsLoading(false);
@@ -173,6 +235,9 @@ export function AuthForm({ type }: AuthFormProps) {
             )}
           </div>
         )}
+
+        {/* Insert role selection for signin */}
+        {renderRoleSelection()}
 
         <div className="flex items-center gap-4 p-2 rounded">
           <Checkbox id="showPassword"

@@ -1,9 +1,14 @@
 import { apiClient } from './client';
 
 export interface LoginCredentials {
+  // Frontend uses identifier for convenience
   identifier: string;
   password: string;
   role: 'SUPER_ADMIN' | 'ADMIN' | 'TEACHER' | 'STUDENT' | 'PARENT' | 'SCHOOL_MANAGEMENT';
+  // Backend-specific fields, populated by the login method
+  email?: string;
+  studentId?: string;
+  staffID?: string;
 }
 
 export interface RegisterData {
@@ -39,19 +44,33 @@ export interface User {
 }
 
 export interface RefreshTokenResponse {
-  access_token: string;
+  accessToken: string;
+  refreshToken?: string;
 }
 
 export class AuthApiService {
-  private static readonly BASE_PATH = '/auth';
-  /**
+  private static readonly BASE_PATH = '/auth';  /**
    * Login user with identifier (email/student ID/staff ID) and password
-   */
-  static async login(credentials: LoginCredentials): Promise<AuthResponse> {
+   */  static async login(credentials: LoginCredentials): Promise<AuthResponse> {
     try {
+      // Transform credentials to match backend expectations
+      // Backend expects one of: email, studentId, or staffID
+      const loginPayload = {
+        password: credentials.password,
+        role: credentials.role,
+        // Route the identifier to the appropriate field based on role
+        email: credentials.role === 'STUDENT' || credentials.role === 'PARENT' || 
+               credentials.role === 'SUPER_ADMIN' || credentials.identifier.includes('@') 
+               ? credentials.identifier : undefined,
+        studentId: credentials.role === 'STUDENT' && !credentials.identifier.includes('@') 
+                  ? credentials.identifier : undefined,
+        staffID: (credentials.role === 'TEACHER' || credentials.role === 'ADMIN') && 
+                !credentials.identifier.includes('@') ? credentials.identifier : undefined
+      };
+      
       const response = await apiClient.post<AuthResponse>(
         `${this.BASE_PATH}/login`,
-        credentials
+        loginPayload
       );
       
       // Store token for future requests
@@ -61,7 +80,7 @@ export class AuthApiService {
         // Store user data and tokens
         if (typeof window !== 'undefined') {
           localStorage.setItem('user_data', JSON.stringify(response.user));
-          localStorage.setItem('access_token', response.accessToken);
+          localStorage.setItem('auth_token', response.accessToken);
           localStorage.setItem('refresh_token', response.refreshToken);
         }
       }
@@ -71,7 +90,7 @@ export class AuthApiService {
       console.error('Login error:', error);
       throw error;
     }
-  }  /**
+  }/**
    * Register new user (public registration)
    */
   static async register(userData: RegisterData): Promise<AuthResponse> {
@@ -84,11 +103,10 @@ export class AuthApiService {
       // Store token for future requests
       if (response.accessToken) {
         apiClient.setAuthToken(response.accessToken);
-        
-        // Store user data and tokens
+          // Store user data and tokens
         if (typeof window !== 'undefined') {
           localStorage.setItem('user_data', JSON.stringify(response.user));
-          localStorage.setItem('access_token', response.accessToken);
+          localStorage.setItem('auth_token', response.accessToken);
           localStorage.setItem('refresh_token', response.refreshToken);
         }
       }
@@ -190,17 +208,23 @@ export class AuthApiService {
       throw error;
     }
   }
-
   /**
    * Refresh access token
    */
   static async refreshToken(): Promise<RefreshTokenResponse> {
     try {
-      const response = await apiClient.post<RefreshTokenResponse>(`${this.BASE_PATH}/refresh`);
+      const response = await apiClient.post<RefreshTokenResponse>(`${this.BASE_PATH}/refresh`, {
+        refreshToken: localStorage.getItem('refresh_token')
+      });
       
       // Store new token
-      if (response.access_token) {
-        apiClient.setAuthToken(response.access_token);
+      if (response.accessToken) {
+        apiClient.setAuthToken(response.accessToken);
+        
+        // Store refresh token if it exists
+        if (response.refreshToken && typeof window !== 'undefined') {
+          localStorage.setItem('refresh_token', response.refreshToken);
+        }
       }
       
       return response;

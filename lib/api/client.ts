@@ -47,20 +47,49 @@ class ApiClient {
       (error) => {
         return Promise.reject(error);
       }
-    );
-
-    // Response interceptor for error handling
+    );    // Response interceptor for error handling
     this.client.interceptors.response.use(
       (response: AxiosResponse) => {
         return response;
       },
-      (error) => {
-        if (error.response?.status === 401) {
-          // Token expired or invalid
-          this.clearStoredToken();
-          // Redirect to login or refresh token
-          if (typeof window !== 'undefined') {
-            window.location.href = '/auth/signin';
+      async (error) => {
+        const originalRequest = error.config;
+        
+        // Token expired handling (status 401)
+        if (error.response?.status === 401 && !originalRequest._retry) {
+          originalRequest._retry = true;
+          
+          // Don't try to refresh if we're already on the auth endpoints
+          const isAuthEndpoint = originalRequest.url.includes('/auth/');
+          const refreshToken = localStorage.getItem('refresh_token');
+          
+          // Attempt token refresh if we have a refresh token and not on auth endpoints
+          if (refreshToken && !isAuthEndpoint) {
+            try {              const { AuthApiService } = await import('./auth');
+              const response = await AuthApiService.refreshToken();
+              
+              // Update auth token in axios headers
+              this.setAuthToken(response.accessToken);
+              originalRequest.headers.Authorization = `Bearer ${response.accessToken}`;
+              
+              // Retry the original request with new token
+              return this.client(originalRequest);
+            } catch (refreshError) {
+              // Refresh token failed, clear tokens and redirect to login
+              console.error('Token refresh failed:', refreshError);
+              this.clearStoredToken();
+              
+              if (typeof window !== 'undefined') {
+                window.location.href = '/auth/signin';
+              }
+            }
+          } else {
+            // No refresh token or on auth endpoint, clear tokens and redirect
+            this.clearStoredToken();
+            
+            if (typeof window !== 'undefined') {
+              window.location.href = '/auth/signin';
+            }
           }
         }
         

@@ -1,0 +1,130 @@
+# Docker Compose for School Management System - Staging Environment
+version: '3.8'
+
+services:
+  # PostgreSQL Database for staging
+  postgres:
+    image: postgres:15-alpine
+    container_name: school_sms_postgres_staging
+    restart: always
+    environment:
+      POSTGRES_DB: ${DB_NAME:-school_management}
+      POSTGRES_USER: ${DB_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
+    volumes:
+      - postgres_staging_data:/var/lib/postgresql/data
+      - ../school_management_backend/init-scripts:/docker-entrypoint-initdb.d
+    ports:
+      - "5435:5432"
+    networks:
+      - school_network_staging
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-postgres} -d ${DB_NAME:-school_management}"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Redis for caching and session management
+  redis:
+    image: redis:7-alpine
+    container_name: school_sms_redis_staging
+    restart: always
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-redis_password}
+    volumes:
+      - redis_staging_data:/data
+    ports:
+      - "6380:6379"
+    networks:
+      - school_network_staging
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+  # Backend Service (Staging)
+  backend:
+    build:
+      context: ../school_management_backend
+      dockerfile: Dockerfile.dev
+      target: development
+    container_name: school_sms_backend_staging
+    restart: always
+    environment:
+      NODE_ENV: staging
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: ${DB_USERNAME:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      DB_NAME: ${DB_NAME:-school_management}
+      DB_SSL: "false"
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-redis_password}
+      JWT_SECRET: ${JWT_SECRET:-school_management_jwt_secret_staging}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-1d}
+      PORT: 4000
+      LOG_LEVEL: debug
+      ENABLE_SWAGGER: "true"
+    volumes:
+      - ../school_management_backend:/app
+      - /app/node_modules
+    ports:
+      - "4000:4000"
+    networks:
+      - school_network_staging
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # Frontend Service (Staging)
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: school_sms_frontend_staging
+    restart: always
+    environment:
+      NODE_ENV: development
+      NEXT_PUBLIC_API_BASE_URL: http://localhost/api
+      NEXT_PUBLIC_AUTH_DOMAIN: staging.schoolsms.local
+      NEXT_PUBLIC_ENABLE_REGISTRATION: "true"
+      NEXT_PUBLIC_ENABLE_MULTI_TENANT: "true"
+      NEXT_PUBLIC_DEBUG_MODE: "true"
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    ports:
+      - "3000:3000"
+    networks:
+      - school_network_staging
+    depends_on:
+      - backend
+
+  # Nginx Reverse Proxy (Staging)
+  nginx:
+    image: nginx:alpine
+    container_name: school_sms_nginx_staging
+    restart: always
+    volumes:
+      - ./nginx/nginx.staging.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "80:80"
+    networks:
+      - school_network_staging
+    depends_on:
+      - backend
+      - frontend
+
+volumes:
+  postgres_staging_data:
+    driver: local
+  redis_staging_data:
+    driver: local
+
+networks:
+  school_network_staging:
+    driver: bridge

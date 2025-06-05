@@ -89,8 +89,7 @@ export function RoleLoginForm({ role }: RoleLoginFormProps) {
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  };  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
     if (!validateForm()) {
@@ -101,16 +100,32 @@ export function RoleLoginForm({ role }: RoleLoginFormProps) {
     setIsLoading(true);
     
     try {
+      // Use the role from props to ensure consistent authentication
       await login(formData.email, formData.password, role);
+      
+      // Show role-specific welcome message
       toast.success(`Welcome back, ${roleDisplayNames[role]}!`);
       
-      // Redirect will be handled by the auth context
+      // Redirect will be handled by the auth context based on returned user role
       
-    } catch (error) {
+    } catch (error: any) {
       console.error("Login error:", error);
-      toast.error("Invalid email or password. Please try again.");
+      
+      // Provide more specific error messages when available
+      let errorMessage = "Invalid email or password. Please try again.";
+      
+      if (error?.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (typeof error === 'string') {
+        errorMessage = error;
+      } else if (error?.message) {
+        errorMessage = error.message;
+      }
+      
+      toast.error(errorMessage);
+      
       setErrors({
-        form: "Invalid email or password. Please try again."
+        form: errorMessage
       });
     } finally {
       setIsLoading(false);
