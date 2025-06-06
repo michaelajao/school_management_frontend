@@ -101,7 +101,7 @@ export function SchoolSignupForm() {
       // Store school data (in real app, this would be sent to API)
       localStorage.setItem("schoolData", JSON.stringify(formData));
       
-      toast.success("School registered successfully!");
+      toast.success("School information saved! Now create your administrator account.");
       
       // Redirect to create account page
       router.push("/auth/create-account");
@@ -118,20 +118,17 @@ export function SchoolSignupForm() {
     <AuthLayout>
       <div className="space-y-6">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900">School Sign Up</h1>
-          <p className="text-gray-600 mt-2">
-            Register your school to get started
-          </p>
+          <h1 className="text-2xl font-bold text-gray-900">School Signup</h1>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div className="space-y-2">
-            <Label htmlFor="schoolName">School Name *</Label>
+            <Label htmlFor="schoolName" className="text-sm font-medium text-gray-700">School Name</Label>
             <Input
               id="schoolName"
               name="schoolName"
               type="text"
-              placeholder="Enter your school name"
+              placeholder="Enter full name"
               value={formData.schoolName}
               onChange={(e) => handleChange("schoolName", e.target.value)}
               disabled={isLoading}
@@ -143,27 +140,28 @@ export function SchoolSignupForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="shortName">Short Name *</Label>
+            <Label htmlFor="shortName" className="text-sm font-medium text-gray-700">School Short Name</Label>
             <Input
               id="shortName"
               name="shortName"
               type="text"
-              placeholder="Enter school short name/abbreviation"
+              placeholder="Enter school short name"
               value={formData.shortName}
               onChange={(e) => handleChange("shortName", e.target.value)}
               disabled={isLoading}
               className={errors.shortName ? "border-red-500" : ""}
             />
+            <p className="text-xs text-teal-600">This will be the main URL to the portal</p>
             {errors.shortName && (
               <p className="text-xs text-red-500">{errors.shortName}</p>
             )}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="country">Country *</Label>
+            <Label htmlFor="country" className="text-sm font-medium text-gray-700">Country</Label>
             <Select onValueChange={(value) => handleChange("country", value)} disabled={isLoading}>
-              <SelectTrigger className={errors.country ? "border-red-500" : ""}>
-                <SelectValue placeholder="Select your country" />
+              <SelectTrigger className={`h-12 border-gray-300 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 ${errors.country ? "border-red-500" : ""}`}>
+                <SelectValue placeholder="Select Country" />
               </SelectTrigger>
               <SelectContent>
                 {countries.map((country) => (
@@ -179,12 +177,12 @@ export function SchoolSignupForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="website">Website (Optional)</Label>
+            <Label htmlFor="website" className="text-sm font-medium text-gray-700">School Website</Label>
             <Input
               id="website"
               name="website"
               type="text"
-              placeholder="https://yourschool.com"
+              placeholder="www.loremipsumschools.com"
               value={formData.website}
               onChange={(e) => handleChange("website", e.target.value)}
               disabled={isLoading}
@@ -197,10 +195,10 @@ export function SchoolSignupForm() {
 
           <Button 
             type="submit" 
-            className="w-full bg-teal-600 hover:bg-teal-700" 
+            className="w-full" 
             disabled={isLoading}
           >
-            {isLoading ? "Registering..." : "Continue"}
+{isLoading ? "Processing..." : "Next"}
           </Button>
         </form>
 

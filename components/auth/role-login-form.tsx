@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PasswordInput } from "@/components/ui/password-input";
 import { AuthLayout } from "@/components/auth/auth-layout";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -61,7 +62,7 @@ export function RoleLoginForm({ role }: RoleLoginFormProps) {
   const router = useRouter();
   const { login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState({
     identifier: "",
     password: ""
   });
@@ -157,11 +158,10 @@ export function RoleLoginForm({ role }: RoleLoginFormProps) {
   };
 
   return (
-    <AuthLayout showBackButton backHref="/">
+    <AuthLayout>
       <div className="space-y-6">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900">{config.title}</h1>
-          <p className="text-gray-600 mt-2">{config.description}</p>
+          <h1 className="text-2xl font-bold text-gray-900">Login</h1>
         </div>
 
         {errors.form && (
@@ -170,13 +170,14 @@ export function RoleLoginForm({ role }: RoleLoginFormProps) {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">          <div className="space-y-2">
-            <Label htmlFor="identifier">{config.identifierLabel}</Label>
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="space-y-2">
+            <Label htmlFor="identifier" className="text-sm font-medium text-gray-700">Email Address</Label>
             <Input
               id="identifier"
               name="identifier"
-              type={config.identifierType === "email" ? "email" : "text"}
-              placeholder={config.identifierPlaceholder}
+              type="email"
+              placeholder="Enter email address"
               value={formData.identifier}
               onChange={(e) => handleChange("identifier", e.target.value)}
               disabled={isLoading}
@@ -188,12 +189,11 @@ export function RoleLoginForm({ role }: RoleLoginFormProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <Input
+            <Label htmlFor="password" className="text-sm font-medium text-gray-700">Password</Label>
+            <PasswordInput
               id="password"
               name="password"
-              type={showPassword ? "text" : "password"}
-              placeholder="Enter your password"
+              placeholder="Enter password"
               value={formData.password}
               onChange={(e) => handleChange("password", e.target.value)}
               disabled={isLoading}
@@ -206,15 +206,11 @@ export function RoleLoginForm({ role }: RoleLoginFormProps) {
             <div className="flex items-center space-x-2">
               <input
                 type="checkbox"
-                id="showPassword"
-                title="Show password"
-                aria-label="Show password"
-                checked={showPassword}
-                onChange={(e) => setShowPassword(e.target.checked)}
-                className="rounded border-gray-300"
+                id="remember"
+                className="h-4 w-4 rounded border-gray-300 text-teal-600 focus:ring-teal-500"
               />
-              <Label htmlFor="showPassword" className="text-sm">
-                Show password
+              <Label htmlFor="remember" className="text-sm text-gray-600">
+                Remember me
               </Label>
             </div>
 
@@ -228,20 +224,20 @@ export function RoleLoginForm({ role }: RoleLoginFormProps) {
 
           <Button 
             type="submit" 
-            className="w-full bg-teal-600 hover:bg-teal-700" 
+            className="w-full" 
             disabled={isLoading}
           >
-            {isLoading ? "Signing in..." : "Sign In"}
+            {isLoading ? "Signing in..." : "Login"}
           </Button>
         </form>
 
         <div className="text-center text-sm text-gray-600">
           Don't have an account?{" "}
           <Link
-            href="/auth/create-account"
+            href="/auth/school-signup"
             className="text-teal-600 hover:text-teal-700 font-medium"
           >
-            Create account
+            Contact your school administrator
           </Link>
         </div>
       </div>

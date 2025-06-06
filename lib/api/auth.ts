@@ -258,44 +258,7 @@ export class AuthApiService {
       throw error;
     }
   }
-  /**
-   * Complete teacher invite registration
-   */  static async completeInviteRegistration(registrationData: {
-    firstName: string;
-    lastName: string;
-    email: string;
-    staffId: string;
-    password: string;
-    phone?: string;
-    address?: string;
-    inviteToken: string;
-    subRole?: string;
-    firstLogin?: boolean;
-  }): Promise<AuthResponse> {
-    try {
-      const response = await apiClient.post<AuthResponse>(
-        `${this.BASE_PATH}/complete-invite-registration`,
-        registrationData
-      );
-      
-      // Store token for future requests
-      if (response.accessToken) {
-        apiClient.setAuthToken(response.accessToken);
-        
-        // Store user data and tokens
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('user_data', JSON.stringify(response.user));
-          localStorage.setItem('auth_token', response.accessToken);
-          localStorage.setItem('refresh_token', response.refreshToken);
-        }
-      }
-      
-      return response;
-    } catch (error) {
-      console.error('Complete invite registration error:', error);
-      throw error;
-    }
-  }
+
   
   /**
    * Complete student invite registration
@@ -471,6 +434,84 @@ export class AuthApiService {
       return response;
     } catch (error) {
       console.error('School admin creation error:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Complete teacher registration from invitation
+   */
+  static async completeTeacherRegistration(registrationData: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    staffId: string;
+    password: string;
+    inviteToken: string;
+    phoneNumber?: string;
+    address?: string;
+    subRole?: string;
+  }): Promise<AuthResponse> {
+    try {
+      const response = await apiClient.post<AuthResponse>(
+        `${this.BASE_PATH}/complete-teacher-registration`,
+        registrationData
+      );
+      
+      // Store token for future requests
+      if (response.accessToken) {
+        apiClient.setAuthToken(response.accessToken);
+        
+        // Store user data and tokens
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('user_data', JSON.stringify(response.user));
+          localStorage.setItem('auth_token', response.accessToken);
+          localStorage.setItem('refresh_token', response.refreshToken);
+        }
+      }
+      
+      return response;
+    } catch (error) {
+      console.error('Complete teacher registration error:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Complete staff registration from invitation
+   */
+  static async completeStaffRegistration(registrationData: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    staffId: string;
+    password: string;
+    inviteToken: string;
+    phoneNumber?: string;
+    address?: string;
+    subRole: string;
+  }): Promise<AuthResponse> {
+    try {
+      const response = await apiClient.post<AuthResponse>(
+        `${this.BASE_PATH}/complete-staff-registration`,
+        registrationData
+      );
+      
+      // Store token for future requests
+      if (response.accessToken) {
+        apiClient.setAuthToken(response.accessToken);
+        
+        // Store user data and tokens
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('user_data', JSON.stringify(response.user));
+          localStorage.setItem('auth_token', response.accessToken);
+          localStorage.setItem('refresh_token', response.refreshToken);
+        }
+      }
+      
+      return response;
+    } catch (error) {
+      console.error('Complete staff registration error:', error);
       throw error;
     }
   }

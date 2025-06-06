@@ -1,5 +1,5 @@
-import { ResetPasswordSuccess } from "@/components/auth/reset-password-success";
+import { PasswordResetSuccessForm } from "@/components/auth/password-reset-success-form";
 
-export default function ResetPasswordSuccessPage() {
-  return <ResetPasswordSuccess />;
+export default function PasswordResetSuccessPage() {
+  return <PasswordResetSuccessForm />;
 }

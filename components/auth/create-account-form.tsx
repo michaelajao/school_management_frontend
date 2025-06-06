@@ -5,19 +5,15 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
 import { AuthLayout } from "@/components/auth/auth-layout";
+import { PasswordInput } from "@/components/ui/password-input";
+import { PhoneInput } from "@/components/ui/phone-input";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { validatePassword } from "@/lib/validatePassword";
-import { AuthApiService } from "@/lib/api/auth";
 
-const roles = [
-  { value: "ADMIN", label: "Admin" },
-  { value: "TEACHER", label: "Teacher" },
-  { value: "STUDENT", label: "Student" },
-  { value: "PARENT", label: "Parent" }
-];
+import { AuthApiService } from "@/lib/api/auth";
+import { cn } from "@/lib/utils";
 
 export function CreateAccountForm() {
   const router = useRouter();
@@ -27,9 +23,7 @@ export function CreateAccountForm() {
     lastName: "",
     email: "",
     phone: "",
-    role: "",
-    password: "",
-    confirmPassword: ""
+    password: ""
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -70,33 +64,16 @@ export function CreateAccountForm() {
       newErrors.email = "Please enter a valid email address";
     }
     
-    // Phone validation
-    if (!formData.phone.trim()) {
-      newErrors.phone = "Phone number is required";
-    } else if (!/^\+?[\d\s\-\(\)]{10,}$/.test(formData.phone.trim())) {
+    // Phone validation (optional for admin)
+    if (formData.phone && !/^\+?[\d\s\-\(\)]{10,}$/.test(formData.phone.trim())) {
       newErrors.phone = "Please enter a valid phone number";
-    }
-    
-    // Role validation
-    if (!formData.role) {
-      newErrors.role = "Please select a role";
     }
     
     // Password validation
     if (!formData.password) {
       newErrors.password = "Password is required";
-    } else {
-      const { valid, errors: passwordErrors } = validatePassword(formData.password);
-      if (!valid) {
-        newErrors.password = passwordErrors[0];
-      }
-    }
-    
-    // Confirm password validation
-    if (!formData.confirmPassword) {
-      newErrors.confirmPassword = "Please confirm your password";
-    } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match";
+    } else if (formData.password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters";
     }
     
     setErrors(newErrors);
@@ -113,19 +90,31 @@ export function CreateAccountForm() {
     setIsLoading(true);
     
     try {
-      // Call backend API for registration
+      // Get school data from previous step
+      const schoolData = localStorage.getItem("schoolData");
+      if (!schoolData) {
+        toast.error("School information missing. Please complete school registration first.");
+        router.push("/auth/school-signup");
+        return;
+      }
+
+      // Call backend API for school admin registration  
       const registerData = {
         email: formData.email.trim(),
         password: formData.password,
         firstName: formData.firstName.trim(),
         lastName: formData.lastName.trim(),
-        role: formData.role as 'ADMIN' | 'TEACHER' | 'STUDENT' | 'PARENT',
-        phoneNumber: formData.phone.trim()
+        role: "SCHOOL_ADMIN" as const,
+        phoneNumber: formData.phone?.trim() || undefined,
+        schoolData: JSON.parse(schoolData)
       };
 
       const response = await AuthApiService.register(registerData);
       
-      toast.success("Account created successfully!");
+      toast.success("School administrator account created successfully!");
+      
+      // Clear school data
+      localStorage.removeItem("schoolData");
       
       // Redirect to login page
       router.push("/auth/signin");
@@ -145,59 +134,57 @@ export function CreateAccountForm() {
   };
 
   return (
-    <AuthLayout showBackButton backHref="/auth/school-signup">
+    <AuthLayout>
       <div className="space-y-6">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900">Create Account</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Create Administrator Account</h1>
           <p className="text-gray-600 mt-2">
-            Set up your personal account
+            Set up your school administrator account
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="firstName">First Name *</Label>
-              <Input
-                id="firstName"
-                name="firstName"
-                type="text"
-                placeholder="Enter first name"
-                value={formData.firstName}
-                onChange={(e) => handleChange("firstName", e.target.value)}
-                disabled={isLoading}
-                className={errors.firstName ? "border-red-500" : ""}
-              />
-              {errors.firstName && (
-                <p className="text-xs text-red-500">{errors.firstName}</p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="lastName">Last Name *</Label>
-              <Input
-                id="lastName"
-                name="lastName"
-                type="text"
-                placeholder="Enter last name"
-                value={formData.lastName}
-                onChange={(e) => handleChange("lastName", e.target.value)}
-                disabled={isLoading}
-                className={errors.lastName ? "border-red-500" : ""}
-              />
-              {errors.lastName && (
-                <p className="text-xs text-red-500">{errors.lastName}</p>
-              )}
-            </div>
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="space-y-2">
+            <Label htmlFor="firstName" className="text-sm font-medium text-gray-700">First Name</Label>
+            <Input
+              id="firstName"
+              name="firstName"
+              type="text"
+              placeholder="Enter First Name"
+              value={formData.firstName}
+              onChange={(e) => handleChange("firstName", e.target.value)}
+              disabled={isLoading}
+              className={errors.firstName ? "border-red-500" : ""}
+            />
+            {errors.firstName && (
+              <p className="text-xs text-red-500">{errors.firstName}</p>
+            )}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email">Email Address *</Label>
+            <Label htmlFor="lastName" className="text-sm font-medium text-gray-700">Last Name</Label>
+            <Input
+              id="lastName"
+              name="lastName"
+              type="text"
+              placeholder="Enter full name"
+              value={formData.lastName}
+              onChange={(e) => handleChange("lastName", e.target.value)}
+              disabled={isLoading}
+              className={errors.lastName ? "border-red-500" : ""}
+            />
+            {errors.lastName && (
+              <p className="text-xs text-red-500">{errors.lastName}</p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="email" className="text-sm font-medium text-gray-700">Email Address</Label>
             <Input
               id="email"
               name="email"
               type="email"
-              placeholder="Enter your email address"
+              placeholder="Enter email address"
               value={formData.email}
               onChange={(e) => handleChange("email", e.target.value)}
               disabled={isLoading}
@@ -209,14 +196,11 @@ export function CreateAccountForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="phone">Phone Number *</Label>
-            <Input
-              id="phone"
-              name="phone"
-              type="tel"
-              placeholder="Enter your phone number"
+            <Label htmlFor="phone" className="text-sm font-medium text-gray-700">Phone (Optional)</Label>
+            <PhoneInput
               value={formData.phone}
-              onChange={(e) => handleChange("phone", e.target.value)}
+              onChange={(value) => handleChange("phone", value)}
+              placeholder="Enter phone number"
               disabled={isLoading}
               className={errors.phone ? "border-red-500" : ""}
             />
@@ -226,31 +210,11 @@ export function CreateAccountForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="role">Role *</Label>
-            <Select onValueChange={(value) => handleChange("role", value)} disabled={isLoading}>
-              <SelectTrigger className={errors.role ? "border-red-500" : ""}>
-                <SelectValue placeholder="Select your role" />
-              </SelectTrigger>
-              <SelectContent>
-                {roles.map((role) => (
-                  <SelectItem key={role.value} value={role.value}>
-                    {role.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {errors.role && (
-              <p className="text-xs text-red-500">{errors.role}</p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="password">Password *</Label>
-            <Input
+            <Label htmlFor="password" className="text-sm font-medium text-gray-700">Password</Label>
+            <PasswordInput
               id="password"
               name="password"
-              type="password"
-              placeholder="Create a secure password"
+              placeholder="Enter password"
               value={formData.password}
               onChange={(e) => handleChange("password", e.target.value)}
               disabled={isLoading}
@@ -261,49 +225,35 @@ export function CreateAccountForm() {
             )}
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="confirmPassword">Confirm Password *</Label>
-            <Input
-              id="confirmPassword"
-              name="confirmPassword"
-              type="password"
-              placeholder="Confirm your password"
-              value={formData.confirmPassword}
-              onChange={(e) => handleChange("confirmPassword", e.target.value)}
-              disabled={isLoading}
-              className={errors.confirmPassword ? "border-red-500" : ""}
-            />
-            {errors.confirmPassword && (
-              <p className="text-xs text-red-500">{errors.confirmPassword}</p>
-            )}
-          </div>
-
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 pt-2">
             <input
               type="checkbox"
-              id="showPassword"
-              checked={false}
-              onChange={() => {}}
-              className="rounded border-gray-300"
-              aria-label="Show passwords"
-              title="Toggle password visibility"
+              id="terms"
+              className="h-4 w-4 rounded border-gray-300 text-teal-600 focus:ring-teal-500"
             />
-            <Label htmlFor="showPassword" className="text-sm">
-              Show passwords
+            <Label htmlFor="terms" className="text-sm text-gray-600">
+              I agree to all{" "}
+              <Link href="/terms" className="text-teal-600 hover:text-teal-700">
+                Terms of Service
+              </Link>{" "}
+              &{" "}
+              <Link href="/privacy" className="text-teal-600 hover:text-teal-700">
+                Privacy Policy
+              </Link>
             </Label>
           </div>
 
           <Button 
             type="submit" 
-            className="w-full bg-teal-600 hover:bg-teal-700" 
+            className="w-full" 
             disabled={isLoading}
           >
-            {isLoading ? "Creating Account..." : "Create Account"}
+{isLoading ? "Creating..." : "Create Administrator Account"}
           </Button>
         </form>
 
         <div className="text-center text-sm text-gray-600">
-          Already have an account?{" "}
+          Already have an administrator account?{" "}
           <button
             onClick={() => router.push("/auth/signin")}
             className="text-teal-600 hover:text-teal-700 font-medium"

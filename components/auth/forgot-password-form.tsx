@@ -1,45 +1,26 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AuthLayout } from "@/components/auth/auth-layout";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 import { AuthApiService } from "@/lib/api/auth";
-import { Loader2 } from "lucide-react";
 
 export function ForgotPasswordForm() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    email: ""
-  });
+  const [email, setEmail] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleChange = (name: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    
-    // Clear error when user starts typing
-    if (errors[name]) {
-      setErrors((prev) => {
-        const newErrors = { ...prev };
-        delete newErrors[name];
-        return newErrors;
-      });
-    }
-  };
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
     
-    // Email validation
-    if (!formData.email.trim()) {
+    if (!email.trim()) {
       newErrors.email = "Email is required";
-    } else if (!/^\S+@\S+\.\S+$/.test(formData.email.trim())) {
+    } else if (!/^\S+@\S+\.\S+$/.test(email.trim())) {
       newErrors.email = "Please enter a valid email address";
     }
     
@@ -51,27 +32,24 @@ export function ForgotPasswordForm() {
     e.preventDefault();
     
     if (!validateForm()) {
+      toast.error("Please enter a valid email address");
       return;
     }
     
-    if (isSubmitting) {
-      return;
-    }
-    
-    setIsSubmitting(true);
     setIsLoading(true);
     
     try {
-      await AuthApiService.requestPasswordReset(formData.email.trim());
+      // Call real API
+      await AuthApiService.requestPasswordReset(email.trim());
+      
+      toast.success("Password reset link sent to your email!");
       
       // Store email for confirmation page
       if (typeof window !== 'undefined') {
-        localStorage.setItem("resetEmail", formData.email.trim());
+        localStorage.setItem("resetEmail", email.trim());
       }
       
-      toast.success("Password reset email sent! Please check your inbox.");
-      
-      // Redirect to confirmation page
+      // Redirect to sent page
       router.push("/auth/forgot-password/sent");
       
     } catch (error: any) {
@@ -92,66 +70,50 @@ export function ForgotPasswordForm() {
       }
     } finally {
       setIsLoading(false);
-      setIsSubmitting(false);
     }
   };
 
   return (
-    <AuthLayout showBackButton>
+    <AuthLayout>
       <div className="space-y-6">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900">Forgot Password</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Reset Password</h1>
           <p className="text-gray-600 mt-2">
-            Enter your email address and we'll send you a link to reset your password
+            Please provide the email address associated with your account
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div className="space-y-2">
-            <Label htmlFor="email">Email Address</Label>
+            <Label htmlFor="email" className="text-sm font-medium text-gray-700">Email Address</Label>
             <Input
               id="email"
               name="email"
               type="email"
-              placeholder="Enter your email address"
-              value={formData.email}
-              onChange={(e) => handleChange("email", e.target.value)}
+              placeholder="Enter email address"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                if (errors.email) {
+                  setErrors(prev => ({ ...prev, email: "" }));
+                }
+              }}
               disabled={isLoading}
-              className={`${errors.email ? "border-red-500" : ""} transition-colors`}
-              aria-invalid={!!errors.email}
-              aria-describedby={errors.email ? "email-error" : undefined}
+              className={errors.email ? "border-red-500" : ""}
             />
             {errors.email && (
-              <p className="text-xs text-red-500" id="email-error">{errors.email}</p>
+              <p className="text-xs text-red-500">{errors.email}</p>
             )}
           </div>
 
           <Button 
             type="submit" 
-            className="w-full bg-teal-600 hover:bg-teal-700 transition-colors" 
-            disabled={isLoading || isSubmitting}
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Sending...
-              </>
-            ) : (
-              "Send Reset Link"
-            )}
-          </Button>
-        </form>
-
-        <div className="text-center text-sm text-gray-600">
-          Remember your password?{" "}
-          <button
-            onClick={() => router.push("/auth/signin")}
-            className="text-teal-600 hover:text-teal-700 font-medium transition-colors"
+            className="w-full" 
             disabled={isLoading}
           >
-            Back to sign in
-          </button>
-        </div>
+            {isLoading ? "Sending..." : "Proceed"}
+          </Button>
+        </form>
       </div>
     </AuthLayout>
   );

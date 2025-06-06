@@ -1,5 +1,5 @@
-import { ForgotPasswordSent } from "@/components/auth/forgot-password-sent";
+import { PasswordResetSentForm } from "@/components/auth/password-reset-sent-form";
 
-export default function ForgotPasswordSentPage() {
-  return <ForgotPasswordSent />;
+export default function PasswordResetSentPage() {
+  return <PasswordResetSentForm />;
 }

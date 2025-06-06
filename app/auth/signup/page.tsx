@@ -1,5 +1,0 @@
-import { SchoolSignupForm } from "@/components/auth/school-signup-form";
-
-export default function SignupPage() {
-  return <SchoolSignupForm />;
-}

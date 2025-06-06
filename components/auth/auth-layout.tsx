@@ -11,19 +11,24 @@ interface AuthLayoutProps {
 
 export function AuthLayout({ children, showBackButton = false, backHref = "/auth/signin" }: AuthLayoutProps) {
   return (
-    <div className="min-h-screen bg-teal-600 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-teal-600 flex items-center justify-center p-4 sm:p-6">
       <div className="w-full max-w-md">
         {/* Header with Logo */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-block">
-            <div className="text-white text-2xl font-bold">
-              Logoipsum
+            <div className="flex items-center justify-center">
+              <div className="bg-white/10 rounded-lg p-2 mr-3">
+                <div className="w-8 h-8 bg-white/20 rounded"></div>
+              </div>
+              <div className="text-white text-2xl font-bold">
+                Logoipsum
+              </div>
             </div>
           </Link>
         </div>
 
         {/* White Card Container */}
-        <div className="bg-white rounded-lg shadow-xl p-8">
+        <div className="bg-white rounded-2xl shadow-2xl p-6 sm:p-8">
           {/* Back Button */}
           {showBackButton && (
             <div className="mb-6">

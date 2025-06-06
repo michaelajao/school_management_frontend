@@ -1,136 +1,297 @@
-# Authentication Integration Guide
+# Authentication and Invitation System Integration Guide
 
-This document outlines the authentication flow between the frontend and backend services for the School Management System, particularly focusing on the multi-tenant architecture.
+## Overview
 
-## Authentication Flow
+This guide covers the integration of the authentication and invitation system in the School Management System. The system provides secure, role-based access control and a comprehensive invitation system for user onboarding.
 
-1. **Login Process**:
-   - User enters credentials in frontend login form (`/auth/signin`)
-   - Frontend sends credentials to backend via `POST /auth/login`
-   - Backend validates credentials and tenant context (school_id)
-   - Backend returns JWT token containing user info and tenant context
-   - Frontend stores token in localStorage and sets up API client
+## Authentication System
 
-2. **Token Structure**:
-   ```json
-   {
-     "sub": "<user-id>",          // Subject (User ID)
-     "email": "<user-email>",     // User email
-     "role": "<user-role>",       // User role (e.g., ADMIN, TEACHER)
-     "schoolId": "<school-id>",   // Tenant context
-     "iat": 1713666789,           // Issued at
-     "exp": 1713753189            // Expiration time
-   }
+### User Roles
+- Super Admin
+- Admin
+- Finance Admin
+- Teacher
+- Student
+- Parent
+- Non-Academic Staff
+
+### Authentication Flow
+1. User visits landing page or protected route
+2. Redirected to general login (`/auth/signin`)
+3. Backend determines user role automatically
+4. User redirected to appropriate dashboard
+
+### API Integration
+```typescript
+// Authentication endpoints
+const AUTH_ENDPOINTS = {
+  LOGIN: '/auth/login',
+  REGISTER: '/auth/register',
+  REFRESH: '/auth/refresh',
+  LOGOUT: '/auth/logout',
+  PROFILE: '/auth/profile',
+  CHANGE_PASSWORD: '/auth/change-password',
+  RESET_PASSWORD: '/auth/reset-password',
+  VERIFY_EMAIL: '/auth/verify-email'
+};
+```
+
+## Invitation System
+
+### Overview
+The invitation system provides a secure way to onboard new users into the system. Each invitation is role-specific and includes:
+- Email address
+- Role
+- School ID
+- Token
+- Expiration time
+
+### Invitation Flow
+1. Admin creates invitation for new user
+2. System generates unique token and sends invitation email
+3. User clicks invitation link
+4. System validates token and email
+5. User completes registration with required information
+6. Account is activated and user can access the system
+
+### Role-Specific Registration
+Each role has specific registration requirements:
+
+1. **Staff (Admin/Teacher)**
+   - First name
+   - Last name
+   - Email
+   - Staff ID
+   - Password
+   - Phone (optional)
+   - Address (optional)
+   - Sub-role (optional)
+
+2. **Student**
+   - First name
+   - Last name
+   - Email
+   - Student ID
+   - Password
+   - Phone (optional)
+   - Class
+   - Gender
+   - Address (optional)
+   - Birthdate
+
+3. **Parent**
+   - First name
+   - Last name
+   - Email
+   - Password
+   - Phone (optional)
+   - Address (optional)
+   - Gender
+   - Occupation
+   - Relationship to student
+   - Student ID (optional)
+
+### API Integration
+```typescript
+// Invitation endpoints
+const INVITATION_ENDPOINTS = {
+  CREATE_INVITE: '/auth/invite',
+  VALIDATE_TOKEN: '/auth/validate-invite',
+  COMPLETE_REGISTRATION: {
+    STAFF: '/auth/complete-staff-registration',
+    STUDENT: '/auth/complete-student-registration',
+    PARENT: '/auth/complete-parent-registration'
+  }
+};
+```
+
+### Security Features
+- Token expiration
+- Email verification
+- Role-specific validation
+- Password policies
+- Rate limiting
+- IP tracking
+
+## Password Reset System
+
+### Overview
+The password reset system provides a secure mechanism for users to reset forgotten passwords using email-based verification.
+
+### Password Reset Flow
+1. User requests password reset at `/auth/forgot-password`
+2. System validates email and generates secure token (1-hour expiration)
+3. Reset email sent with token-based URL
+4. User clicks link and enters new password at `/auth/reset-password?token=xyz`
+5. Token validated server-side and password updated
+6. User redirected to success page and can log in
+
+### API Endpoints
+```typescript
+const PASSWORD_RESET_ENDPOINTS = {
+  REQUEST_RESET: '/auth/reset-password',      // POST - Request password reset
+  UPDATE_PASSWORD: '/auth/update-password'    // POST - Update password with token
+};
+```
+
+### Frontend Implementation
+```typescript
+// Request password reset
+const requestPasswordReset = async (email: string) => {
+  try {
+    await AuthApiService.requestPasswordReset(email);
+    // Success: redirect to confirmation page
+    router.push('/auth/forgot-password/sent');
+  } catch (error) {
+    // Handle errors (rate limiting, validation, etc.)
+  }
+};
+
+// Reset password with token
+const resetPassword = async (token: string, newPassword: string) => {
+  try {
+    await AuthApiService.resetPassword(token, newPassword);
+    // Success: redirect to success page
+    router.push('/auth/reset-password/success');
+  } catch (error) {
+    // Handle errors (invalid token, validation, etc.)
+  }
+};
+```
+
+### Security Features
+- **JWT-based tokens** with 1-hour expiration
+- **Rate limiting** (5 requests per minute)
+- **Password validation** with strength requirements
+- **No user enumeration** (same response for valid/invalid emails)
+- **Token invalidation** after successful use
+- **Email verification** required for reset
+
+### Error Handling
+- **429**: Rate limit exceeded
+- **401**: Invalid or expired token
+- **400**: Validation errors (password requirements)
+- **404**: User not found (hidden from user for security)
+
+## Implementation
+
+### Frontend Components
+1. **InviteValidation**
+   - Validates invitation tokens
+   - Handles expired/invalid invitations
+   - Provides role-specific registration forms
+
+2. **Registration Forms**
+   - Role-specific fields
+   - Validation rules
+   - Error handling
+   - Success feedback
+
+### Backend Integration
+1. **Token Validation**
+   ```typescript
+   const validateInviteToken = async (token: string) => {
+     const response = await AuthApiService.validateInviteToken(token);
+     return {
+       valid: response.valid,
+       invite: response.invite
+     };
+   };
    ```
 
-3. **Token Refresh Mechanism**:
-   - Frontend stores both access token (`auth_token`) and refresh token (`refresh_token`)
-   - When access token expires (401 response), API client automatically:
-     - Intercepts the 401 error
-     - Attempts to refresh the token using `POST /auth/refresh`
-     - Updates stored tokens with new values
-     - Retries the original request with new token
-   - If refresh fails, user is redirected to login
-
-4. **Multi-Tenant Security**:
-   - JWT token contains school_id (tenant identifier)
-   - Backend guards (JwtAuthGuard, TenantIsolationGuard) validate both:
-     - Token authenticity
-     - User's permission to access the specific tenant's data
-   - Guards are applied at controller level to protect all routes
-
-## Storage Keys
-
-| Key | Description | Format |
-|-----|-------------|--------|
-| `auth_token` | JWT access token | String |
-| `refresh_token` | JWT refresh token | String |
-| `user_data` | User profile information | JSON |
-
-## Key Components
-
-### Frontend
-
-1. **AuthApiService (`lib/api/auth.ts`)**
-   - Handles all authentication API calls
-   - Manages token storage and retrieval
-   - Provides user profile operations
-
-2. **ApiClient (`lib/api/client.ts`)**
-   - Sets up Axios with interceptors
-   - Automatically attaches token to requests
-   - Handles token refresh on 401 errors
-
-3. **AuthContext (`contexts/auth-context.tsx`)**
-   - Provides authentication state to all components
-   - Handles login, logout, and registration
-   - Manages user session and redirects
-
-### Backend
-
-1. **AuthService (`modules/auth/auth.service.ts`)**
-   - Validates user credentials
-   - Generates and validates JWT tokens
-   - Handles registration and password reset
-
-2. **JwtAuthGuard (`modules/auth/guards/jwt-auth.guard.ts`)**
-   - Protects routes requiring authentication
-   - Sets tenant context for database queries
-
-3. **TenantIsolationGuard (`modules/auth/guards/tenant-isolation.guard.ts`)**
-   - Ensures users can only access their tenant's data
-   - Works with row-level security in database
-
-## Docker Configuration
-
-For staging environment, the docker-compose.staging.yml sets up:
-- Frontend container with Next.js
-- Backend container with NestJS
-- PostgreSQL database with multi-tenant support
-- Redis for caching and session management
-- Nginx for reverse proxy and SSL termination
-
-## Testing Authentication Flow
-
-1. Start the staging environment:
-   ```bash
-   docker-compose -f docker-compose.staging.yml up -d
+2. **Registration Completion**
+   ```typescript
+   const completeRegistration = async (data: RegistrationData) => {
+     const endpoint = getRegistrationEndpoint(data.role);
+     const response = await AuthApiService.completeRegistration(endpoint, data);
+     return response;
+   };
    ```
 
-2. Navigate to `http://localhost:3000/auth/signin`
+## Error Handling
 
-3. Login with test credentials:
-   - Email: admin@school.com
-   - Password: SecurePass123!
-   - Role: Admin
+### Common Errors
+1. **Invalid Token**
+   - Token not found
+   - Token expired
+   - Token already used
 
-4. Upon successful login, you'll be redirected to dashboard.
+2. **Email Mismatch**
+   - Email doesn't match invitation
+   - Email already registered
 
-5. To test token refresh, you can:
-   - Modify the token expiration in the JWT settings for testing
-   - Monitor network requests to see refresh operations
+3. **Validation Errors**
+   - Missing required fields
+   - Invalid data format
+   - Password policy violations
 
-## Common Issues and Solutions
+### Error Responses
+```typescript
+interface ErrorResponse {
+  code: string;
+  message: string;
+  details?: Record<string, string[]>;
+}
+```
 
-1. **CORS Errors**:
-   - Ensure Nginx is properly configured to handle CORS
-   - Backend should allow requests from frontend origin
+## Best Practices
 
-2. **401 Unauthorized Errors**:
-   - Check that token is properly stored and sent in requests
-   - Verify JWT_SECRET is consistent between environments
+1. **Security**
+   - Use HTTPS for all requests
+   - Implement rate limiting
+   - Validate all inputs
+   - Sanitize error messages
+   - Log security events
 
-3. **Multi-Tenant Access Issues**:
-   - Make sure JWT contains correct schoolId
-   - Verify row-level security policies in database
+2. **User Experience**
+   - Clear error messages
+   - Progress indicators
+   - Form validation
+   - Success feedback
+   - Helpful guidance
 
-4. **Token Refresh Failures**:
-   - Check refresh token expiration settings
-   - Verify storage keys are consistent
+3. **Performance**
+   - Optimize token validation
+   - Cache user data
+   - Minimize API calls
+   - Handle timeouts
+   - Retry failed requests
 
-## Future Enhancements
+## Testing
 
-1. Implement secure HttpOnly cookies for token storage
-2. Add fingerprint verification for additional security
-3. Implement role-based access control on frontend routes
-4. Add two-factor authentication for sensitive operations
+### Test Cases
+1. **Token Validation**
+   - Valid token
+   - Expired token
+   - Invalid token
+   - Used token
+
+2. **Registration**
+   - Complete registration
+   - Missing fields
+   - Invalid data
+   - Duplicate email
+
+3. **Error Handling**
+   - Network errors
+   - Validation errors
+   - Server errors
+   - Timeout handling
+
+## Maintenance
+
+### Regular Tasks
+1. **Token Management**
+   - Clean expired tokens
+   - Monitor token usage
+   - Update token policies
+
+2. **Security Updates**
+   - Update dependencies
+   - Review security logs
+   - Update password policies
+
+3. **Performance Monitoring**
+   - Track response times
+   - Monitor error rates
+   - Optimize queries
