@@ -309,9 +309,9 @@ This README and associated documentation have been updated to reflect the curren
 - ✅ **Standalone Repository**: Documentation reflects single repository structure
 
 **Additional Documentation**:
-- `AUTH_INTEGRATION_GUIDE.md` - Authentication implementation details
-- `TESTING_GUIDE.md` - Comprehensive testing documentation  
+- `docs/AUTH_INTEGRATION_GUIDE.md` - Authentication implementation details
+- `docs/TESTING_GUIDE.md` - Comprehensive testing documentation  
 - `CONTRIBUTING.md` - Updated contribution guidelines
-- `DEPLOYMENT_GUIDE.md` - Current deployment instructions
-- `DASHBOARD_DOCUMENTATION.md` - Detailed dashboard features
-- `CONNECTIVITY_TROUBLESHOOTING.md` - Development troubleshooting 
+- `docs/DEPLOYMENT_GUIDE.md` - Current deployment instructions
+- `docs/DASHBOARD_DOCUMENTATION.md` - Detailed dashboard features
+- `docs/CONNECTIVITY_TROUBLESHOOTING.md` - Development troubleshooting 

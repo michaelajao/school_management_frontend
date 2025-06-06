@@ -18,7 +18,7 @@
 - Performance optimizations
 - Accessibility improvements
 
-See [TESTING_GUIDE.md](./TESTING_GUIDE.md) for testing procedures and [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) for setup instructions.
+See [TESTING_GUIDE.md](./docs/TESTING_GUIDE.md) for testing procedures and [DEPLOYMENT_GUIDE.md](./docs/DEPLOYMENT_GUIDE.md) for setup instructions.
 
 ---
 
