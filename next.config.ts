@@ -7,18 +7,21 @@ const nextConfig: NextConfig = {
   // Disable strict mode for development
   reactStrictMode: true,
   
-  // Enable experimental features
-  experimental: {
-    // Enable turbo for faster development
-    turbo: {
-      rules: {
-        '*.svg': {
-          loaders: ['@svgr/webpack'],
-          as: '*.js',
-        },
+  // Turbopack configuration (moved from experimental.turbo)
+  turbopack: {
+    rules: {
+      '*.svg': {
+        loaders: ['@svgr/webpack'],
+        as: '*.js',
       },
     },
   },
+  
+  // Allow cross-origin requests from network IP
+  allowedDevOrigins: [
+    'http://192.168.0.85:3000',
+    'http://localhost:3000',
+  ],
   
   // Environment variables
   env: {
