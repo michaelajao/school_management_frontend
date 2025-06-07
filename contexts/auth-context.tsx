@@ -12,7 +12,7 @@ type User = {
   id: string;
   name: string;
   email: string;
-  role: "admin" | "teacher" | "student" | "parent" | "superadmin" | "school_management";
+  role: "super_admin" | "principal" | "head_teacher" | "restricted_admin" | "teacher" | "student" | "parent";
 };
 
 type AuthContextType = {
@@ -29,20 +29,22 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 // Helper function to get correct dashboard path - exported for use in other files
 export const getDashboardPath = (role: User['role']): string => {
   switch (role) {
-    case 'admin':
-      return '/(users)/admin';
+    case 'super_admin':
+      return '/admin'; // Super Admin uses the main admin dashboard
+    case 'principal':
+      return '/principal';
+    case 'head_teacher':
+      return '/head_teacher';
+    case 'restricted_admin':
+      return '/restricted_admin';
     case 'teacher':
-      return '/(users)/teacher';
+      return '/teacher';
     case 'student':
-      return '/(users)/student';
+      return '/student';
     case 'parent':
-      return '/(users)/parent';
-    case 'superadmin':
-      return '/(users)/superadmin';
-    case 'school_management':
-      return '/(users)/school_management';
+      return '/parent';
     default:
-      return '/(users)/admin'; // Default fallback
+      return '/admin'; // Default fallback to admin
   }
 };
 
@@ -76,7 +78,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             id: profile.id,
             name: `${profile.firstName} ${profile.lastName}`.trim(),
             email: profile.email,
-            role: profile.role?.toLowerCase() === 'super_admin' ? 'superadmin' : 
+            role: profile.role?.toLowerCase() === 'school_management' ? 'super_admin' :
                   profile.role?.toLowerCase() as User['role'] || 'student',
           };
           setUser(localUser);
@@ -117,8 +119,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           id: response.user.id,
           name: `${response.user.firstName} ${response.user.lastName}`.trim(),
           email: response.user.email,
-          role: response.user.role?.toLowerCase() === 'super_admin' ? 'superadmin' : 
-                response.user.role?.toLowerCase() === 'school_management' ? 'admin' :
+          role: response.user.role?.toLowerCase() === 'school_management' ? 'super_admin' :
                 response.user.role?.toLowerCase() as User['role'] || 'student',
         };
         
@@ -126,6 +127,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         
         // Redirect based on returned role
         const dashboardPath = getDashboardPath(localUser.role);
+        console.log('🔄 General Login Redirect:', {
+          userRole: localUser.role,
+          dashboardPath,
+          fullPath: dashboardPath
+        });
         router.push(dashboardPath);
         return;
       }
@@ -134,11 +140,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       let backendRole: LoginCredentials['role'];
       
       switch (role) {
-        case 'superadmin':
-          backendRole = 'SUPER_ADMIN';
+        case 'super_admin':
+          backendRole = 'SCHOOL_MANAGEMENT'; // Super Admin maps to SCHOOL_MANAGEMENT in backend
           break;
-        case 'admin':
-          backendRole = 'SCHOOL_MANAGEMENT';
+        case 'principal':
+          backendRole = 'PRINCIPAL';
+          break;
+        case 'head_teacher':
+          backendRole = 'HEAD_TEACHER';
+          break;
+        case 'restricted_admin':
+          backendRole = 'RESTRICTED_ADMIN';
           break;
         case 'teacher':
           backendRole = 'TEACHER';
@@ -149,11 +161,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         case 'parent':
           backendRole = 'PARENT';
           break;
-        case 'school_management':
-          backendRole = 'SCHOOL_MANAGEMENT';
-          break;
         default:
-          backendRole = 'SCHOOL_MANAGEMENT'; // Default fallback for school management
+          backendRole = 'SCHOOL_MANAGEMENT'; // Default fallback
       }      
       // Using identifier field that the AuthApiService will map to the appropriate backend field
       const credentials: LoginCredentials = { 
@@ -169,8 +178,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         id: response.user.id,
         name: `${response.user.firstName} ${response.user.lastName}`.trim(),
         email: response.user.email,
-        role: response.user.role?.toLowerCase() === 'super_admin' ? 'superadmin' : 
-              response.user.role?.toLowerCase() === 'school_management' ? 'admin' :
+        role: response.user.role?.toLowerCase() === 'school_management' ? 'super_admin' :
               response.user.role?.toLowerCase() as User['role'] || 'student',
       };
       
@@ -178,6 +186,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Redirect based on returned role (not the requested role)
       // This ensures proper redirection if server assigns a different role
       const dashboardPath = getDashboardPath(localUser.role);
+      console.log('🔄 Role-based Login Redirect:', {
+        requestedRole: role,
+        userRole: localUser.role,
+        dashboardPath,
+        fullPath: dashboardPath
+      });
       router.push(dashboardPath);
       
     } catch (error) {
@@ -206,7 +220,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         id: response.user.id,
         name: `${response.user.firstName} ${response.user.lastName}`.trim(),
         email: response.user.email,
-        role: response.user.role?.toLowerCase() === 'super_admin' ? 'superadmin' : 
+        role: response.user.role?.toLowerCase() === 'school_management' ? 'super_admin' :
               response.user.role?.toLowerCase() as User['role'] || 'student',
       };
         setUser(localUser);

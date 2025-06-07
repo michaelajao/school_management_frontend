@@ -35,26 +35,36 @@ This document provides comprehensive documentation for the School Management Sys
 
 ## User Roles and Dashboards
 
-### Super Admin Dashboard
-- System-wide configuration
-- School management
-- User role management
-- System monitoring
-- Global settings
+### Super Admin Dashboard (`/admin`)
+- **Complete system control** - School Owner/Proprietor access
+- School settings and configuration
+- Financial management
+- User role management and assignments
+- System-wide analytics and reporting
+- Subscription management
 
-### Admin Dashboard
-- School operations management
-- Staff management
-- Academic structure setup
-- School calendar management
-- Communication management
+### Principal Dashboard (`/principal`)
+- **School operations management** - High-level oversight
+- User management (except Super Admin)
+- Academic calendar and policies
+- Teacher assignments and scheduling
+- Student admissions and enrollment
+- Operational reports and analytics
 
-### Finance Admin Dashboard
-- Fee management
-- Payment processing
-- Financial reporting
-- Invoice generation
-- Payment tracking
+### Head Teacher Dashboard (`/head_teacher`)
+- **Academic oversight** - Educational leadership
+- Teacher management and supervision
+- Curriculum development and oversight
+- Student academic records and performance
+- Class scheduling and academic planning
+- Academic reports and assessments
+
+### Restricted Admin Dashboard (`/restricted_admin`)
+- **Limited administrative functions** - Specific operational tasks
+- Data entry and clerical operations
+- Basic user management (as assigned)
+- Limited reporting access
+- Functions defined by Super Admin or Principal
 
 ### Teacher Dashboard
 - Class management

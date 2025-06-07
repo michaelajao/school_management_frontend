@@ -37,7 +37,7 @@ app/
 │   ├── signin/              # General login
 │   ├── create-account/      # Registration
 │   └── forgot-password/     # Password recovery
-├── test-endpoints/          # API testing interface
+
 ├── page.tsx                 # Landing page
 └── layout.tsx               # Root layout
 
@@ -159,7 +159,7 @@ REDIS_PORT=6379
 - ✅ Teacher dashboard with class management
 - ✅ Student dashboard with academic portal
 - ✅ Parent dashboard with child monitoring
-- ✅ API testing interface at `/test-endpoints`
+- ✅ Role-based dashboards for all user types
 - ✅ Docker development environment
 
 ### Dashboard Features:
@@ -179,7 +179,7 @@ Parent: parent@schoolsms.staging / staging123
 ```
 
 ### Testing Endpoints:
-- Visit `/test-endpoints` to test API functionality
+- Visit `/admin` after login to access the dashboard
 - Use provided test accounts for different role testing
 
 ## Development Setup

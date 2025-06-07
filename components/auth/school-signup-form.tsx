@@ -98,8 +98,14 @@ export function SchoolSignupForm() {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Store school data (in real app, this would be sent to API)
-      localStorage.setItem("schoolData", JSON.stringify(formData));
+      // Store school data with consistent field names for the next step
+      const schoolDataForStorage = {
+        name: formData.schoolName.trim(),
+        alias: formData.shortName.trim(),
+        country: formData.country,
+        website: formData.website?.trim() || undefined
+      };
+      localStorage.setItem("schoolData", JSON.stringify(schoolDataForStorage));
       
       toast.success("School information saved! Now create your administrator account.");
       

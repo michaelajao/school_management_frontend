@@ -7,13 +7,13 @@ This guide covers the integration of the authentication and invitation system in
 ## Authentication System
 
 ### User Roles
-- Super Admin
-- Admin
-- Finance Admin
-- Teacher
-- Student
-- Parent
-- Non-Academic Staff
+- **Super Admin (School Owner/Proprietor)** - Full system access
+- **Principal** - School operations management  
+- **Head Teacher** - Academic oversight
+- **Restricted Admin** - Limited administrative functions
+- **Teacher** - Class/subject specific access
+- **Student** - Student portal access
+- **Parent** - Child-specific access
 
 ### Authentication Flow
 1. User visits landing page or protected route

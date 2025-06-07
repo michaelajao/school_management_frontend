@@ -54,27 +54,25 @@ export class AuthApiService {
    */  static async login(credentials: LoginCredentials): Promise<AuthResponse> {
     try {
       // Transform credentials to match backend expectations
-      // Backend expects one of: email, studentId, or staffID
-      // Convert role from UPPER_CASE to lower_case format expected by backend
+      // Backend expects identifier, password, and role enum value
       const backendRole = credentials.role.toLowerCase();
       
       const loginPayload = {
+        identifier: credentials.identifier,
         password: credentials.password,
-        role: backendRole,
-        // Route the identifier to the appropriate field based on role
-        email: credentials.role === 'STUDENT' || credentials.role === 'PARENT' || 
-               credentials.role === 'SUPER_ADMIN' || credentials.identifier.includes('@') 
-               ? credentials.identifier : undefined,
-        studentId: credentials.role === 'STUDENT' && !credentials.identifier.includes('@') 
-                  ? credentials.identifier : undefined,
-        staffID: (credentials.role === 'TEACHER' || credentials.role === 'ADMIN') && 
-                !credentials.identifier.includes('@') ? credentials.identifier : undefined
+        role: backendRole
       };
       
       const response = await apiClient.post<AuthResponse>(
         `${this.BASE_PATH}/login`,
         loginPayload
       );
+      
+      console.log('🔄 Auth API Login Response:', {
+        userRole: response.user.role,
+        userId: response.user.id,
+        hasToken: !!response.accessToken
+      });
       
       // Store token for future requests
       if (response.accessToken) {

@@ -215,7 +215,7 @@ export default function Home() {
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
             </Link>
-            <Link href="/test-endpoints">
+            <Link href="/auth/signin">
               <Button size="lg" variant="outline" className="text-lg px-8 py-3">
                 View Demo
               </Button>
@@ -358,7 +358,7 @@ export default function Home() {
                 <li><Link href="/auth/signin" className="hover:text-white">Login Portal</Link></li>
                 <li><Link href="/auth/school-signup" className="hover:text-white">School Registration</Link></li>
                 <li><Link href="/auth/create-account" className="hover:text-white">Create Account</Link></li>
-                <li><Link href="/test-endpoints" className="hover:text-white">System Demo</Link></li>
+                <li><Link href="/auth/signin" className="hover:text-white">Login</Link></li>
               </ul>
             </div>
             <div>
@@ -373,7 +373,7 @@ export default function Home() {
             <div>
               <h3 className="text-lg font-semibold mb-4">Support</h3>
               <ul className="space-y-2 text-gray-400">
-                <li><Link href="/test-endpoints" className="hover:text-white">System Status</Link></li>
+                <li>System Status</li>
                 <li>Documentation</li>
                 <li>Help Center</li>
                 <li>Contact Support</li>

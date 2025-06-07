@@ -259,7 +259,7 @@ curl -X POST http://localhost:4000/auth/login \
 curl http://localhost:3000
 
 # Check API integration
-# Visit http://localhost:3000/test-endpoints
+# Visit http://localhost:3000/admin (after login)
 ```
 
 ### Test Accounts

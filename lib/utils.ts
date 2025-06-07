@@ -14,7 +14,6 @@ import {
   BookOpen,
   UserCog,
   LogOut,
-  TestTube,
 } from "lucide-react";
 import React from "react";
 
@@ -101,11 +100,7 @@ export const adminSideBar: SideBarType[] = [
     label: 'Reports & Analysis',
     icon: BookOpen 
   },
-  {
-    href: '/test-endpoints',
-    label: 'Test Endpoints',
-    icon: TestTube 
-  },
+
 ];
 
 // Add the rest sidebars here

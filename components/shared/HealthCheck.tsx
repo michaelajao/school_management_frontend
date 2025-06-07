@@ -16,6 +16,7 @@ interface HealthStatus {
 
 export function HealthCheck() {
   const [healthStatus, setHealthStatus] = useState<HealthStatus>({ status: 'checking' });
+  const [isMinimized, setIsMinimized] = useState(false);
 
   useEffect(() => {    const checkBackendHealth = async () => {
       try {
@@ -71,31 +72,52 @@ export function HealthCheck() {
   };
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 max-w-xs">
-      <div className={`p-3 rounded-lg border text-sm font-medium shadow-lg ${getStatusColor()}`}>
-        <div className="flex items-center gap-2">
-          <span>{getStatusIcon()}</span>
-          <span className="font-semibold">Backend: {healthStatus.status}</span>
-        </div>
-        
-        {healthStatus.backendInfo && (
-          <div className="text-xs mt-2 space-y-1">
-            <div>Environment: {healthStatus.backendInfo.environment}</div>
-            <div>Version: {healthStatus.backendInfo.version}</div>
-            <div>Last Check: {new Date(healthStatus.backendInfo.timestamp || '').toLocaleTimeString()}</div>
+    <div className="fixed bottom-4 right-4 z-50">
+      {isMinimized ? (
+        // Minimized view - just a small circle
+        <button
+          onClick={() => setIsMinimized(false)}
+          className={`w-8 h-8 rounded-full flex items-center justify-center shadow-lg border ${getStatusColor()}`}
+          title="Show backend status"
+        >
+          <span className="text-xs">{getStatusIcon()}</span>
+        </button>
+      ) : (
+        // Full view
+        <div className={`p-3 rounded-lg border text-sm font-medium shadow-lg max-w-xs ${getStatusColor()}`}>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span>{getStatusIcon()}</span>
+              <span className="font-semibold">Backend: {healthStatus.status}</span>
+            </div>
+            <button
+              onClick={() => setIsMinimized(true)}
+              className="text-xs opacity-50 hover:opacity-100 ml-2"
+              title="Minimize"
+            >
+              ✕
+            </button>
           </div>
-        )}
-        
-        {healthStatus.error && (
+          
+          {healthStatus.backendInfo && (
+            <div className="text-xs mt-2 space-y-1">
+              <div>Environment: {healthStatus.backendInfo.environment}</div>
+              <div>Version: {healthStatus.backendInfo.version}</div>
+              <div>Last Check: {new Date(healthStatus.backendInfo.timestamp || '').toLocaleTimeString()}</div>
+            </div>
+          )}
+          
+          {healthStatus.error && (
+            <div className="text-xs mt-2 opacity-75">
+              Error: {healthStatus.error}
+            </div>
+          )}
+          
           <div className="text-xs mt-2 opacity-75">
-            Error: {healthStatus.error}
+            API: {config.apiUrl}
           </div>
-        )}
-        
-        <div className="text-xs mt-2 opacity-75">
-          API: {config.apiUrl}
         </div>
-      </div>
+      )}
     </div>
   );
 }

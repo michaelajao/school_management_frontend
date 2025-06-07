@@ -12,14 +12,38 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/auth-context";
 
 interface RoleLoginFormProps {
-  role: "admin" | "teacher" | "student" | "parent" | "general";
+  role: "super_admin" | "principal" | "head_teacher" | "restricted_admin" | "teacher" | "student" | "parent" | "general";
 }
 
 const roleConfig = {
-  admin: {
-    title: "Admin Login",
+  super_admin: {
+    title: "Super Admin Login",
     description: "Access your administrative dashboard",
     backendRole: "SCHOOL_MANAGEMENT",
+    identifierType: "email",
+    identifierLabel: "Email Address",
+    identifierPlaceholder: "Enter your email address"
+  },
+  principal: {
+    title: "Principal Login",
+    description: "Access school operations dashboard",
+    backendRole: "PRINCIPAL",
+    identifierType: "email",
+    identifierLabel: "Email Address",
+    identifierPlaceholder: "Enter your email address"
+  },
+  head_teacher: {
+    title: "Head Teacher Login",
+    description: "Access academic oversight dashboard",
+    backendRole: "HEAD_TEACHER",
+    identifierType: "email",
+    identifierLabel: "Email Address", 
+    identifierPlaceholder: "Enter your email address"
+  },
+  restricted_admin: {
+    title: "Admin Login",
+    description: "Access limited administrative functions",
+    backendRole: "RESTRICTED_ADMIN",
     identifierType: "email",
     identifierLabel: "Email Address",
     identifierPlaceholder: "Enter your email address"
@@ -70,7 +94,10 @@ export function RoleLoginForm({ role }: RoleLoginFormProps) {
 
   const config = roleConfig[role];
   const roleDisplayNames = {
-    admin: "Administrator",
+    super_admin: "Super Administrator",
+    principal: "Principal", 
+    head_teacher: "Head Teacher",
+    restricted_admin: "Administrator",
     teacher: "Teacher",
     student: "Student",
     parent: "Parent",

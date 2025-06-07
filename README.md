@@ -211,7 +211,7 @@ school_management_frontend/
 │   │   └── reset-password/      # Password reset
 │   ├── onboarding/              # User onboarding flows
 │   ├── api/                     # API route handlers
-│   ├── test-endpoints/          # API testing interface
+│ 
 │   ├── page.tsx                 # Landing page
 │   └── layout.tsx               # Root layout
 ├── components/                   # Reusable components

@@ -92,12 +92,29 @@ export function CreateAccountForm() {
     try {
       // Get school data from previous step
       const schoolData = localStorage.getItem("schoolData");
+      console.log("School data from localStorage:", schoolData); // Debug log
+      
       if (!schoolData) {
         toast.error("School information missing. Please complete school registration first.");
         router.push("/auth/school-signup");
         return;
       }      // Parse school data and combine with admin form data
-      const schoolInfo = JSON.parse(schoolData);
+      let schoolInfo;
+      try {
+        schoolInfo = JSON.parse(schoolData);
+        console.log("Parsed school info:", schoolInfo); // Debug log
+        
+        // Validate required school fields
+        if (!schoolInfo.name || !schoolInfo.alias) {
+          throw new Error("Missing required school information");
+        }
+      } catch (parseError) {
+        console.error("Error parsing school data:", parseError);
+        toast.error("Invalid school information. Please complete school registration again.");
+        localStorage.removeItem("schoolData");
+        router.push("/auth/school-signup");
+        return;
+      }
       
       // Call backend API for school admin creation using the correct endpoint
       const createSchoolAdminData = {
