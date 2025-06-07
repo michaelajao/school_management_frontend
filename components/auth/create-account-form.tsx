@@ -96,20 +96,24 @@ export function CreateAccountForm() {
         toast.error("School information missing. Please complete school registration first.");
         router.push("/auth/school-signup");
         return;
-      }
-
-      // Call backend API for school admin registration  
-      const registerData = {
-        email: formData.email.trim(),
-        password: formData.password,
+      }      // Parse school data and combine with admin form data
+      const schoolInfo = JSON.parse(schoolData);
+      
+      // Call backend API for school admin creation using the correct endpoint
+      const createSchoolAdminData = {
         firstName: formData.firstName.trim(),
         lastName: formData.lastName.trim(),
-        role: "SCHOOL_ADMIN" as const,
-        phoneNumber: formData.phone?.trim() || undefined,
-        schoolData: JSON.parse(schoolData)
+        email: formData.email.trim(),
+        password: formData.password,
+        schoolName: schoolInfo.name,
+        schoolAlias: schoolInfo.alias,
+        country: schoolInfo.country,
+        website: schoolInfo.website,
+        phone: formData.phone?.trim() || undefined,
+        adminRole: 'Principal' // Default admin role
       };
 
-      const response = await AuthApiService.register(registerData);
+      const response = await AuthApiService.createSchoolAndAdmin(createSchoolAdminData);
       
       toast.success("School administrator account created successfully!");
       
@@ -230,6 +234,7 @@ export function CreateAccountForm() {
               type="checkbox"
               id="terms"
               className="h-4 w-4 rounded border-gray-300 text-teal-600 focus:ring-teal-500"
+              aria-label="I agree to all Terms of Service & Privacy Policy"
             />
             <Label htmlFor="terms" className="text-sm text-gray-600">
               I agree to all{" "}
