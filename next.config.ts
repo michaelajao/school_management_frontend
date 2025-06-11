@@ -32,7 +32,14 @@ const nextConfig: NextConfig = {
   
   // Environment variables
   env: {
-    NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:4000',
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 
+                         process.env.NODE_ENV === 'production' 
+                           ? 'https://schoolmanagementbackend-production-be10.up.railway.app'
+                           : 'http://localhost:4000',
+    NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL || 
+                              process.env.NODE_ENV === 'production' 
+                                ? 'https://schoolmanagementbackend-production-be10.up.railway.app'
+                                : 'http://localhost:4000',
   },
   
   // Image optimization for Docker

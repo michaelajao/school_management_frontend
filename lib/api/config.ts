@@ -2,9 +2,16 @@ import axios from 'axios';
 
 // Configuration based on environment
 const config = {
-  apiUrl: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000',
-  appUrl: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
-  environment: (process.env.NEXT_PUBLIC_ENVIRONMENT as 'development' | 'staging' | 'production') || 'development',
+  apiUrl: process.env.NEXT_PUBLIC_API_URL || 
+          process.env.NODE_ENV === 'production' 
+            ? 'https://schoolmanagementbackend-production-be10.up.railway.app'
+            : 'http://localhost:4000',
+  appUrl: process.env.NEXT_PUBLIC_APP_URL || 
+          process.env.NODE_ENV === 'production'
+            ? 'https://schoolmanagementfrontend-production.up.railway.app'
+            : 'http://localhost:3000',
+  environment: (process.env.NEXT_PUBLIC_ENVIRONMENT as 'development' | 'staging' | 'production') || 
+               (process.env.NODE_ENV as 'development' | 'staging' | 'production') || 'development',
   features: {
     pwa: process.env.NEXT_PUBLIC_ENABLE_PWA === 'true',
     offline: process.env.NEXT_PUBLIC_ENABLE_OFFLINE === 'true',

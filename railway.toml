@@ -6,6 +6,10 @@ startCommand = "npm start"
 healthcheckPath = "/"
 healthcheckTimeout = 300
 restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 3
 
 [env]
-NODE_ENV = "production" 
+NODE_ENV = "production"
+NEXT_PUBLIC_ENVIRONMENT = "production"
+NEXT_PUBLIC_API_URL = "https://schoolmanagementbackend-production-be10.up.railway.app"
+NEXT_PUBLIC_APP_URL = "https://schoolmanagementfrontend-production.up.railway.app"
