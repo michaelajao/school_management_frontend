@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../school_management_backend"
+		}
+	],
+	"settings": {
+		"powershell.cwd": "school_management_frontend"
+	}
+}
