@@ -18,7 +18,7 @@ type User = {
 type AuthContextType = {
   user: User | null;
   loading: boolean;
-  login: (email: string, password: string, schoolAlias?: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
   signup: (email: string, password: string) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
@@ -118,13 +118,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
     
     checkAuth();
-  }, []);  const login = async (email: string, password: string, schoolAlias?: string) => {
+  }, []);  const login = async (email: string, password: string) => {
     setLoading(true);
     try {
       const credentials: LoginCredentials = { 
         email, 
-        password,
-        schoolAlias
+        password
       };
       
       const response = await AuthApiService.login(credentials);

@@ -3,7 +3,6 @@ import { apiClient } from './client';
 export interface LoginCredentials {
   email: string;
   password: string;
-  schoolAlias?: string; // Optional for multi-tenant isolation
 }
 
 export interface RegisterData {
@@ -43,11 +42,37 @@ export interface RefreshTokenResponse {
   refreshToken?: string;
 }
 
+// School registration for first-time school owners
+export interface SchoolRegistrationData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  schoolName: string;
+  schoolAlias: string;
+  country: string;
+  website?: string;
+  phone?: string;
+}
+
+// Invitation-based registration data
+export interface InviteRegistrationData {
+  inviteToken: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  staffId?: string;
+  studentId?: string;
+  phone?: string;
+  gender?: string;
+}
+
 export class AuthApiService {
   private static readonly BASE_PATH = '/auth';
 
   /**
-   * Login user with email and password - universal for all user roles
+   * Universal login for all users - just email and password
    */
   static async login(credentials: LoginCredentials): Promise<AuthResponse> {
     try {
@@ -55,8 +80,7 @@ export class AuthApiService {
         `${this.BASE_PATH}/login`,
         {
           email: credentials.email,
-          password: credentials.password,
-          schoolAlias: credentials.schoolAlias
+          password: credentials.password
         }
       );
       
@@ -392,20 +416,9 @@ export class AuthApiService {
   }
 
   /**
-   * Create a new school and admin account
+   * School owner creates school + admin account (first-time registration)
    */
-  static async createSchoolAndAdmin(data: {
-    firstName: string;
-    lastName: string;
-    email: string;
-    password: string;
-    schoolName: string;
-    schoolAlias: string;
-    country: string;
-    website?: string;
-    phone?: string;
-    adminRole?: string;
-  }): Promise<AuthResponse> {
+  static async createSchoolAndAdmin(data: SchoolRegistrationData): Promise<AuthResponse> {
     try {
       const response = await apiClient.post<AuthResponse>(
         `${this.BASE_PATH}/create-school-admin`,
@@ -426,7 +439,36 @@ export class AuthApiService {
       
       return response;
     } catch (error) {
-      console.error('School admin creation error:', error);
+      console.error('School creation error:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Complete registration from invite link
+   */
+  static async completeInviteRegistration(data: InviteRegistrationData): Promise<AuthResponse> {
+    try {
+      const response = await apiClient.post<AuthResponse>(
+        `${this.BASE_PATH}/complete-invite-registration`,
+        data
+      );
+      
+      // Store token for future requests
+      if (response.accessToken) {
+        apiClient.setAuthToken(response.accessToken);
+        
+        // Store user data and tokens
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('user_data', JSON.stringify(response.user));
+          localStorage.setItem('auth_token', response.accessToken);
+          localStorage.setItem('refresh_token', response.refreshToken);
+        }
+      }
+      
+      return response;
+    } catch (error) {
+      console.error('Invite registration error:', error);
       throw error;
     }
   }
