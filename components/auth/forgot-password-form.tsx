@@ -2,12 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { AuthLayout } from "@/components/auth/auth-layout";
+import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { AuthApiService } from "@/lib/api/auth";
 
 export function ForgotPasswordForm() {
   const router = useRouter();
@@ -19,7 +17,7 @@ export function ForgotPasswordForm() {
     const newErrors: Record<string, string> = {};
     
     if (!email.trim()) {
-      newErrors.email = "Email is required";
+      newErrors.email = "Email address is required";
     } else if (!/^\S+@\S+\.\S+$/.test(email.trim())) {
       newErrors.email = "Please enter a valid email address";
     }
@@ -39,82 +37,67 @@ export function ForgotPasswordForm() {
     setIsLoading(true);
     
     try {
-      // Call real API
-      await AuthApiService.requestPasswordReset(email.trim());
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
-      toast.success("Password reset link sent to your email!");
+      toast.success("Password reset link sent to your email");
       
-      // Store email for confirmation page
-      if (typeof window !== 'undefined') {
-        localStorage.setItem("resetEmail", email.trim());
-      }
-      
-      // Redirect to sent page
+      // Redirect to sent confirmation page
       router.push("/auth/forgot-password/sent");
       
     } catch (error: any) {
       console.error("Forgot password error:", error);
-      
-      // Handle specific error cases
-      if (error?.response?.status === 429) {
-        toast.error("Too many attempts. Please try again later.");
-      } else if (error?.response?.status === 404) {
-        toast.error("No account found with this email address.");
-      } else {
-        // Extract meaningful error message
-        const errorMessage = error?.response?.data?.message || 
-                          error?.message || 
-                          "Failed to send reset email. Please try again.";
-        
-        toast.error(errorMessage);
-      }
+      toast.error("Failed to send reset email. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <AuthLayout>
-      <div className="space-y-6">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900">Reset Password</h1>
-          <p className="text-gray-600 mt-2">
-            Please provide the email address associated with your account
-          </p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div className="space-y-2">
-            <Label htmlFor="email" className="text-sm font-medium text-gray-700">Email Address</Label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              placeholder="Enter email address"
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                if (errors.email) {
-                  setErrors(prev => ({ ...prev, email: "" }));
-                }
-              }}
-              disabled={isLoading}
-              className={errors.email ? "border-red-500" : ""}
-            />
-            {errors.email && (
-              <p className="text-xs text-red-500">{errors.email}</p>
-            )}
+    <div className="min-h-screen bg-teal-500 flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        {/* Reset Password Form */}
+        <div className="bg-white rounded-lg p-8 shadow-lg">
+          {/* Title */}
+          <div className="text-center mb-8">
+            <h1 className="text-2xl font-bold text-gray-900">Reset Password</h1>
+            <p className="text-gray-600 mt-4">
+              Please provide the email address associated with your account
+            </p>
           </div>
 
-          <Button 
-            type="submit" 
-            className="w-full" 
-            disabled={isLoading}
-          >
-            {isLoading ? "Sending..." : "Proceed"}
-          </Button>
-        </form>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Email Address */}
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+                Email Address
+              </Label>
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                placeholder="Enter email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={isLoading}
+                className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+              />
+              {errors.email && (
+                <p className="text-sm text-red-500">{errors.email}</p>
+              )}
+            </div>
+
+            {/* Proceed Button */}
+            <Button
+              type="submit"
+              disabled={isLoading}
+              className="w-full bg-teal-600 hover:bg-teal-700 text-white font-medium py-3 rounded-lg transition-colors"
+            >
+              {isLoading ? "Sending..." : "Proceed"}
+            </Button>
+          </form>
+        </div>
       </div>
-    </AuthLayout>
+    </div>
   );
 }

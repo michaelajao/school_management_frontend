@@ -1,27 +1,38 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { AuthLayout } from "@/components/auth/auth-layout";
 import { toast } from "sonner";
 
 const countries = [
-  "Nigeria",
-  "Kenya",
-  "Ghana",
-  "South Africa",
-  "Uganda",
-  "Tanzania",
-  "Ethiopia",
-  "Rwanda",
-  "Zambia",
-  "Zimbabwe",
-  "Other"
+  "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Argentina", "Armenia", "Australia",
+  "Austria", "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium",
+  "Belize", "Benin", "Bhutan", "Bolivia", "Bosnia and Herzegovina", "Botswana", "Brazil", "Brunei",
+  "Bulgaria", "Burkina Faso", "Burundi", "Cambodia", "Cameroon", "Canada", "Cape Verde",
+  "Central African Republic", "Chad", "Chile", "China", "Colombia", "Comoros", "Congo", "Costa Rica",
+  "Croatia", "Cuba", "Cyprus", "Czech Republic", "Denmark", "Djibouti", "Dominica", "Dominican Republic",
+  "Ecuador", "Egypt", "El Salvador", "Equatorial Guinea", "Eritrea", "Estonia", "Ethiopia", "Fiji",
+  "Finland", "France", "Gabon", "Gambia", "Georgia", "Germany", "Ghana", "Greece", "Grenada",
+  "Guatemala", "Guinea", "Guinea-Bissau", "Guyana", "Haiti", "Honduras", "Hungary", "Iceland",
+  "India", "Indonesia", "Iran", "Iraq", "Ireland", "Israel", "Italy", "Jamaica", "Japan", "Jordan",
+  "Kazakhstan", "Kenya", "Kiribati", "Kuwait", "Kyrgyzstan", "Laos", "Latvia", "Lebanon", "Lesotho",
+  "Liberia", "Libya", "Liechtenstein", "Lithuania", "Luxembourg", "Madagascar", "Malawi", "Malaysia",
+  "Maldives", "Mali", "Malta", "Marshall Islands", "Mauritania", "Mauritius", "Mexico", "Micronesia",
+  "Moldova", "Monaco", "Mongolia", "Montenegro", "Morocco", "Mozambique", "Myanmar", "Namibia",
+  "Nauru", "Nepal", "Netherlands", "New Zealand", "Nicaragua", "Niger", "Nigeria", "North Korea",
+  "North Macedonia", "Norway", "Oman", "Pakistan", "Palau", "Panama", "Papua New Guinea", "Paraguay",
+  "Peru", "Philippines", "Poland", "Portugal", "Qatar", "Romania", "Russia", "Rwanda", "Saint Kitts and Nevis",
+  "Saint Lucia", "Saint Vincent and the Grenadines", "Samoa", "San Marino", "Sao Tome and Principe",
+  "Saudi Arabia", "Senegal", "Serbia", "Seychelles", "Sierra Leone", "Singapore", "Slovakia", "Slovenia",
+  "Solomon Islands", "Somalia", "South Africa", "South Korea", "South Sudan", "Spain", "Sri Lanka",
+  "Sudan", "Suriname", "Sweden", "Switzerland", "Syria", "Taiwan", "Tajikistan", "Tanzania", "Thailand",
+  "Togo", "Tonga", "Trinidad and Tobago", "Tunisia", "Turkey", "Turkmenistan", "Tuvalu", "Uganda",
+  "Ukraine", "United Arab Emirates", "United Kingdom", "United States", "Uruguay", "Uzbekistan",
+  "Vanuatu", "Vatican City", "Venezuela", "Vietnam", "Yemen", "Zambia", "Zimbabwe"
 ];
 
 export function SchoolSignupForm() {
@@ -51,14 +62,12 @@ export function SchoolSignupForm() {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
     
-    // School name validation
     if (!formData.schoolName.trim()) {
       newErrors.schoolName = "School name is required";
     } else if (formData.schoolName.trim().length < 2) {
       newErrors.schoolName = "School name must be at least 2 characters";
     }
     
-    // Short name validation
     if (!formData.shortName.trim()) {
       newErrors.shortName = "Short name is required";
     } else if (formData.shortName.trim().length < 2) {
@@ -67,12 +76,10 @@ export function SchoolSignupForm() {
       newErrors.shortName = "Short name must be 10 characters or less";
     }
     
-    // Country validation
     if (!formData.country) {
       newErrors.country = "Please select a country";
     }
     
-    // Website validation (optional but must be valid if provided)
     if (formData.website && formData.website.trim()) {
       const websitePattern = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
       if (!websitePattern.test(formData.website.trim())) {
@@ -121,103 +128,110 @@ export function SchoolSignupForm() {
   };
 
   return (
-    <AuthLayout>
-      <div className="space-y-6">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900">School Signup</h1>
-        </div>
+    <div className="min-h-screen bg-teal-500 flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        {/* School Signup Form */}
+        <div className="bg-white rounded-lg p-8 shadow-lg">
+          {/* Title */}
+          <div className="text-center mb-8">
+            <h1 className="text-2xl font-bold text-gray-900">School Signup</h1>
+          </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div className="space-y-2">
-            <Label htmlFor="schoolName" className="text-sm font-medium text-gray-700">School Name</Label>
-            <Input
-              id="schoolName"
-              name="schoolName"
-              type="text"
-              placeholder="Enter full name"
-              value={formData.schoolName}
-              onChange={(e) => handleChange("schoolName", e.target.value)}
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* School Name */}
+            <div className="space-y-2">
+              <Label htmlFor="schoolName" className="text-sm font-medium text-gray-700">
+                School Name
+              </Label>
+              <Input
+                id="schoolName"
+                name="schoolName"
+                type="text"
+                placeholder="Enter full name"
+                value={formData.schoolName}
+                onChange={(e) => handleChange("schoolName", e.target.value)}
+                disabled={isLoading}
+                className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+              />
+              {errors.schoolName && (
+                <p className="text-sm text-red-500">{errors.schoolName}</p>
+              )}
+            </div>
+
+            {/* School Short Name */}
+            <div className="space-y-2">
+              <Label htmlFor="shortName" className="text-sm font-medium text-gray-700">
+                School Short Name
+              </Label>
+              <Input
+                id="shortName"
+                name="shortName"
+                type="text"
+                placeholder="Enter school short name"
+                value={formData.shortName}
+                onChange={(e) => handleChange("shortName", e.target.value)}
+                disabled={isLoading}
+                className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+              />
+              <p className="text-sm text-teal-600">This will be the main URL to the portal</p>
+              {errors.shortName && (
+                <p className="text-sm text-red-500">{errors.shortName}</p>
+              )}
+            </div>
+
+            {/* Country */}
+            <div className="space-y-2">
+              <Label htmlFor="country" className="text-sm font-medium text-gray-700">
+                Country
+              </Label>
+              <Select onValueChange={(value) => handleChange("country", value)} disabled={isLoading}>
+                <SelectTrigger className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent">
+                  <SelectValue placeholder="Select Country" />
+                </SelectTrigger>
+                <SelectContent className="max-h-60">
+                  {countries.map((country) => (
+                    <SelectItem key={country} value={country}>
+                      {country}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {errors.country && (
+                <p className="text-sm text-red-500">{errors.country}</p>
+              )}
+            </div>
+
+            {/* School Website */}
+            <div className="space-y-2">
+              <Label htmlFor="website" className="text-sm font-medium text-gray-700">
+                School Website
+              </Label>
+              <Input
+                id="website"
+                name="website"
+                type="text"
+                placeholder="www.loremipsumschools.com"
+                value={formData.website}
+                onChange={(e) => handleChange("website", e.target.value)}
+                disabled={isLoading}
+                className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+              />
+              {errors.website && (
+                <p className="text-sm text-red-500">{errors.website}</p>
+              )}
+            </div>
+
+            {/* Next Button */}
+            <Button
+              type="submit"
               disabled={isLoading}
-              className={errors.schoolName ? "border-red-500" : ""}
-            />
-            {errors.schoolName && (
-              <p className="text-xs text-red-500">{errors.schoolName}</p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="shortName" className="text-sm font-medium text-gray-700">School Short Name</Label>
-            <Input
-              id="shortName"
-              name="shortName"
-              type="text"
-              placeholder="Enter school short name"
-              value={formData.shortName}
-              onChange={(e) => handleChange("shortName", e.target.value)}
-              disabled={isLoading}
-              className={errors.shortName ? "border-red-500" : ""}
-            />
-            <p className="text-xs text-teal-600">This will be the main URL to the portal</p>
-            {errors.shortName && (
-              <p className="text-xs text-red-500">{errors.shortName}</p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="country" className="text-sm font-medium text-gray-700">Country</Label>
-            <Select onValueChange={(value) => handleChange("country", value)} disabled={isLoading}>
-              <SelectTrigger className={`h-12 border-gray-300 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 ${errors.country ? "border-red-500" : ""}`}>
-                <SelectValue placeholder="Select Country" />
-              </SelectTrigger>
-              <SelectContent>
-                {countries.map((country) => (
-                  <SelectItem key={country} value={country}>
-                    {country}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {errors.country && (
-              <p className="text-xs text-red-500">{errors.country}</p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="website" className="text-sm font-medium text-gray-700">School Website</Label>
-            <Input
-              id="website"
-              name="website"
-              type="text"
-              placeholder="www.loremipsumschools.com"
-              value={formData.website}
-              onChange={(e) => handleChange("website", e.target.value)}
-              disabled={isLoading}
-              className={errors.website ? "border-red-500" : ""}
-            />
-            {errors.website && (
-              <p className="text-xs text-red-500">{errors.website}</p>
-            )}
-          </div>
-
-          <Button 
-            type="submit" 
-            className="w-full" 
-            disabled={isLoading}
-          >
-{isLoading ? "Processing..." : "Next"}
-          </Button>
-        </form>
-
-        <div className="text-center text-sm text-gray-600">
-          Already have a school account?{" "}
-          <button
-            onClick={() => router.push("/auth/signin")}
-            className="text-teal-600 hover:text-teal-700 font-medium"
-          >
-            Sign in
-          </button>
+              className="w-full bg-teal-600 hover:bg-teal-700 text-white font-medium py-3 rounded-lg transition-colors"
+            >
+              {isLoading ? "Please wait..." : "Next"}
+            </Button>
+          </form>
         </div>
       </div>
-    </AuthLayout>
+    </div>
   );
 }

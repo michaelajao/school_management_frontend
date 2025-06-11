@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PasswordInput } from "@/components/ui/password-input";
-import { AuthLayout } from "@/components/auth/auth-layout";
+import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/auth-context";
@@ -52,17 +52,17 @@ const roleConfig = {
     title: "Teacher Login", 
     description: "Access your teaching dashboard",
     backendRole: "TEACHER",
-    identifierType: "staffId",
-    identifierLabel: "Staff ID",
-    identifierPlaceholder: "Enter your staff ID"
+    identifierType: "email",
+    identifierLabel: "Email Address",
+    identifierPlaceholder: "Enter your email address"
   },
   student: {
     title: "Student Login",
     description: "Access your student portal",
     backendRole: "STUDENT",
-    identifierType: "studentId",
-    identifierLabel: "Student ID",
-    identifierPlaceholder: "Enter your student ID"
+    identifierType: "email",
+    identifierLabel: "Email Address",
+    identifierPlaceholder: "Enter your email address"
   },
   parent: {
     title: "Parent Login",
@@ -73,19 +73,19 @@ const roleConfig = {
     identifierPlaceholder: "Enter your email address"
   },
   general: {
-    title: "General Login",
+    title: "Login",
     description: "Access your account",
     backendRole: null,
     identifierType: "email",
     identifierLabel: "Email Address",
-    identifierPlaceholder: "Enter your email address"
+    identifierPlaceholder: "Enter email address"
   }
 };
 
 export function RoleLoginForm({ role }: RoleLoginFormProps) {
-  const router = useRouter();
   const { login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const [formData, setFormData] = useState({
     identifier: "",
     password: ""
@@ -116,28 +116,25 @@ export function RoleLoginForm({ role }: RoleLoginFormProps) {
       });
     }
   };
+
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
     
-    // Identifier validation based on role
     if (!formData.identifier.trim()) {
       newErrors.identifier = `${config.identifierLabel} is required`;
     } else if (config.identifierType === "email" && !/^\S+@\S+\.\S+$/.test(formData.identifier.trim())) {
       newErrors.identifier = "Please enter a valid email address";
-    } else if ((config.identifierType === "studentId" || config.identifierType === "staffId") && formData.identifier.trim().length < 3) {
-      newErrors.identifier = `${config.identifierLabel} must be at least 3 characters`;
     }
     
-    // Password validation
     if (!formData.password) {
       newErrors.password = "Password is required";
-    } else if (formData.password.length < 3) {
-      newErrors.password = "Password must be at least 3 characters";
     }
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
     if (!validateForm()) {
@@ -146,24 +143,18 @@ export function RoleLoginForm({ role }: RoleLoginFormProps) {
     }
     
     setIsLoading(true);
-      try {
-      // Use the role from props to ensure consistent authentication
+    try {
       if (role === "general") {
-        // For general login, we need to determine the role from the backend
         await login(formData.identifier, formData.password);
       } else {
         await login(formData.identifier, formData.password, role);
       }
       
-      // Show role-specific welcome message
       toast.success(`Welcome back, ${roleDisplayNames[role]}!`);
-      
-      // Redirect will be handled by the auth context based on returned user role
       
     } catch (error: any) {
       console.error("Login error:", error);
       
-      // Provide more specific error messages when available
       let errorMessage = "Invalid email or password. Please try again.";
       
       if (error?.response?.data?.message) {
@@ -185,89 +176,108 @@ export function RoleLoginForm({ role }: RoleLoginFormProps) {
   };
 
   return (
-    <AuthLayout>
-      <div className="space-y-6">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900">Login</h1>
+    <div className="min-h-screen bg-teal-500 flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        {/* Logo */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center space-x-2 mb-6">
+            <div className="w-8 h-8 bg-gray-800 rounded flex items-center justify-center">
+              <span className="text-white font-bold text-sm">L</span>
+            </div>
+            <span className="text-gray-800 font-bold text-xl">Logoipsum</span>
+          </div>
         </div>
 
-        {errors.form && (
-          <div className="p-4 text-sm text-red-500 bg-red-50 rounded-lg border border-red-200">
-            {errors.form}
-          </div>
-        )}
+        {/* Login Form */}
+        <div className="bg-white rounded-lg p-8 shadow-lg">
+          {errors.form && (
+            <div className="mb-4 p-3 text-sm text-red-500 bg-red-50 rounded-lg border border-red-200">
+              {errors.form}
+            </div>
+          )}
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div className="space-y-2">
-            <Label htmlFor="identifier" className="text-sm font-medium text-gray-700">Email Address</Label>
-            <Input
-              id="identifier"
-              name="identifier"
-              type="email"
-              placeholder="Enter email address"
-              value={formData.identifier}
-              onChange={(e) => handleChange("identifier", e.target.value)}
-              disabled={isLoading}
-              className={errors.identifier ? "border-red-500" : ""}
-            />
-            {errors.identifier && (
-              <p className="text-xs text-red-500">{errors.identifier}</p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="password" className="text-sm font-medium text-gray-700">Password</Label>
-            <PasswordInput
-              id="password"
-              name="password"
-              placeholder="Enter password"
-              value={formData.password}
-              onChange={(e) => handleChange("password", e.target.value)}
-              disabled={isLoading}
-              className={errors.password ? "border-red-500" : ""}
-            />
-            {errors.password && (
-              <p className="text-xs text-red-500">{errors.password}</p>
-            )}
-          </div>          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                id="remember"
-                className="h-4 w-4 rounded border-gray-300 text-teal-600 focus:ring-teal-500"
-              />
-              <Label htmlFor="remember" className="text-sm text-gray-600">
-                Remember me
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Email Address */}
+            <div className="space-y-2">
+              <Label htmlFor="identifier" className="text-sm font-medium text-gray-700">
+                {config.identifierLabel}
               </Label>
+              <Input
+                id="identifier"
+                type={config.identifierType === "email" ? "email" : "text"}
+                placeholder={config.identifierPlaceholder}
+                value={formData.identifier}
+                onChange={(e) => handleChange("identifier", e.target.value)}
+                className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                disabled={isLoading}
+              />
+              {errors.identifier && (
+                <p className="text-sm text-red-500">{errors.identifier}</p>
+              )}
             </div>
 
-            <Link 
-              href="/auth/forgot-password"
-              className="text-sm text-teal-600 hover:text-teal-700"
+            {/* Password */}
+            <div className="space-y-2">
+              <Label htmlFor="password" className="text-sm font-medium text-gray-700">
+                Password
+              </Label>
+              <PasswordInput
+                id="password"
+                placeholder="Enter password"
+                value={formData.password}
+                onChange={(e) => handleChange("password", e.target.value)}
+                className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                disabled={isLoading}
+              />
+              {errors.password && (
+                <p className="text-sm text-red-500">{errors.password}</p>
+              )}
+            </div>
+
+            {/* Remember Me & Forgot Password */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="remember"
+                  checked={rememberMe}
+                  onCheckedChange={(checked) => setRememberMe(checked as boolean)}
+                />
+                <Label htmlFor="remember" className="text-sm text-gray-600">
+                  Remember me
+                </Label>
+              </div>
+              <Link 
+                href="/auth/forgot-password" 
+                className="text-sm text-teal-600 hover:text-teal-700 font-medium"
+              >
+                Forgot password?
+              </Link>
+            </div>
+
+            {/* Login Button */}
+            <Button
+              type="submit"
+              disabled={isLoading}
+              className="w-full bg-teal-600 hover:bg-teal-700 text-white font-medium py-3 rounded-lg transition-colors"
             >
-              Forgot password?
-            </Link>
-          </div>
+              {isLoading ? "Signing in..." : "Login"}
+            </Button>
 
-          <Button 
-            type="submit" 
-            className="w-full" 
-            disabled={isLoading}
-          >
-            {isLoading ? "Signing in..." : "Login"}
-          </Button>
-        </form>
-
-        <div className="text-center text-sm text-gray-600">
-          Don't have an account?{" "}
-          <Link
-            href="/auth/school-signup"
-            className="text-teal-600 hover:text-teal-700 font-medium"
-          >
-            Contact your school administrator
-          </Link>
+            {/* Sign Up Link */}
+            <div className="text-center">
+              <p className="text-sm text-gray-600">
+                Don&apos;t have an account?{" "}
+                <Link 
+                  href="/auth/create-account" 
+                  className="text-teal-600 hover:text-teal-700 font-medium"
+                >
+                  Contact your school administrator
+                </Link>
+              </p>
+            </div>
+          </form>
         </div>
       </div>
-    </AuthLayout>
+    </div>
   );
 }

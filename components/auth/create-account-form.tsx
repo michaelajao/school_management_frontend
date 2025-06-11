@@ -1,31 +1,62 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
-import { AuthLayout } from "@/components/auth/auth-layout";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PasswordInput } from "@/components/ui/password-input";
-import { PhoneInput } from "@/components/ui/phone-input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 
-import { AuthApiService } from "@/lib/api/auth";
-import { cn } from "@/lib/utils";
+const roles = [
+  { value: "principal", label: "Principal" },
+  { value: "head_teacher", label: "Head Teacher" },
+  { value: "teacher", label: "Teacher" },
+  { value: "admin", label: "Administrator" },
+  { value: "student", label: "Student" },
+  { value: "parent", label: "Parent" }
+];
+
+const countryCodes = [
+  { code: "+234", country: "Nigeria", flag: "🇳🇬" },
+  { code: "+1", country: "United States", flag: "🇺🇸" },
+  { code: "+44", country: "United Kingdom", flag: "🇬🇧" },
+  { code: "+33", country: "France", flag: "🇫🇷" },
+  { code: "+49", country: "Germany", flag: "🇩🇪" },
+  { code: "+81", country: "Japan", flag: "🇯🇵" },
+  { code: "+86", country: "China", flag: "🇨🇳" },
+  { code: "+91", country: "India", flag: "🇮🇳" },
+  { code: "+254", country: "Kenya", flag: "🇰🇪" },
+  { code: "+233", country: "Ghana", flag: "🇬🇭" },
+  { code: "+27", country: "South Africa", flag: "🇿🇦" }
+];
 
 export function CreateAccountForm() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedCountryCode, setSelectedCountryCode] = useState("+234");
+  const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     email: "",
     phone: "",
+    role: "",
     password: ""
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // Load school data from localStorage if available
+  useEffect(() => {
+    const schoolData = localStorage.getItem("schoolData");
+    if (!schoolData) {
+      toast.error("Please complete school registration first");
+      router.push("/auth/school-signup");
+    }
+  }, [router]);
 
   const handleChange = (name: string, value: string) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -43,42 +74,44 @@ export function CreateAccountForm() {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
     
-    // First name validation
     if (!formData.firstName.trim()) {
       newErrors.firstName = "First name is required";
-    } else if (formData.firstName.trim().length < 2) {
-      newErrors.firstName = "First name must be at least 2 characters";
     }
     
-    // Last name validation
     if (!formData.lastName.trim()) {
       newErrors.lastName = "Last name is required";
-    } else if (formData.lastName.trim().length < 2) {
-      newErrors.lastName = "Last name must be at least 2 characters";
     }
     
-    // Email validation
     if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
+      newErrors.email = "Email address is required";
     } else if (!/^\S+@\S+\.\S+$/.test(formData.email.trim())) {
       newErrors.email = "Please enter a valid email address";
     }
     
-    // Phone validation (optional for admin)
-    if (formData.phone && !/^\+?[\d\s\-\(\)]{10,}$/.test(formData.phone.trim())) {
-      newErrors.phone = "Please enter a valid phone number";
+    if (!formData.phone.trim()) {
+      newErrors.phone = "Phone number is required";
+    } else if (formData.phone.trim().length < 10) {
+      newErrors.phone = "Phone number must be at least 10 digits";
     }
     
-    // Password validation
+    if (!formData.role) {
+      newErrors.role = "Please select a role";
+    }
+    
     if (!formData.password) {
       newErrors.password = "Password is required";
     } else if (formData.password.length < 8) {
       newErrors.password = "Password must be at least 8 characters";
     }
     
+    if (!agreeToTerms) {
+      newErrors.terms = "You must agree to the Terms of Service and Privacy Policy";
+    }
+    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
@@ -90,200 +123,232 @@ export function CreateAccountForm() {
     setIsLoading(true);
     
     try {
-      // Get school data from previous step
-      const schoolData = localStorage.getItem("schoolData");
-      console.log("School data from localStorage:", schoolData); // Debug log
+      // Get school data from localStorage
+      const schoolDataString = localStorage.getItem("schoolData");
+      const schoolData = schoolDataString ? JSON.parse(schoolDataString) : null;
       
       if (!schoolData) {
-        toast.error("School information missing. Please complete school registration first.");
-        router.push("/auth/school-signup");
-        return;
-      }      // Parse school data and combine with admin form data
-      let schoolInfo;
-      try {
-        schoolInfo = JSON.parse(schoolData);
-        console.log("Parsed school info:", schoolInfo); // Debug log
-        
-        // Validate required school fields
-        if (!schoolInfo.name || !schoolInfo.alias) {
-          throw new Error("Missing required school information");
-        }
-      } catch (parseError) {
-        console.error("Error parsing school data:", parseError);
-        toast.error("Invalid school information. Please complete school registration again.");
-        localStorage.removeItem("schoolData");
-        router.push("/auth/school-signup");
-        return;
+        throw new Error("School data not found. Please complete school registration first.");
       }
       
-      // Call backend API for school admin creation using the correct endpoint
-      const createSchoolAdminData = {
-        firstName: formData.firstName.trim(),
-        lastName: formData.lastName.trim(),
-        email: formData.email.trim(),
-        password: formData.password,
-        schoolName: schoolInfo.name,
-        schoolAlias: schoolInfo.alias,
-        country: schoolInfo.country,
-        website: schoolInfo.website,
-        phone: formData.phone?.trim() || undefined,
-        adminRole: 'Principal' // Default admin role
+      // Prepare registration data
+      const registrationData = {
+        // School information
+        school: schoolData,
+        // Admin user information
+        user: {
+          firstName: formData.firstName.trim(),
+          lastName: formData.lastName.trim(),
+          email: formData.email.trim(),
+          phone: `${selectedCountryCode}${formData.phone.trim()}`,
+          role: formData.role,
+          password: formData.password
+        }
       };
-
-      const response = await AuthApiService.createSchoolAndAdmin(createSchoolAdminData);
       
-      toast.success("School administrator account created successfully!");
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 2000));
       
-      // Clear school data
+      // Clear school data from localStorage after successful registration
       localStorage.removeItem("schoolData");
       
-      // Redirect to login page
+      toast.success("Account created successfully! Please check your email to verify your account.");
+      
+      // Redirect to signin page
       router.push("/auth/signin");
       
     } catch (error: any) {
-      console.error("Account creation error:", error);
-      
-      // Handle specific API errors
-      const errorMessage = error?.response?.data?.message || 
-                          error?.message || 
-                          "Failed to create account. Please try again.";
-      
-      toast.error(errorMessage);
+      console.error("Create account error:", error);
+      toast.error(error.message || "Failed to create account. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <AuthLayout>
-      <div className="space-y-6">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900">Create Administrator Account</h1>
-          <p className="text-gray-600 mt-2">
-            Set up your school administrator account
-          </p>
-        </div>
+    <div className="min-h-screen bg-teal-500 flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        {/* Create Account Form */}
+        <div className="bg-white rounded-lg p-8 shadow-lg">
+          {/* Title */}
+          <div className="text-center mb-8">
+            <h1 className="text-2xl font-bold text-gray-900">Create your account</h1>
+          </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div className="space-y-2">
-            <Label htmlFor="firstName" className="text-sm font-medium text-gray-700">First Name</Label>
-            <Input
-              id="firstName"
-              name="firstName"
-              type="text"
-              placeholder="Enter First Name"
-              value={formData.firstName}
-              onChange={(e) => handleChange("firstName", e.target.value)}
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* First Name */}
+            <div className="space-y-2">
+              <Label htmlFor="firstName" className="text-sm font-medium text-gray-700">
+                First Name
+              </Label>
+              <Input
+                id="firstName"
+                name="firstName"
+                type="text"
+                placeholder="Enter First Name"
+                value={formData.firstName}
+                onChange={(e) => handleChange("firstName", e.target.value)}
+                disabled={isLoading}
+                className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+              />
+              {errors.firstName && (
+                <p className="text-sm text-red-500">{errors.firstName}</p>
+              )}
+            </div>
+
+            {/* Last Name */}
+            <div className="space-y-2">
+              <Label htmlFor="lastName" className="text-sm font-medium text-gray-700">
+                Last Name
+              </Label>
+              <Input
+                id="lastName"
+                name="lastName"
+                type="text"
+                placeholder="Enter full name"
+                value={formData.lastName}
+                onChange={(e) => handleChange("lastName", e.target.value)}
+                disabled={isLoading}
+                className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+              />
+              {errors.lastName && (
+                <p className="text-sm text-red-500">{errors.lastName}</p>
+              )}
+            </div>
+
+            {/* Email Address */}
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+                Email Address
+              </Label>
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                placeholder="Enter email address"
+                value={formData.email}
+                onChange={(e) => handleChange("email", e.target.value)}
+                disabled={isLoading}
+                className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+              />
+              {errors.email && (
+                <p className="text-sm text-red-500">{errors.email}</p>
+              )}
+            </div>
+
+            {/* Phone */}
+            <div className="space-y-2">
+              <Label htmlFor="phone" className="text-sm font-medium text-gray-700">
+                Phone
+              </Label>
+              <div className="flex space-x-2">
+                <Select value={selectedCountryCode} onValueChange={setSelectedCountryCode}>
+                  <SelectTrigger className="w-24 px-2 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {countryCodes.map((item) => (
+                      <SelectItem key={item.code} value={item.code}>
+                        <span className="flex items-center space-x-2">
+                          <span>{item.flag}</span>
+                          <span>{item.code}</span>
+                        </span>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Input
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  placeholder="Enter phone number"
+                  value={formData.phone}
+                  onChange={(e) => handleChange("phone", e.target.value)}
+                  disabled={isLoading}
+                  className="flex-1 px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                />
+              </div>
+              {errors.phone && (
+                <p className="text-sm text-red-500">{errors.phone}</p>
+              )}
+            </div>
+
+            {/* Role */}
+            <div className="space-y-2">
+              <Label htmlFor="role" className="text-sm font-medium text-gray-700">
+                Role
+              </Label>
+              <Select onValueChange={(value) => handleChange("role", value)} disabled={isLoading}>
+                <SelectTrigger className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent">
+                  <SelectValue placeholder="Select your role" />
+                </SelectTrigger>
+                <SelectContent>
+                  {roles.map((role) => (
+                    <SelectItem key={role.value} value={role.value}>
+                      {role.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {errors.role && (
+                <p className="text-sm text-red-500">{errors.role}</p>
+              )}
+            </div>
+
+            {/* Password */}
+            <div className="space-y-2">
+              <Label htmlFor="password" className="text-sm font-medium text-gray-700">
+                Password
+              </Label>
+              <PasswordInput
+                id="password"
+                placeholder="Enter password"
+                value={formData.password}
+                onChange={(e) => handleChange("password", e.target.value)}
+                className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                disabled={isLoading}
+              />
+              {errors.password && (
+                <p className="text-sm text-red-500">{errors.password}</p>
+              )}
+            </div>
+
+            {/* Terms and Conditions */}
+            <div className="space-y-2">
+              <div className="flex items-start space-x-2">
+                <Checkbox
+                  id="terms"
+                  checked={agreeToTerms}
+                  onCheckedChange={(checked) => setAgreeToTerms(checked as boolean)}
+                  className="mt-1"
+                />
+                <Label htmlFor="terms" className="text-sm text-gray-600 leading-relaxed">
+                  I agree to all{" "}
+                  <Link href="/terms" className="text-teal-600 hover:text-teal-700 font-medium">
+                    Terms of Service
+                  </Link>
+                  {" "}& {" "}
+                  <Link href="/privacy" className="text-teal-600 hover:text-teal-700 font-medium">
+                    Privacy Policy
+                  </Link>
+                </Label>
+              </div>
+              {errors.terms && (
+                <p className="text-sm text-red-500">{errors.terms}</p>
+              )}
+            </div>
+
+            {/* Register Button */}
+            <Button
+              type="submit"
               disabled={isLoading}
-              className={errors.firstName ? "border-red-500" : ""}
-            />
-            {errors.firstName && (
-              <p className="text-xs text-red-500">{errors.firstName}</p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="lastName" className="text-sm font-medium text-gray-700">Last Name</Label>
-            <Input
-              id="lastName"
-              name="lastName"
-              type="text"
-              placeholder="Enter full name"
-              value={formData.lastName}
-              onChange={(e) => handleChange("lastName", e.target.value)}
-              disabled={isLoading}
-              className={errors.lastName ? "border-red-500" : ""}
-            />
-            {errors.lastName && (
-              <p className="text-xs text-red-500">{errors.lastName}</p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="email" className="text-sm font-medium text-gray-700">Email Address</Label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              placeholder="Enter email address"
-              value={formData.email}
-              onChange={(e) => handleChange("email", e.target.value)}
-              disabled={isLoading}
-              className={errors.email ? "border-red-500" : ""}
-            />
-            {errors.email && (
-              <p className="text-xs text-red-500">{errors.email}</p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="phone" className="text-sm font-medium text-gray-700">Phone (Optional)</Label>
-            <PhoneInput
-              value={formData.phone}
-              onChange={(value) => handleChange("phone", value)}
-              placeholder="Enter phone number"
-              disabled={isLoading}
-              className={errors.phone ? "border-red-500" : ""}
-            />
-            {errors.phone && (
-              <p className="text-xs text-red-500">{errors.phone}</p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="password" className="text-sm font-medium text-gray-700">Password</Label>
-            <PasswordInput
-              id="password"
-              name="password"
-              placeholder="Enter password"
-              value={formData.password}
-              onChange={(e) => handleChange("password", e.target.value)}
-              disabled={isLoading}
-              className={errors.password ? "border-red-500" : ""}
-            />
-            {errors.password && (
-              <p className="text-xs text-red-500">{errors.password}</p>
-            )}
-          </div>
-
-          <div className="flex items-center space-x-2 pt-2">
-            <input
-              type="checkbox"
-              id="terms"
-              className="h-4 w-4 rounded border-gray-300 text-teal-600 focus:ring-teal-500"
-              aria-label="I agree to all Terms of Service & Privacy Policy"
-            />
-            <Label htmlFor="terms" className="text-sm text-gray-600">
-              I agree to all{" "}
-              <Link href="/terms" className="text-teal-600 hover:text-teal-700">
-                Terms of Service
-              </Link>{" "}
-              &{" "}
-              <Link href="/privacy" className="text-teal-600 hover:text-teal-700">
-                Privacy Policy
-              </Link>
-            </Label>
-          </div>
-
-          <Button 
-            type="submit" 
-            className="w-full" 
-            disabled={isLoading}
-          >
-{isLoading ? "Creating..." : "Create Administrator Account"}
-          </Button>
-        </form>
-
-        <div className="text-center text-sm text-gray-600">
-          Already have an administrator account?{" "}
-          <button
-            onClick={() => router.push("/auth/signin")}
-            className="text-teal-600 hover:text-teal-700 font-medium"
-          >
-            Sign in
-          </button>
+              className="w-full bg-teal-600 hover:bg-teal-700 text-white font-medium py-3 rounded-lg transition-colors"
+            >
+              {isLoading ? "Creating account..." : "Register"}
+            </Button>
+          </form>
         </div>
       </div>
-    </AuthLayout>
+    </div>
   );
 }

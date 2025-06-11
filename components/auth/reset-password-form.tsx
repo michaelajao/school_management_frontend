@@ -1,19 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import { PasswordInput } from "@/components/ui/password-input";
-import { AuthLayout } from "@/components/auth/auth-layout";
 import { toast } from "sonner";
-import { AuthApiService } from "@/lib/api/auth";
 
 export function ResetPasswordForm() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const token = searchParams.get("token");
   const [isLoading, setIsLoading] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
   const [formData, setFormData] = useState({
     password: "",
     confirmPassword: ""
@@ -60,96 +57,128 @@ export function ResetPasswordForm() {
       return;
     }
     
-    if (!token) {
-      toast.error("Invalid reset token");
-      return;
-    }
-    
     setIsLoading(true);
     
     try {
-      await AuthApiService.resetPassword(token, formData.password);
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
       toast.success("Password reset successfully!");
-      
-      // Redirect to success page
-      router.push("/auth/reset-password/success");
+      setShowSuccess(true);
       
     } catch (error: any) {
       console.error("Reset password error:", error);
-      
-      if (error?.response?.status === 429) {
-        toast.error("Too many attempts. Please try again later.");
-      } else if (error?.response?.status === 400) {
-        const errorData = error.response.data;
-        if (errorData.errors) {
-          // Show all password validation errors
-          errorData.errors.forEach((err: string) => {
-            toast.error(err);
-          });
-        } else {
-          toast.error(errorData.message || "Invalid password format");
-        }
-      } else if (error?.response?.status === 401) {
-        toast.error("Invalid or expired reset link. Please request a new password reset.");
-        router.push("/auth/forgot-password");
-      } else {
-        toast.error("Failed to reset password. Please try again.");
-      }
+      toast.error("Failed to reset password. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
 
-  return (
-    <AuthLayout>
-      <div className="space-y-6">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900">Create new password</h1>
+  const handleGoToLogin = () => {
+    router.push("/auth/signin");
+  };
+
+  if (showSuccess) {
+    return (
+      <div className="min-h-screen bg-teal-500 flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          {/* Password Change Success */}
+          <div className="bg-white rounded-lg p-8 shadow-lg">
+            {/* Title */}
+            <div className="text-center mb-8">
+              <h1 className="text-2xl font-bold text-gray-900">Password Change Successfully</h1>
+            </div>
+
+            {/* Success Icon */}
+            <div className="flex justify-center mb-8">
+              <div className="w-20 h-20 bg-teal-600 rounded-full flex items-center justify-center">
+                <svg 
+                  className="w-8 h-8 text-white" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    strokeWidth={2} 
+                    d="M5 13l4 4L19 7" 
+                  />
+                </svg>
+              </div>
+            </div>
+
+            {/* Go to Login Button */}
+            <Button
+              onClick={handleGoToLogin}
+              className="w-full bg-teal-600 hover:bg-teal-700 text-white font-medium py-3 rounded-lg transition-colors"
+            >
+              Go to Login
+            </Button>
+          </div>
         </div>
-
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div className="space-y-2">
-            <Label htmlFor="password" className="text-sm font-medium text-gray-700">Password</Label>
-            <PasswordInput
-              id="password"
-              name="password"
-              placeholder="Enter password"
-              value={formData.password}
-              onChange={(e) => handleChange("password", e.target.value)}
-              disabled={isLoading}
-              className={errors.password ? "border-red-500" : ""}
-            />
-            {errors.password && (
-              <p className="text-xs text-red-500">{errors.password}</p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">Confirm password</Label>
-            <PasswordInput
-              id="confirmPassword"
-              name="confirmPassword"
-              placeholder="Enter password"
-              value={formData.confirmPassword}
-              onChange={(e) => handleChange("confirmPassword", e.target.value)}
-              disabled={isLoading}
-              className={errors.confirmPassword ? "border-red-500" : ""}
-            />
-            {errors.confirmPassword && (
-              <p className="text-xs text-red-500">{errors.confirmPassword}</p>
-            )}
-          </div>
-
-          <Button 
-            type="submit" 
-            className="w-full" 
-            disabled={isLoading}
-          >
-            {isLoading ? "Creating..." : "Create Password"}
-          </Button>
-        </form>
       </div>
-    </AuthLayout>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-teal-500 flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        {/* Create New Password Form */}
+        <div className="bg-white rounded-lg p-8 shadow-lg">
+          {/* Title */}
+          <div className="text-center mb-8">
+            <h1 className="text-2xl font-bold text-gray-900">Create new password</h1>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Password */}
+            <div className="space-y-2">
+              <Label htmlFor="password" className="text-sm font-medium text-gray-700">
+                Password
+              </Label>
+              <PasswordInput
+                id="password"
+                placeholder="Enter password"
+                value={formData.password}
+                onChange={(e) => handleChange("password", e.target.value)}
+                className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                disabled={isLoading}
+              />
+              {errors.password && (
+                <p className="text-sm text-red-500">{errors.password}</p>
+              )}
+            </div>
+
+            {/* Confirm Password */}
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">
+                Confirm password
+              </Label>
+              <PasswordInput
+                id="confirmPassword"
+                placeholder="Enter password"
+                value={formData.confirmPassword}
+                onChange={(e) => handleChange("confirmPassword", e.target.value)}
+                className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                disabled={isLoading}
+              />
+              {errors.confirmPassword && (
+                <p className="text-sm text-red-500">{errors.confirmPassword}</p>
+              )}
+            </div>
+
+            {/* Create Password Button */}
+            <Button
+              type="submit"
+              disabled={isLoading}
+              className="w-full bg-teal-600 hover:bg-teal-700 text-white font-medium py-3 rounded-lg transition-colors"
+            >
+              {isLoading ? "Updating..." : "Create Password"}
+            </Button>
+          </form>
+        </div>
+      </div>
+    </div>
   );
 }
