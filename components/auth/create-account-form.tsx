@@ -11,27 +11,18 @@ import { PasswordInput } from "@/components/ui/password-input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 
-const roles = [
-  { value: "principal", label: "Principal" },
-  { value: "head_teacher", label: "Head Teacher" },
-  { value: "teacher", label: "Teacher" },
-  { value: "admin", label: "Administrator" },
-  { value: "student", label: "Student" },
-  { value: "parent", label: "Parent" }
-];
 
+
+// Only countries with education systems available in the backend
 const countryCodes = [
-  { code: "+234", country: "Nigeria", flag: "🇳🇬" },
-  { code: "+1", country: "United States", flag: "🇺🇸" },
-  { code: "+44", country: "United Kingdom", flag: "🇬🇧" },
-  { code: "+33", country: "France", flag: "🇫🇷" },
-  { code: "+49", country: "Germany", flag: "🇩🇪" },
-  { code: "+81", country: "Japan", flag: "🇯🇵" },
-  { code: "+86", country: "China", flag: "🇨🇳" },
-  { code: "+91", country: "India", flag: "🇮🇳" },
-  { code: "+254", country: "Kenya", flag: "🇰🇪" },
+  { code: "+61", country: "Australia", flag: "🇦🇺" },
+  { code: "+1", country: "Canada", flag: "🇨🇦" },
   { code: "+233", country: "Ghana", flag: "🇬🇭" },
-  { code: "+27", country: "South Africa", flag: "🇿🇦" }
+  { code: "+254", country: "Kenya", flag: "🇰🇪" },
+  { code: "+234", country: "Nigeria", flag: "🇳🇬" },
+  { code: "+27", country: "South Africa", flag: "🇿🇦" },
+  { code: "+44", country: "United Kingdom", flag: "🇬🇧" },
+  { code: "+1", country: "United States", flag: "🇺🇸" }
 ];
 
 export function CreateAccountForm() {
@@ -44,7 +35,6 @@ export function CreateAccountForm() {
     lastName: "",
     email: "",
     phone: "",
-    role: "",
     password: ""
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -94,10 +84,6 @@ export function CreateAccountForm() {
       newErrors.phone = "Phone number must be at least 10 digits";
     }
     
-    if (!formData.role) {
-      newErrors.role = "Please select a role";
-    }
-    
     if (!formData.password) {
       newErrors.password = "Password is required";
     } else if (formData.password.length < 8) {
@@ -125,34 +111,67 @@ export function CreateAccountForm() {
     try {
       // Get school data from localStorage
       const schoolDataString = localStorage.getItem("schoolData");
+      console.log("Raw school data string:", schoolDataString);
+      
       const schoolData = schoolDataString ? JSON.parse(schoolDataString) : null;
+      console.log("Parsed school data:", schoolData);
       
       if (!schoolData) {
         throw new Error("School data not found. Please complete school registration first.");
       }
       
-      // Prepare registration data
+      // Validate required school fields
+      if (!schoolData.name || !schoolData.alias) {
+        console.error("Missing required school fields:", {
+          name: schoolData.name,
+          alias: schoolData.alias,
+          country: schoolData.country
+        });
+        throw new Error("Incomplete school data. Please complete school registration first.");
+      }
+      
+      // Prepare registration data with automatic SCHOOL_ADMIN role
       const registrationData = {
-        // School information
-        school: schoolData,
-        // Admin user information
-        user: {
         firstName: formData.firstName.trim(),
         lastName: formData.lastName.trim(),
         email: formData.email.trim(),
-          phone: `${selectedCountryCode}${formData.phone.trim()}`,
-          role: formData.role,
-          password: formData.password
-        }
+        phone: `${selectedCountryCode}${formData.phone.trim()}`,
+        password: formData.password,
+        schoolName: schoolData.name.trim(),
+        schoolAlias: schoolData.alias.trim(),
+        country: schoolData.country,
+        website: schoolData.website || undefined
       };
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      console.log("Registration data being sent:", registrationData);
+      
+      // Validate the final data before sending
+      if (!registrationData.schoolName || !registrationData.schoolAlias) {
+        console.error("Final validation failed:", {
+          schoolName: registrationData.schoolName,
+          schoolAlias: registrationData.schoolAlias
+        });
+        throw new Error("School name and alias are required but missing.");
+      }
+      
+      // Use the createSchoolAndAdmin API endpoint
+      const response = await fetch('/api/auth/create-school-admin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(registrationData),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to create school and admin account');
+      }
       
       // Clear school data from localStorage after successful registration
       localStorage.removeItem("schoolData");
       
-      toast.success("Account created successfully! Please check your email to verify your account.");
+      toast.success("School and admin account created successfully! You can now login.");
       
       // Redirect to signin page
       router.push("/auth/signin");
@@ -172,72 +191,73 @@ export function CreateAccountForm() {
         <div className="bg-white rounded-lg p-8 shadow-lg">
           {/* Title */}
           <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold text-gray-900">Create your account</h1>
-        </div>
+            <h1 className="text-2xl font-bold text-gray-900">Create your admin account</h1>
+            <p className="text-sm text-gray-600 mt-2">You will be the school administrator</p>
+          </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* First Name */}
-          <div className="space-y-2">
+            <div className="space-y-2">
               <Label htmlFor="firstName" className="text-sm font-medium text-gray-700">
                 First Name
               </Label>
-            <Input
-              id="firstName"
-              name="firstName"
-              type="text"
-              placeholder="Enter First Name"
-              value={formData.firstName}
-              onChange={(e) => handleChange("firstName", e.target.value)}
-              disabled={isLoading}
+              <Input
+                id="firstName"
+                name="firstName"
+                type="text"
+                placeholder="Enter First Name"
+                value={formData.firstName}
+                onChange={(e) => handleChange("firstName", e.target.value)}
+                disabled={isLoading}
                 className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-            />
-            {errors.firstName && (
+              />
+              {errors.firstName && (
                 <p className="text-sm text-red-500">{errors.firstName}</p>
-            )}
-          </div>
+              )}
+            </div>
 
             {/* Last Name */}
-          <div className="space-y-2">
+            <div className="space-y-2">
               <Label htmlFor="lastName" className="text-sm font-medium text-gray-700">
                 Last Name
               </Label>
-            <Input
-              id="lastName"
-              name="lastName"
-              type="text"
-              placeholder="Enter full name"
-              value={formData.lastName}
-              onChange={(e) => handleChange("lastName", e.target.value)}
-              disabled={isLoading}
+              <Input
+                id="lastName"
+                name="lastName"
+                type="text"
+                placeholder="Enter Last Name"
+                value={formData.lastName}
+                onChange={(e) => handleChange("lastName", e.target.value)}
+                disabled={isLoading}
                 className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-            />
-            {errors.lastName && (
+              />
+              {errors.lastName && (
                 <p className="text-sm text-red-500">{errors.lastName}</p>
-            )}
-          </div>
+              )}
+            </div>
 
             {/* Email Address */}
-          <div className="space-y-2">
+            <div className="space-y-2">
               <Label htmlFor="email" className="text-sm font-medium text-gray-700">
                 Email Address
               </Label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              placeholder="Enter email address"
-              value={formData.email}
-              onChange={(e) => handleChange("email", e.target.value)}
-              disabled={isLoading}
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                placeholder="Enter email address"
+                value={formData.email}
+                onChange={(e) => handleChange("email", e.target.value)}
+                disabled={isLoading}
                 className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-            />
-            {errors.email && (
+              />
+              {errors.email && (
                 <p className="text-sm text-red-500">{errors.email}</p>
-            )}
-          </div>
+              )}
+            </div>
 
             {/* Phone */}
-          <div className="space-y-2">
+            <div className="space-y-2">
               <Label htmlFor="phone" className="text-sm font-medium text-gray-700">
                 Phone
               </Label>
@@ -262,91 +282,69 @@ export function CreateAccountForm() {
                   name="phone"
                   type="tel"
                   placeholder="Enter phone number"
-              value={formData.phone}
+                  value={formData.phone}
                   onChange={(e) => handleChange("phone", e.target.value)}
-              disabled={isLoading}
+                  disabled={isLoading}
                   className="flex-1 px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-            />
+                />
               </div>
-            {errors.phone && (
+              {errors.phone && (
                 <p className="text-sm text-red-500">{errors.phone}</p>
               )}
             </div>
 
-            {/* Role */}
-            <div className="space-y-2">
-              <Label htmlFor="role" className="text-sm font-medium text-gray-700">
-                Role
-              </Label>
-              <Select onValueChange={(value) => handleChange("role", value)} disabled={isLoading}>
-                <SelectTrigger className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent">
-                  <SelectValue placeholder="Select your role" />
-                </SelectTrigger>
-                <SelectContent>
-                  {roles.map((role) => (
-                    <SelectItem key={role.value} value={role.value}>
-                      {role.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {errors.role && (
-                <p className="text-sm text-red-500">{errors.role}</p>
-            )}
-          </div>
-
             {/* Password */}
-          <div className="space-y-2">
+            <div className="space-y-2">
               <Label htmlFor="password" className="text-sm font-medium text-gray-700">
                 Password
               </Label>
-            <PasswordInput
-              id="password"
-              placeholder="Enter password"
-              value={formData.password}
-              onChange={(e) => handleChange("password", e.target.value)}
+              <PasswordInput
+                id="password"
+                placeholder="Enter password"
+                value={formData.password}
+                onChange={(e) => handleChange("password", e.target.value)}
                 className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-              disabled={isLoading}
-            />
-            {errors.password && (
+                disabled={isLoading}
+              />
+              {errors.password && (
                 <p className="text-sm text-red-500">{errors.password}</p>
-            )}
-          </div>
+              )}
+            </div>
 
             {/* Terms and Conditions */}
             <div className="space-y-2">
               <div className="flex items-start space-x-2">
                 <Checkbox
-              id="terms"
+                  id="terms"
                   checked={agreeToTerms}
                   onCheckedChange={(checked) => setAgreeToTerms(checked as boolean)}
                   className="mt-1"
-            />
+                />
                 <Label htmlFor="terms" className="text-sm text-gray-600 leading-relaxed">
-              I agree to all{" "}
+                  I agree to all{" "}
                   <Link href="/terms" className="text-teal-600 hover:text-teal-700 font-medium">
-                Terms of Service
+                    Terms of Service
                   </Link>
                   {" "}& {" "}
                   <Link href="/privacy" className="text-teal-600 hover:text-teal-700 font-medium">
-                Privacy Policy
-              </Link>
-            </Label>
+                    Privacy Policy
+                  </Link>
+                </Label>
               </div>
               {errors.terms && (
                 <p className="text-sm text-red-500">{errors.terms}</p>
               )}
-          </div>
+            </div>
 
             {/* Register Button */}
-          <Button 
-            type="submit" 
-            disabled={isLoading}
+            <Button 
+              type="submit" 
+              disabled={isLoading}
               className="w-full bg-teal-600 hover:bg-teal-700 text-white font-medium py-3 rounded-lg transition-colors"
-          >
-              {isLoading ? "Creating account..." : "Register"}
-          </Button>
-        </form>
+            >
+              {isLoading ? "Creating school and admin account..." : "Create School & Admin Account"}
+            </Button>
+          </form>
         </div>
       </div>
     </div>

@@ -124,11 +124,32 @@ A comprehensive Multi-Tenant School Management System (SMS) designed as a SaaS p
 
 ## 🛠️ Tech Stack
 
+### 🆕 NEW: Global Education Systems Support
+
+The frontend now supports **8 major education systems** worldwide with specialized UI components:
+
+#### Supported Education Systems
+- **Nigeria**: 6-3-3-4 System with Primary → JSS → SSS structure
+- **United States**: K-12 System with Elementary → Middle → High School
+- **United Kingdom**: Key Stages with GCSEs and A-Levels
+- **Canada**: Provincial variations with Elementary → Secondary
+- **South Africa**: CAPS System with Foundation → Senior phases
+- **Ghana**: 6-3-3-4 System with Primary → JHS → SHS
+- **Kenya**: 8-4-4 System with Primary → Secondary structure
+- **Australia**: National Curriculum with Foundation → Year 12
+
+#### Enhanced Class Management UI
+- **Multi-Section Support**: Create classes like 1A, 1B, 1C with visual section indicators
+- **Smart Display Names**: Auto-generated labels like "P1A", "JSS2A-Sci", "Y7-Blue-Adv"
+- **Stream Management**: Science, Arts, Commercial, Technical stream selection
+- **Track Systems**: Advanced, Regular, Remedial, Honors performance tracking
+- **Capacity Management**: Visual enrollment indicators and capacity warnings
+
 ### Core Technologies
 - **Framework**: Next.js 15 with App Router
 - **Language**: TypeScript 5
 - **Styling**: Tailwind CSS 3
-- **UI Components**: shadcn/ui + Radix UI
+- **UI Components**: shadcn/ui + Radix UI + Custom Education Components
 - **State Management**: React Context API + Custom Hooks
 
 ### Authentication & Security
@@ -241,7 +262,8 @@ school_management_frontend/
 │   ├── admin/                   # Admin-specific components
 │   │   ├── students/            # Student management components
 │   │   ├── parents/             # Parent management components
-│   │   └── announcement/        # Communication components
+│   │   ├── announcement/        # Communication components
+│   │   └── ClassSectionManager.tsx # 🆕 Multi-section class management
 │   ├── auth/                    # Authentication components
 │   │   ├── registration-forms/  # Role-specific registration forms
 │   │   └── shared/              # Shared auth utilities
@@ -258,6 +280,7 @@ school_management_frontend/
 │   │   ├── auth.ts              # Authentication API service
 │   │   ├── users.ts             # User management API service
 │   │   ├── classes.ts           # Class management API service
+│   │   ├── education-systems.ts # 🆕 Education systems API service
 │   │   ├── client.ts            # Base API client with interceptors
 │   │   └── index.ts             # API service exports
 │   └── utils.ts                 # Utility functions and helpers
@@ -396,13 +419,53 @@ class ApiClient {
 }
 ```
 
+### 🆕 NEW: Education Systems API Service
+```typescript
+export class EducationSystemsApiService {
+  // Get all available education systems
+  static async getAllEducationSystems(): Promise<EducationSystem[]>
+  
+  // Get education system by country
+  static async getEducationSystemByCountry(country: string): Promise<EducationSystem>
+  
+  // Get grade levels for an education system
+  static async getGradeLevels(educationSystemId: string): Promise<GradeLevel[]>
+  
+  // Get assessment types and term structures
+  static async getAssessmentTypes(educationSystemId: string): Promise<AssessmentType[]>
+  static async getTermStructures(educationSystemId: string): Promise<TermStructure[]>
+}
+```
+
+### 🆕 NEW: Class Sections API Service
+```typescript
+export class ClassSectionsApiService {
+  // Create single class section
+  static async createClassSection(data: CreateClassSectionDto): Promise<ClassSection>
+  
+  // Create multiple sections at once (1A, 1B, 1C, etc.)
+  static async createMultipleSections(
+    baseData: Omit<CreateClassSectionDto, 'section'>,
+    sections: string[]
+  ): Promise<ClassSection[]>
+  
+  // Get all sections for a specific class name
+  static async getClassSections(className: string, academicYearId: string): Promise<ClassSection[]>
+  
+  // Get available sections, streams, and tracks
+  static async getAvailableSections(): Promise<string[]>
+  static async getAvailableStreams(): Promise<string[]>
+  static async getAvailableTracks(): Promise<string[]>
+}
+```
+
 ### Authentication API Service
 ```typescript
 export class AuthApiService {
   // Universal login for all users
   static async login(credentials: LoginCredentials): Promise<AuthResponse>
   
-  // School owner registration
+  // School owner registration with education system selection
   static async createSchoolAndAdmin(data: SchoolRegistrationData): Promise<AuthResponse>
   
   // Complete invite registration
@@ -647,4 +710,14 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ✅ **Invitation-Based Onboarding** - Easy user registration system  
 ✅ **Mobile-First Design** - Optimized for low-resource environments  
 ✅ **Real-time Updates** - Live notifications and data synchronization  
-✅ **Offline Support** - Basic functionality without internet connection
+✅ **Offline Support** - Basic functionality without internet connection  
+
+### 🆕 NEW FEATURES (Latest Update)
+✅ **Global Education Systems** - Support for 8 major education systems worldwide  
+✅ **Multi-Section Classes** - Create classes like 1A, 1B, 1C with visual indicators  
+✅ **Smart Display Names** - Auto-generated class labels (P1A, JSS2A-Sci, Y7-Blue-Adv)  
+✅ **Stream Management** - Science, Arts, Commercial, Technical academic streams  
+✅ **Performance Tracking** - Advanced, Regular, Remedial, Honors track systems  
+✅ **Prisma Integration** - Enhanced database performance with Prisma ORM  
+✅ **Migration-Free Architecture** - Streamlined development without complex migrations  
+✅ **Enhanced Class UI** - Visual capacity management and enrollment indicators

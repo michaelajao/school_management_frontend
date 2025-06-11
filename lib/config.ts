@@ -11,9 +11,9 @@ interface AppConfig {
 }
 
 export const config: AppConfig = {
-  apiUrl: process.env.NEXT_PUBLIC_API_URL || 'https://jsonplaceholder.typicode.com', // Mock API for now
+  apiUrl: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000', // School management backend
   appUrl: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
-  environment: (process.env.NEXT_PUBLIC_ENVIRONMENT as any) || 'staging',
+  environment: (process.env.NEXT_PUBLIC_ENVIRONMENT as any) || 'development',
   features: {
     pwa: process.env.NEXT_PUBLIC_ENABLE_PWA === 'true',
     offline: process.env.NEXT_PUBLIC_ENABLE_OFFLINE === 'true',

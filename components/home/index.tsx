@@ -556,12 +556,14 @@ export default function HomeIndex() {
                       <label htmlFor="country" className="block text-sm font-medium text-gray-700 mb-1">Country</label>
                       <select id="country" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1B5B5E] focus:border-[#1B5B5E]">
                         <option>Select your country</option>
+                        <option>Australia</option>
+                        <option>Canada</option>
+                        <option>Ghana</option>
                         <option>Kenya</option>
                         <option>Nigeria</option>
-                        <option>Ghana</option>
                         <option>South Africa</option>
-                        <option>Tanzania</option>
-                        <option>Uganda</option>
+                        <option>United Kingdom</option>
+                        <option>United States</option>
                         <option>Other</option>
                       </select>
                     </div>

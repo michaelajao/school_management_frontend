@@ -22,13 +22,13 @@ export function HealthCheck() {
       try {
         setHealthStatus({ status: 'checking' });
         
-        // For staging, test with JSONPlaceholder API
-        const response = await api.get('/posts/1', { timeout: 5000 });
+        // Test with our backend health endpoint
+        const response = await api.get('/', { timeout: 5000 });
         
         setHealthStatus({
           status: 'connected',
           backendInfo: {
-            version: '1.0.0-staging',
+            version: response.data?.version || '1.0.0',
             environment: config.environment,
             timestamp: new Date().toISOString(),
           }

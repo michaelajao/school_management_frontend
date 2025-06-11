@@ -44,3 +44,12 @@ export type {
   AttendanceStats,
   ClassAttendanceStats,
 } from './attendance';
+
+// Export education systems API
+export { educationSystemsApi, educationSystemHelpers } from './education-systems';
+export type {
+  EducationSystem,
+  GradeLevel,
+  SubjectArea,
+  AssessmentType,
+} from './education-systems';

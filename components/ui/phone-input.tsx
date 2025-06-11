@@ -4,11 +4,16 @@ import * as React from "react";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+// Only countries with education systems available in the backend
 const countryCodes = [
-  { code: "+234", country: "NG", flag: "🇳🇬" },
+  { code: "+61", country: "AU", flag: "🇦🇺" },
+  { code: "+1", country: "CA", flag: "🇨🇦" },
   { code: "+233", country: "GH", flag: "🇬🇭" },
-  { code: "+1", country: "US", flag: "🇺🇸" },
+  { code: "+254", country: "KE", flag: "🇰🇪" },
+  { code: "+234", country: "NG", flag: "🇳🇬" },
+  { code: "+27", country: "ZA", flag: "🇿🇦" },
   { code: "+44", country: "GB", flag: "🇬🇧" },
+  { code: "+1", country: "US", flag: "🇺🇸" },
 ];
 
 export interface PhoneInputProps {

@@ -8,31 +8,16 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 
+// Only countries with education systems available in the backend
 const countries = [
-  "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Argentina", "Armenia", "Australia",
-  "Austria", "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium",
-  "Belize", "Benin", "Bhutan", "Bolivia", "Bosnia and Herzegovina", "Botswana", "Brazil", "Brunei",
-  "Bulgaria", "Burkina Faso", "Burundi", "Cambodia", "Cameroon", "Canada", "Cape Verde",
-  "Central African Republic", "Chad", "Chile", "China", "Colombia", "Comoros", "Congo", "Costa Rica",
-  "Croatia", "Cuba", "Cyprus", "Czech Republic", "Denmark", "Djibouti", "Dominica", "Dominican Republic",
-  "Ecuador", "Egypt", "El Salvador", "Equatorial Guinea", "Eritrea", "Estonia", "Ethiopia", "Fiji",
-  "Finland", "France", "Gabon", "Gambia", "Georgia", "Germany", "Ghana", "Greece", "Grenada",
-  "Guatemala", "Guinea", "Guinea-Bissau", "Guyana", "Haiti", "Honduras", "Hungary", "Iceland",
-  "India", "Indonesia", "Iran", "Iraq", "Ireland", "Israel", "Italy", "Jamaica", "Japan", "Jordan",
-  "Kazakhstan", "Kenya", "Kiribati", "Kuwait", "Kyrgyzstan", "Laos", "Latvia", "Lebanon", "Lesotho",
-  "Liberia", "Libya", "Liechtenstein", "Lithuania", "Luxembourg", "Madagascar", "Malawi", "Malaysia",
-  "Maldives", "Mali", "Malta", "Marshall Islands", "Mauritania", "Mauritius", "Mexico", "Micronesia",
-  "Moldova", "Monaco", "Mongolia", "Montenegro", "Morocco", "Mozambique", "Myanmar", "Namibia",
-  "Nauru", "Nepal", "Netherlands", "New Zealand", "Nicaragua", "Niger", "Nigeria", "North Korea",
-  "North Macedonia", "Norway", "Oman", "Pakistan", "Palau", "Panama", "Papua New Guinea", "Paraguay",
-  "Peru", "Philippines", "Poland", "Portugal", "Qatar", "Romania", "Russia", "Rwanda", "Saint Kitts and Nevis",
-  "Saint Lucia", "Saint Vincent and the Grenadines", "Samoa", "San Marino", "Sao Tome and Principe",
-  "Saudi Arabia", "Senegal", "Serbia", "Seychelles", "Sierra Leone", "Singapore", "Slovakia", "Slovenia",
-  "Solomon Islands", "Somalia", "South Africa", "South Korea", "South Sudan", "Spain", "Sri Lanka",
-  "Sudan", "Suriname", "Sweden", "Switzerland", "Syria", "Taiwan", "Tajikistan", "Tanzania", "Thailand",
-  "Togo", "Tonga", "Trinidad and Tobago", "Tunisia", "Turkey", "Turkmenistan", "Tuvalu", "Uganda",
-  "Ukraine", "United Arab Emirates", "United Kingdom", "United States", "Uruguay", "Uzbekistan",
-  "Vanuatu", "Vatican City", "Venezuela", "Vietnam", "Yemen", "Zambia", "Zimbabwe"
+  "Australia",
+  "Canada", 
+  "Ghana",
+  "Kenya",
+  "Nigeria",
+  "South Africa",
+  "United Kingdom",
+  "United States"
 ];
 
 export function SchoolSignupForm() {
@@ -130,11 +115,22 @@ export function SchoolSignupForm() {
   return (
     <div className="min-h-screen bg-teal-500 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
+        {/* Logo */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center space-x-2 mb-6">
+            <div className="w-8 h-8 bg-gray-800 rounded flex items-center justify-center">
+              <span className="text-white font-bold text-sm">L</span>
+            </div>
+            <span className="text-gray-800 font-bold text-xl">Logoipsum</span>
+          </div>
+        </div>
+
         {/* School Signup Form */}
         <div className="bg-white rounded-lg p-8 shadow-lg">
           {/* Title */}
           <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold text-gray-900">School Signup</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Register Your School</h1>
+            <p className="text-sm text-gray-600 mt-2">Get started with your school management system</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -147,7 +143,7 @@ export function SchoolSignupForm() {
                 id="schoolName"
                 name="schoolName"
                 type="text"
-                placeholder="Enter full name"
+                placeholder="Enter your school's full name"
                 value={formData.schoolName}
                 onChange={(e) => handleChange("schoolName", e.target.value)}
                 disabled={isLoading}
@@ -161,19 +157,19 @@ export function SchoolSignupForm() {
             {/* School Short Name */}
             <div className="space-y-2">
               <Label htmlFor="shortName" className="text-sm font-medium text-gray-700">
-                School Short Name
+                School Alias
               </Label>
               <Input
                 id="shortName"
                 name="shortName"
                 type="text"
-                placeholder="Enter school short name"
+                placeholder="Enter short name (e.g., lincoln-high)"
                 value={formData.shortName}
                 onChange={(e) => handleChange("shortName", e.target.value)}
                 disabled={isLoading}
                 className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
               />
-              <p className="text-sm text-teal-600">This will be the main URL to the portal</p>
+              <p className="text-sm text-teal-600">Used for your school's unique identifier</p>
               {errors.shortName && (
                 <p className="text-sm text-red-500">{errors.shortName}</p>
               )}
@@ -186,7 +182,7 @@ export function SchoolSignupForm() {
               </Label>
               <Select onValueChange={(value) => handleChange("country", value)} disabled={isLoading}>
                 <SelectTrigger className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent">
-                  <SelectValue placeholder="Select Country" />
+                  <SelectValue placeholder="Select your country" />
                 </SelectTrigger>
                 <SelectContent className="max-h-60">
                   {countries.map((country) => (
@@ -204,13 +200,13 @@ export function SchoolSignupForm() {
             {/* School Website */}
             <div className="space-y-2">
               <Label htmlFor="website" className="text-sm font-medium text-gray-700">
-                School Website
+                School Website (Optional)
               </Label>
               <Input
                 id="website"
                 name="website"
-                type="text"
-                placeholder="www.loremipsumschools.com"
+                type="url"
+                placeholder="https://www.yourschool.com"
                 value={formData.website}
                 onChange={(e) => handleChange("website", e.target.value)}
                 disabled={isLoading}
@@ -227,8 +223,21 @@ export function SchoolSignupForm() {
               disabled={isLoading}
               className="w-full bg-teal-600 hover:bg-teal-700 text-white font-medium py-3 rounded-lg transition-colors"
             >
-              {isLoading ? "Please wait..." : "Next"}
+              {isLoading ? "Setting up..." : "Continue to Admin Setup"}
             </Button>
+
+            {/* Sign In Link */}
+            <div className="text-center">
+              <p className="text-sm text-gray-600">
+                Already have an account?{" "}
+                <a
+                  href="/auth/signin"
+                  className="text-teal-600 hover:text-teal-700 font-medium"
+                >
+                  Sign in here
+                </a>
+              </p>
+            </div>
           </form>
         </div>
       </div>
