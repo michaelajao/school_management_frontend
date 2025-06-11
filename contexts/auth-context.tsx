@@ -28,21 +28,25 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // Helper function to map backend roles to frontend roles
 function mapBackendRoleToFrontend(backendRole: string): User['role'] {
-  switch (backendRole?.toLowerCase()) {
-    case 'super_admin':
+  switch (backendRole?.toUpperCase()) {
+    case 'SUPER_ADMIN':
       return 'super_admin';
-    case 'school_admin':
+    case 'SCHOOL_ADMIN':
+    case 'ADMIN':
       return 'school_admin';
-    case 'assistant_admin':
+    case 'ASSISTANT_ADMIN':
       return 'assistant_admin';
-    case 'class_teacher':
+    case 'CLASS_TEACHER':
+    case 'TEACHER':
       return 'class_teacher';
-    case 'subject_teacher':
+    case 'SUBJECT_TEACHER':
       return 'subject_teacher';
-    case 'student':
+    case 'STUDENT':
       return 'student';
-    case 'parent':
+    case 'PARENT':
       return 'parent';
+    case 'SCHOOL_MANAGEMENT':
+      return 'super_admin'; // Map SCHOOL_MANAGEMENT to super_admin for frontend
     default:
       return 'student'; // Default fallback
   }
@@ -100,8 +104,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             id: profile.id,
             name: `${profile.firstName} ${profile.lastName}`.trim(),
             email: profile.email,
-            role: profile.role?.toLowerCase() === 'school_management' ? 'super_admin' :
-                  profile.role?.toLowerCase() as User['role'] || 'student',
+            role: mapBackendRoleToFrontend(profile.role),
           };
           setUser(localUser);
         } catch (error) {

@@ -60,8 +60,8 @@ class ApiClient {
           originalRequest._retry = true;
           
           // Don't try to refresh if we're already on the auth endpoints
-          const isAuthEndpoint = originalRequest.url.includes('/auth/');
-          const refreshToken = localStorage.getItem('refresh_token');
+          const isAuthEndpoint = originalRequest.url?.includes('/auth/') || false;
+          const refreshToken = typeof window !== 'undefined' ? localStorage.getItem('refresh_token') : null;
           
           // Attempt token refresh if we have a refresh token and not on auth endpoints
           if (refreshToken && !isAuthEndpoint) {
