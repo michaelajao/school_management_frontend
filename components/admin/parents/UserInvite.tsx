@@ -1,6 +1,7 @@
 "use client";
 
 import { Parent } from "@/lib/utils";
+import { CustomButton } from '@/components/shared/CustomButton.'
 
 const noProfilePicture =
 "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
@@ -13,7 +14,7 @@ interface UserInviteProps {
 
   export default function UserInvite({ parent, onClick }: UserInviteProps) {
     return(
-        <div className="flex justify-between w-full md:w-8/12">
+        <div className="flex items-center justify-between w-full md:w-10/12">
             <div className="flex items-center gap-4">
                 <img 
                     src={noProfilePicture}
@@ -22,11 +23,14 @@ interface UserInviteProps {
                 />
                 <p className="text-sm font-semibold">{parent.name}</p>
             </div>
-            <button 
-                className="cursor-pointer bg-[#348081] text-white text-xs rounded-lg px-4 py-2"
-                onClick={onClick}>
+            <CustomButton
+                variant="default"
+                size="sm"
+                className="md:py-6 text-xs font-medium"
+                onClick={onClick}
+            >
                 Resend Invite
-            </button>
+            </CustomButton>
         </div>
     )
 }

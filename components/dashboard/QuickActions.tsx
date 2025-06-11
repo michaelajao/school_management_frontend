@@ -44,7 +44,7 @@ export function QuickActions() {
       title: "Add New User",
       description: "Onboard students, teachers or staff",
       icon: <PlusCircle className="w-6 h-6" />,
-      href: "/dashboard/users/add",
+      href: "/dashboard/add",
       color: "#4f46e5" // Indigo
     },
     {

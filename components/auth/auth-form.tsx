@@ -10,7 +10,7 @@ import { Card } from "@/components/ui/card";
 import { useAuth } from "@/contexts/auth-context";
 import { toast } from "sonner";
 import { Checkbox } from "../ui/checkbox";
-import { validatePassword } from "@/components/auth/utils/validatePassword";
+import { validatePassword } from "@/lib/validatePassword";
 import { usePricingStore } from "@/store/usePricingStore"; 
 
 
