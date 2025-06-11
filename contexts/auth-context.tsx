@@ -18,7 +18,7 @@ type User = {
 type AuthContextType = {
   user: User | null;
   loading: boolean;
-  login: (identifier: string, password: string, role?: User['role']) => Promise<void>;
+  login: (email: string, password: string, schoolAlias?: string) => Promise<void>;
   signup: (email: string, password: string) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
@@ -26,27 +26,45 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Helper function to get correct dashboard path - exported for use in other files
-export const getDashboardPath = (role: User['role']): string => {
+// Helper function to map backend roles to frontend roles
+function mapBackendRoleToFrontend(backendRole: string): User['role'] {
+  switch (backendRole?.toLowerCase()) {
+    case 'super_admin':
+      return 'super_admin';
+    case 'school_admin':
+      return 'super_admin'; // School admins get super_admin UI access within their school
+    case 'assistant_admin':
+      return 'restricted_admin';
+    case 'class_teacher':
+      return 'teacher';
+    case 'subject_teacher':
+      return 'teacher';
+    case 'student':
+      return 'student';
+    case 'parent':
+      return 'parent';
+    default:
+      return 'student'; // Default fallback
+  }
+}
+
+// Helper function to get dashboard path based on role
+function getDashboardPath(role: User['role']): string {
   switch (role) {
     case 'super_admin':
-      return '/admin'; // Super Admin uses the main admin dashboard
-    case 'principal':
-      return '/principal';
-    case 'head_teacher':
-      return '/head_teacher';
-    case 'restricted_admin':
-      return '/restricted_admin';
+      return '/(users)/admin';
     case 'teacher':
-      return '/teacher';
+      return '/(users)/teacher';
     case 'student':
-      return '/student';
+      return '/(users)/student';
     case 'parent':
-      return '/parent';
+      return '/(users)/parent';
+    case 'restricted_admin':
+      return '/(users)/admin';
     default:
-      return '/admin'; // Default fallback to admin
+      return '/(users)/student';
   }
-};
+}
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -100,75 +118,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
     
     checkAuth();
-  }, []);  const login = async (identifier: string, password: string, role?: User['role']) => {
+  }, []);  const login = async (email: string, password: string, schoolAlias?: string) => {
     setLoading(true);
     try {
-      // If no role is provided, this is a general login - we'll let the backend determine the role
-      if (!role) {
-        // For general login, we'll use a default role and let the backend override it
-        const credentials: LoginCredentials = { 
-          identifier, 
-          password, 
-          role: 'SCHOOL_MANAGEMENT' // Default - backend will return correct role
-        };
-        
-        const response = await AuthApiService.login(credentials);
-        
-        // Convert API user to local user format
-        const localUser: User = {
-          id: response.user.id,
-          name: `${response.user.firstName} ${response.user.lastName}`.trim(),
-          email: response.user.email,
-          role: response.user.role?.toLowerCase() === 'school_management' ? 'super_admin' :
-                response.user.role?.toLowerCase() as User['role'] || 'student',
-        };
-        
-        setUser(localUser);
-        
-        // Redirect based on returned role
-        const dashboardPath = getDashboardPath(localUser.role);
-        console.log('🔄 General Login Redirect:', {
-          userRole: localUser.role,
-          dashboardPath,
-          fullPath: dashboardPath
-        });
-        router.push(dashboardPath);
-        return;
-      }
-      
-      // Map frontend role to backend role format
-      let backendRole: LoginCredentials['role'];
-      
-      switch (role) {
-        case 'super_admin':
-          backendRole = 'SCHOOL_MANAGEMENT'; // Super Admin maps to SCHOOL_MANAGEMENT in backend
-          break;
-        case 'principal':
-          backendRole = 'PRINCIPAL';
-          break;
-        case 'head_teacher':
-          backendRole = 'HEAD_TEACHER';
-          break;
-        case 'restricted_admin':
-          backendRole = 'RESTRICTED_ADMIN';
-          break;
-        case 'teacher':
-          backendRole = 'TEACHER';
-          break;
-        case 'student':
-          backendRole = 'STUDENT';
-          break;
-        case 'parent':
-          backendRole = 'PARENT';
-          break;
-        default:
-          backendRole = 'SCHOOL_MANAGEMENT'; // Default fallback
-      }      
-      // Using identifier field that the AuthApiService will map to the appropriate backend field
       const credentials: LoginCredentials = { 
-        identifier, 
-        password, 
-        role: backendRole 
+        email, 
+        password,
+        schoolAlias
       };
       
       const response = await AuthApiService.login(credentials);
@@ -178,19 +134,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         id: response.user.id,
         name: `${response.user.firstName} ${response.user.lastName}`.trim(),
         email: response.user.email,
-        role: response.user.role?.toLowerCase() === 'school_management' ? 'super_admin' :
-              response.user.role?.toLowerCase() as User['role'] || 'student',
+        role: mapBackendRoleToFrontend(response.user.role),
       };
       
       setUser(localUser);
-        // Redirect based on returned role (not the requested role)
-      // This ensures proper redirection if server assigns a different role
+      
+      // Redirect based on returned role
       const dashboardPath = getDashboardPath(localUser.role);
-      console.log('🔄 Role-based Login Redirect:', {
-        requestedRole: role,
-        userRole: localUser.role,
+      console.log('🔄 Login Success Redirect:', {
+        backendRole: response.user.role,
+        frontendRole: localUser.role,
         dashboardPath,
-        fullPath: dashboardPath
+        schoolId: response.user.schoolId
       });
       router.push(dashboardPath);
       

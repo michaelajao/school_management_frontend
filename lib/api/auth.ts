@@ -1,14 +1,9 @@
 import { apiClient } from './client';
 
 export interface LoginCredentials {
-  // Frontend uses identifier for convenience
-  identifier: string;
+  email: string;
   password: string;
-  role: 'SUPER_ADMIN' | 'ADMIN' | 'TEACHER' | 'STUDENT' | 'PARENT' | 'SCHOOL_MANAGEMENT';
-  // Backend-specific fields, populated by the login method
-  email?: string;
-  studentId?: string;
-  staffID?: string;
+  schoolAlias?: string; // Optional for multi-tenant isolation
 }
 
 export interface RegisterData {
@@ -49,28 +44,26 @@ export interface RefreshTokenResponse {
 }
 
 export class AuthApiService {
-  private static readonly BASE_PATH = '/auth';  /**
-   * Login user with identifier (email/student ID/staff ID) and password
-   */  static async login(credentials: LoginCredentials): Promise<AuthResponse> {
+  private static readonly BASE_PATH = '/auth';
+
+  /**
+   * Login user with email and password - universal for all user roles
+   */
+  static async login(credentials: LoginCredentials): Promise<AuthResponse> {
     try {
-      // Transform credentials to match backend expectations
-      // Backend expects identifier, password, and role enum value
-      const backendRole = credentials.role.toLowerCase();
-      
-      const loginPayload = {
-        identifier: credentials.identifier,
-        password: credentials.password,
-        role: backendRole
-      };
-      
       const response = await apiClient.post<AuthResponse>(
         `${this.BASE_PATH}/login`,
-        loginPayload
+        {
+          email: credentials.email,
+          password: credentials.password,
+          schoolAlias: credentials.schoolAlias
+        }
       );
       
       console.log('🔄 Auth API Login Response:', {
         userRole: response.user.role,
         userId: response.user.id,
+        schoolId: response.user.schoolId,
         hasToken: !!response.accessToken
       });
       
@@ -91,7 +84,9 @@ export class AuthApiService {
       console.error('Login error:', error);
       throw error;
     }
-  }/**
+  }
+
+  /**
    * Register new user (public registration)
    */
   static async register(userData: RegisterData): Promise<AuthResponse> {

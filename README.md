@@ -546,6 +546,13 @@ Student: student@test.com / password123
 Parent: parent@test.com / password123
 ```
 
+PgAdmin:
+- Host: localhost
+- Port: 5432
+- Username: postgres
+- Password: sms-admin-0
+- Database: postgres
+
 ---
 
 ## 📞 Support

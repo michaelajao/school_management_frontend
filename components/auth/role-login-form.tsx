@@ -121,8 +121,8 @@ export function RoleLoginForm({ role }: RoleLoginFormProps) {
     const newErrors: Record<string, string> = {};
     
     if (!formData.identifier.trim()) {
-      newErrors.identifier = `${config.identifierLabel} is required`;
-    } else if (config.identifierType === "email" && !/^\S+@\S+\.\S+$/.test(formData.identifier.trim())) {
+      newErrors.identifier = "Email address is required";
+    } else if (!/^\S+@\S+\.\S+$/.test(formData.identifier.trim())) {
       newErrors.identifier = "Please enter a valid email address";
     }
     
@@ -144,13 +144,10 @@ export function RoleLoginForm({ role }: RoleLoginFormProps) {
     
     setIsLoading(true);
     try {
-      if (role === "general") {
-        await login(formData.identifier, formData.password);
-      } else {
-        await login(formData.identifier, formData.password, role);
-      }
+      // Use simplified email-based login for all users
+      await login(formData.identifier, formData.password);
       
-      toast.success(`Welcome back, ${roleDisplayNames[role]}!`);
+      toast.success("Welcome back!");
       
     } catch (error: any) {
       console.error("Login error:", error);
