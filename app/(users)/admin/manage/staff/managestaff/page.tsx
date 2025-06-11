@@ -5,9 +5,9 @@ import { ChevronLeft, Pencil } from "lucide-react";
 // import Image from 'next/image';
 import { useState } from "react";
 
-import StaffInfo from "@/components/StaffDashboard/StaffInfo";
+import StaffInfo from "@/components/staff-dashboard/StaffInfo";
 import { useRouter } from "next/navigation";
-import { DeleteModal } from "@/components/StaffDashboard/DeleteModal";
+import { DeleteModal } from "@/components/staff-dashboard/DeleteModal";
 
 export default function ManageStaffPage() {
   const [role, setRole] = useState("Subject Teacher");

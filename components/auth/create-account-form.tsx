@@ -137,9 +137,9 @@ export function CreateAccountForm() {
         school: schoolData,
         // Admin user information
         user: {
-          firstName: formData.firstName.trim(),
-          lastName: formData.lastName.trim(),
-          email: formData.email.trim(),
+        firstName: formData.firstName.trim(),
+        lastName: formData.lastName.trim(),
+        email: formData.email.trim(),
           phone: `${selectedCountryCode}${formData.phone.trim()}`,
           role: formData.role,
           password: formData.password
@@ -173,71 +173,71 @@ export function CreateAccountForm() {
           {/* Title */}
           <div className="text-center mb-8">
             <h1 className="text-2xl font-bold text-gray-900">Create your account</h1>
-          </div>
+        </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* First Name */}
-            <div className="space-y-2">
+          <div className="space-y-2">
               <Label htmlFor="firstName" className="text-sm font-medium text-gray-700">
                 First Name
               </Label>
-              <Input
-                id="firstName"
-                name="firstName"
-                type="text"
-                placeholder="Enter First Name"
-                value={formData.firstName}
-                onChange={(e) => handleChange("firstName", e.target.value)}
-                disabled={isLoading}
+            <Input
+              id="firstName"
+              name="firstName"
+              type="text"
+              placeholder="Enter First Name"
+              value={formData.firstName}
+              onChange={(e) => handleChange("firstName", e.target.value)}
+              disabled={isLoading}
                 className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-              />
-              {errors.firstName && (
+            />
+            {errors.firstName && (
                 <p className="text-sm text-red-500">{errors.firstName}</p>
-              )}
-            </div>
+            )}
+          </div>
 
             {/* Last Name */}
-            <div className="space-y-2">
+          <div className="space-y-2">
               <Label htmlFor="lastName" className="text-sm font-medium text-gray-700">
                 Last Name
               </Label>
-              <Input
-                id="lastName"
-                name="lastName"
-                type="text"
-                placeholder="Enter full name"
-                value={formData.lastName}
-                onChange={(e) => handleChange("lastName", e.target.value)}
-                disabled={isLoading}
+            <Input
+              id="lastName"
+              name="lastName"
+              type="text"
+              placeholder="Enter full name"
+              value={formData.lastName}
+              onChange={(e) => handleChange("lastName", e.target.value)}
+              disabled={isLoading}
                 className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-              />
-              {errors.lastName && (
+            />
+            {errors.lastName && (
                 <p className="text-sm text-red-500">{errors.lastName}</p>
-              )}
-            </div>
+            )}
+          </div>
 
             {/* Email Address */}
-            <div className="space-y-2">
+          <div className="space-y-2">
               <Label htmlFor="email" className="text-sm font-medium text-gray-700">
                 Email Address
               </Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="Enter email address"
-                value={formData.email}
-                onChange={(e) => handleChange("email", e.target.value)}
-                disabled={isLoading}
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              placeholder="Enter email address"
+              value={formData.email}
+              onChange={(e) => handleChange("email", e.target.value)}
+              disabled={isLoading}
                 className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-              />
-              {errors.email && (
+            />
+            {errors.email && (
                 <p className="text-sm text-red-500">{errors.email}</p>
-              )}
-            </div>
+            )}
+          </div>
 
             {/* Phone */}
-            <div className="space-y-2">
+          <div className="space-y-2">
               <Label htmlFor="phone" className="text-sm font-medium text-gray-700">
                 Phone
               </Label>
@@ -262,13 +262,13 @@ export function CreateAccountForm() {
                   name="phone"
                   type="tel"
                   placeholder="Enter phone number"
-                  value={formData.phone}
+              value={formData.phone}
                   onChange={(e) => handleChange("phone", e.target.value)}
-                  disabled={isLoading}
+              disabled={isLoading}
                   className="flex-1 px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                />
+            />
               </div>
-              {errors.phone && (
+            {errors.phone && (
                 <p className="text-sm text-red-500">{errors.phone}</p>
               )}
             </div>
@@ -292,61 +292,61 @@ export function CreateAccountForm() {
               </Select>
               {errors.role && (
                 <p className="text-sm text-red-500">{errors.role}</p>
-              )}
-            </div>
+            )}
+          </div>
 
             {/* Password */}
-            <div className="space-y-2">
+          <div className="space-y-2">
               <Label htmlFor="password" className="text-sm font-medium text-gray-700">
                 Password
               </Label>
-              <PasswordInput
-                id="password"
-                placeholder="Enter password"
-                value={formData.password}
-                onChange={(e) => handleChange("password", e.target.value)}
+            <PasswordInput
+              id="password"
+              placeholder="Enter password"
+              value={formData.password}
+              onChange={(e) => handleChange("password", e.target.value)}
                 className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                disabled={isLoading}
-              />
-              {errors.password && (
+              disabled={isLoading}
+            />
+            {errors.password && (
                 <p className="text-sm text-red-500">{errors.password}</p>
-              )}
-            </div>
+            )}
+          </div>
 
             {/* Terms and Conditions */}
             <div className="space-y-2">
               <div className="flex items-start space-x-2">
                 <Checkbox
-                  id="terms"
+              id="terms"
                   checked={agreeToTerms}
                   onCheckedChange={(checked) => setAgreeToTerms(checked as boolean)}
                   className="mt-1"
-                />
+            />
                 <Label htmlFor="terms" className="text-sm text-gray-600 leading-relaxed">
-                  I agree to all{" "}
+              I agree to all{" "}
                   <Link href="/terms" className="text-teal-600 hover:text-teal-700 font-medium">
-                    Terms of Service
+                Terms of Service
                   </Link>
                   {" "}& {" "}
                   <Link href="/privacy" className="text-teal-600 hover:text-teal-700 font-medium">
-                    Privacy Policy
-                  </Link>
-                </Label>
+                Privacy Policy
+              </Link>
+            </Label>
               </div>
               {errors.terms && (
                 <p className="text-sm text-red-500">{errors.terms}</p>
               )}
-            </div>
+          </div>
 
             {/* Register Button */}
-            <Button
-              type="submit"
-              disabled={isLoading}
+          <Button 
+            type="submit" 
+            disabled={isLoading}
               className="w-full bg-teal-600 hover:bg-teal-700 text-white font-medium py-3 rounded-lg transition-colors"
-            >
+          >
               {isLoading ? "Creating account..." : "Register"}
-            </Button>
-          </form>
+          </Button>
+        </form>
         </div>
       </div>
     </div>

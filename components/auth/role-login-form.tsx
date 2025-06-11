@@ -143,9 +143,9 @@ export function RoleLoginForm({ role }: RoleLoginFormProps) {
     }
     
     setIsLoading(true);
-    try {
+      try {
       // Use simplified email-based login for all users
-      await login(formData.identifier, formData.password);
+        await login(formData.identifier, formData.password);
       
       toast.success("Welcome back!");
       
@@ -187,89 +187,89 @@ export function RoleLoginForm({ role }: RoleLoginFormProps) {
 
         {/* Login Form */}
         <div className="bg-white rounded-lg p-8 shadow-lg">
-          {errors.form && (
+        {errors.form && (
             <div className="mb-4 p-3 text-sm text-red-500 bg-red-50 rounded-lg border border-red-200">
-              {errors.form}
-            </div>
-          )}
+            {errors.form}
+          </div>
+        )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Email Address */}
-            <div className="space-y-2">
+          <div className="space-y-2">
               <Label htmlFor="identifier" className="text-sm font-medium text-gray-700">
                 {config.identifierLabel}
               </Label>
-              <Input
-                id="identifier"
+            <Input
+              id="identifier"
                 type={config.identifierType === "email" ? "email" : "text"}
                 placeholder={config.identifierPlaceholder}
-                value={formData.identifier}
-                onChange={(e) => handleChange("identifier", e.target.value)}
+              value={formData.identifier}
+              onChange={(e) => handleChange("identifier", e.target.value)}
                 className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                disabled={isLoading}
-              />
-              {errors.identifier && (
+              disabled={isLoading}
+            />
+            {errors.identifier && (
                 <p className="text-sm text-red-500">{errors.identifier}</p>
-              )}
-            </div>
+            )}
+          </div>
 
             {/* Password */}
-            <div className="space-y-2">
+          <div className="space-y-2">
               <Label htmlFor="password" className="text-sm font-medium text-gray-700">
                 Password
               </Label>
-              <PasswordInput
-                id="password"
-                placeholder="Enter password"
-                value={formData.password}
-                onChange={(e) => handleChange("password", e.target.value)}
+            <PasswordInput
+              id="password"
+              placeholder="Enter password"
+              value={formData.password}
+              onChange={(e) => handleChange("password", e.target.value)}
                 className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                disabled={isLoading}
-              />
-              {errors.password && (
+              disabled={isLoading}
+            />
+            {errors.password && (
                 <p className="text-sm text-red-500">{errors.password}</p>
-              )}
+            )}
             </div>
 
             {/* Remember Me & Forgot Password */}
             <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2">
                 <Checkbox
-                  id="remember"
+                id="remember"
                   checked={rememberMe}
                   onCheckedChange={(checked) => setRememberMe(checked as boolean)}
-                />
-                <Label htmlFor="remember" className="text-sm text-gray-600">
-                  Remember me
-                </Label>
-              </div>
-              <Link 
-                href="/auth/forgot-password" 
-                className="text-sm text-teal-600 hover:text-teal-700 font-medium"
-              >
-                Forgot password?
-              </Link>
+              />
+              <Label htmlFor="remember" className="text-sm text-gray-600">
+                Remember me
+              </Label>
             </div>
+            <Link 
+              href="/auth/forgot-password"
+                className="text-sm text-teal-600 hover:text-teal-700 font-medium"
+            >
+              Forgot password?
+            </Link>
+          </div>
 
             {/* Login Button */}
-            <Button
-              type="submit"
-              disabled={isLoading}
+          <Button 
+            type="submit" 
+            disabled={isLoading}
               className="w-full bg-teal-600 hover:bg-teal-700 text-white font-medium py-3 rounded-lg transition-colors"
-            >
-              {isLoading ? "Signing in..." : "Login"}
-            </Button>
+          >
+            {isLoading ? "Signing in..." : "Login"}
+          </Button>
 
             {/* Sign Up Link */}
             <div className="text-center">
               <p className="text-sm text-gray-600">
                 Don&apos;t have an account?{" "}
-                <Link 
+          <Link
                   href="/auth/create-account" 
-                  className="text-teal-600 hover:text-teal-700 font-medium"
-                >
-                  Contact your school administrator
-                </Link>
+            className="text-teal-600 hover:text-teal-700 font-medium"
+          >
+            Contact your school administrator
+          </Link>
               </p>
             </div>
           </form>

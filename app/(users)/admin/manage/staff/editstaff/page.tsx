@@ -1,5 +1,5 @@
 'use client';
-import { EditForm } from '@/components/StaffDashboard/EditForm';
+import { EditForm } from '@/components/staff-dashboard/EditForm';
 import { ChevronLeft } from 'lucide-react';
 
 export default function EditStaff() {

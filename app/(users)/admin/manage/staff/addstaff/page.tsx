@@ -1,5 +1,5 @@
 'use client';
-import AddForm from '@/components/StaffDashboard/AddForm';
+import AddForm from '@/components/staff-dashboard/AddForm';
 import { ChevronLeft } from 'lucide-react';
 
 

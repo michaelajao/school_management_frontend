@@ -1,5 +1,5 @@
 "use client";
-import AttendanceTable from "@/components/StaffDashboard/AttendanceTable";
+import AttendanceTable from "@/components/staff-dashboard/AttendanceTable";
 import { ChevronLeft } from "lucide-react";
 
 

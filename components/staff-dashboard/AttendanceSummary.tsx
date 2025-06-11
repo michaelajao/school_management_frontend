@@ -1,5 +1,5 @@
 "use client";
-import StaffListTable from "@/components/StaffDashboard/StaffListTable";
+import StaffListTable from "@/components/staff-dashboard/StaffListTable";
 import { useRouter } from "next/navigation";
 import { DashboardMetrics } from '@/components/shared/DashboardMetrics'
 import { TeacherIcon } from 'hugeicons-react'

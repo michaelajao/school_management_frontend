@@ -1,4 +1,4 @@
-import StaffDashboardPage from '@/components/StaffDashboard/AttendanceSummary'
+import StaffDashboardPage from '@/components/staff-dashboard/AttendanceSummary'
 import React from 'react'
 
 const page = () => {

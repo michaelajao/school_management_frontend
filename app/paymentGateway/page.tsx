@@ -1,4 +1,4 @@
-import PricingView from "@/components/PricingView/pricingView";
+import PricingView from "@/components/pricing-view/pricingView";
 
 export default function PricingPage() {
   return <PricingView />;
