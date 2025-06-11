@@ -12,7 +12,7 @@ type User = {
   id: string;
   name: string;
   email: string;
-  role: "super_admin" | "principal" | "head_teacher" | "restricted_admin" | "teacher" | "student" | "parent";
+  role: "super_admin" | "school_admin" | "assistant_admin" | "class_teacher" | "subject_teacher" | "student" | "parent";
 };
 
 type AuthContextType = {
@@ -32,13 +32,13 @@ function mapBackendRoleToFrontend(backendRole: string): User['role'] {
     case 'super_admin':
       return 'super_admin';
     case 'school_admin':
-      return 'super_admin'; // School admins get super_admin UI access within their school
+      return 'school_admin';
     case 'assistant_admin':
-      return 'restricted_admin';
+      return 'assistant_admin';
     case 'class_teacher':
-      return 'teacher';
+      return 'class_teacher';
     case 'subject_teacher':
-      return 'teacher';
+      return 'subject_teacher';
     case 'student':
       return 'student';
     case 'parent':
@@ -48,19 +48,23 @@ function mapBackendRoleToFrontend(backendRole: string): User['role'] {
   }
 }
 
-// Helper function to get dashboard path based on role
+// Helper function to get dashboard path based on role  
 function getDashboardPath(role: User['role']): string {
   switch (role) {
     case 'super_admin':
       return '/(users)/admin';
-    case 'teacher':
+    case 'school_admin':
+      return '/(users)/admin';
+    case 'assistant_admin':
+      return '/(users)/admin';
+    case 'class_teacher':
+      return '/(users)/teacher';
+    case 'subject_teacher':
       return '/(users)/teacher';
     case 'student':
       return '/(users)/student';
     case 'parent':
       return '/(users)/parent';
-    case 'restricted_admin':
-      return '/(users)/admin';
     default:
       return '/(users)/student';
   }
@@ -174,8 +178,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         id: response.user.id,
         name: `${response.user.firstName} ${response.user.lastName}`.trim(),
         email: response.user.email,
-        role: response.user.role?.toLowerCase() === 'school_management' ? 'super_admin' :
-              response.user.role?.toLowerCase() as User['role'] || 'student',
+        role: mapBackendRoleToFrontend(response.user.role),
       };
         setUser(localUser);
 
@@ -224,3 +227,6 @@ export const useAuth = () => {
   }
   return context;
 };
+
+// Export helper functions for use in other components
+export { getDashboardPath, mapBackendRoleToFrontend };
