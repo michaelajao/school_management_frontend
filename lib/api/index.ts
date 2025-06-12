@@ -1,6 +1,6 @@
 // Export API client
 export { apiClient } from './client';
-export type { ApiError, ApiResponse } from './client';
+export type { ApiError, ApiResponse, PaginatedResponse } from './client';
 
 // Export auth API
 export { AuthApiService } from './auth';
@@ -20,6 +20,68 @@ export type {
   UserFilters,
   PaginatedUsers,
 } from './users';
+
+// Export students API
+export { StudentsApiService } from './students';
+export type {
+  Student,
+  CreateStudentData,
+  UpdateStudentData,
+  StudentFilters,
+  PaginatedStudents,
+  StudentStats,
+  StudentTransfer,
+  StudentPromotion,
+} from './students';
+
+// Export staff API
+export { StaffApiService } from './staff';
+export type {
+  Staff,
+  CreateStaffData,
+  UpdateStaffData,
+  StaffFilters,
+  PaginatedStaff,
+  StaffStats,
+} from './staff';
+
+// Export parents API
+export { ParentsApiService } from './parents';
+export type {
+  Parent,
+  CreateParentData,
+  UpdateParentData,
+  ParentFilters,
+  PaginatedParents,
+  ParentStats,
+  ParentChildAssociation,
+} from './parents';
+
+// Export grades API
+export { GradesApiService } from './grades';
+export type {
+  Grade,
+  CreateGradeData,
+  UpdateGradeData,
+  GradeFilters,
+  PaginatedGrades,
+  GradeStats,
+  StudentGradeSummary,
+  BulkGradeData,
+} from './grades';
+
+// Export subjects API
+export { SubjectsApiService } from './subjects';
+export type {
+  Subject,
+  CreateSubjectData,
+  UpdateSubjectData,
+  SubjectFilters,
+  PaginatedSubjects,
+  SubjectStats,
+  SubjectTeacherAssignment,
+  SubjectClassAssignment,
+} from './subjects';
 
 // Export classes API
 export { ClassesApiService } from './classes';

@@ -120,6 +120,8 @@ export const ROUTE_PERMISSIONS: RoutePermissions = {
 
   // Teacher routes
   "/(dashboard)/(users)/teacher": ["take_attendance", "view_assignments"],
+  "/(dashboard)/(users)/class-teacher": ["manage_students", "take_attendance", "manage_grades"],
+  "/(dashboard)/(users)/subject-teacher": ["manage_grades", "create_assignments", "view_assignments"],
   
   // Student routes  
   "/(dashboard)/(users)/student": ["view_assignments"],
@@ -192,8 +194,9 @@ export function getUserDashboardPath(userRole: UserRole): string {
     case "assistant_admin":
       return "/(dashboard)/(users)/assistant-admin";
     case "class_teacher":
+      return "/(dashboard)/(users)/class-teacher";
     case "subject_teacher":
-      return "/(dashboard)/(users)/teacher";
+      return "/(dashboard)/(users)/subject-teacher";
     case "student":
       return "/(dashboard)/(users)/student";
     case "parent":
