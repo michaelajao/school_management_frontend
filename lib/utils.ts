@@ -100,6 +100,7 @@ export const adminSideBar: SideBarType[] = [
     label: 'Reports & Analysis',
     icon: BookOpen 
   },
+
 ];
 
 // Add the rest sidebars here

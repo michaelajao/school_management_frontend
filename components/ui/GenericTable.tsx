@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ChevronLeft, ChevronRight, MoreHorizontal, Search, SlidersHorizontal, Upload, Plus } from "lucide-react";
 
-import { DeleteModal } from "../StaffDashboard/DeleteModal"; // adjust path as needed
+import { DeleteModal } from "../staff-dashboard/DeleteModal"; // adjust path as needed
 
 export type Column<T> = {
   accessor: keyof T;

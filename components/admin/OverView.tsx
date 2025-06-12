@@ -1,5 +1,6 @@
 "use client";
 import React, { JSX, useState } from "react";
+import { useAuth } from "@/contexts/auth-context";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -138,6 +139,7 @@ const events = [
 ];
 
 const AdminDashboard = () => {
+  const { user } = useAuth();
   const [selectedRole, setSelectedRole] = useState('Subject Teacher');
 
   const dashboardMetrics = [
@@ -179,7 +181,7 @@ const AdminDashboard = () => {
       {/* Welcome message */}
       <div>
         <h1 className="font-semibold text-2xl">Dashboard</h1>
-        <p className="text-gray-500">Welcome, {'test'}</p>
+        <p className="text-gray-500">Welcome, {user?.name || 'Admin'}</p>
       </div>
 
       {/* Header Stats */}
@@ -191,10 +193,10 @@ const AdminDashboard = () => {
       <div className="flex flex-col md:flex-row gap-4">
         <div className="md:w-[55%]">
           {/* Action Buttons */}
-          <div className="flex flex-wrap justify-between mb-6 space-y-4">
+          <div className="flex flex-col sm:flex-row flex-wrap gap-4 mb-6">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="flex justify-between p-5 w-38">
+                <Button variant="outline" className="flex justify-between p-5 w-full sm:w-auto min-w-[160px]">
                   <span className="text-xs text-gray-700">Add New User</span>
                   <img
                     className="w-2.5 h-2.5"
@@ -280,10 +282,10 @@ const AdminDashboard = () => {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <Button variant="outline" className="text-[#28C76F] border border-[#28c76f] text-xs p-5 w-42">
+            <Button variant="outline" className="text-[#28C76F] border border-[#28c76f] text-xs p-5 w-full sm:w-auto min-w-[160px]">
               Assign Class Teacher
             </Button>
-            <Button variant="outline" className="text-[#8B5CF6] border border-[#8B5CF6] text-xs p-5 w-42">
+            <Button variant="outline" className="text-[#8B5CF6] border border-[#8B5CF6] text-xs p-5 w-full sm:w-auto min-w-[160px]">
               Update Payment Record
             </Button>
           </div>
@@ -293,9 +295,9 @@ const AdminDashboard = () => {
             <Card className="md:col-span-2 mb-10">
               <CardHeader className="flex flex-col md:flex-row justify-between items-center space-y-4">
                 <CardTitle className="font-thin font-lg">Attendance Summary</CardTitle>
-                <div className="flex gap-4">
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
                   <Select defaultValue="monthly">
-                    <SelectTrigger className="w-[100px]">
+                    <SelectTrigger className="w-full sm:w-[100px]">
                       <SelectValue placeholder="Monthly" />
                     </SelectTrigger>
                     <SelectContent>
@@ -305,7 +307,7 @@ const AdminDashboard = () => {
                     </SelectContent>
                   </Select>
                   <Select defaultValue="students">
-                    <SelectTrigger className="w-[100px]">
+                    <SelectTrigger className="w-full sm:w-[100px]">
                       <SelectValue placeholder="Students" />
                     </SelectTrigger>
                     <SelectContent>

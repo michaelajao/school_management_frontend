@@ -3,7 +3,7 @@ import { Card } from '@/components/ui/card';
 type IconType = React.FC<React.SVGProps<SVGSVGElement>> | string;
 export type MetricCardProps = {
     icon: IconType;
-    value: number;
+    value: string | number;
     label: string;
     primaryColor: string;
     secondaryColor: string;
@@ -31,8 +31,8 @@ export function MetricCard({
         secondaryColor: The background color of the icon   
     */
     return (
-        <Card className="md:w-3/12">
-            <div className="flex flex-row items-center gap-4 p-2">
+        <Card className="w-full md:w-3/12 min-w-0">
+            <div className="flex flex-row items-center gap-4 p-4">
                 <div
                     className="w-12 h-12 flex items-center justify-center rounded-full p-0"
                     style={{ backgroundColor: secondaryColor }}
@@ -42,9 +42,9 @@ export function MetricCard({
                     <Icon color={primaryColor} className="w-7 h-7" />
                      }
                 </div>
-                <div style={{ color: primaryColor }}>
-                    <p className="font-bold text-xl">{value}</p>
-                    <p className="font-medium text-xs">{label}</p>
+                <div style={{ color: primaryColor }} className="min-w-0 flex-1">
+                    <p className="font-bold text-lg sm:text-xl">{value}</p>
+                    <p className="font-medium text-xs sm:text-sm text-gray-600 truncate">{label}</p>
                 </div>
             </div>
         </Card>

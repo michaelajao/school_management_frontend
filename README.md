@@ -1,679 +1,723 @@
-# School Management Frontend
-
-A feature-rich, role-based school management system front-end built with Next.js, React, and Tailwind CSS. Supports multi-step onboarding for superadmins, admins, teachers, parents, and students, integrated payment and pricing flows, and a reusable UI component library built with Shadcn UI. The application is designed to be responsive across various screen sizes.
-
----
-
-## Table of Contents
-
-- [School Management Frontend](#school-management-frontend)
-  - [Table of Contents](#table-of-contents)
-  - [Project Status](#project-status)
-    - [🟢 Fully Implemented Features](#-fully-implemented-features)
-      - [Core Infrastructure](#core-infrastructure)
-      - [User Onboarding \& Registration](#user-onboarding--registration)
-      - [Payment \& Pricing System](#payment--pricing-system)
-      - [Dashboard \& Navigation](#dashboard--navigation)
-    - [🟡 Partially Implemented Features](#-partially-implemented-features)
-      - [Admin Management (UI Complete, Logic Placeholder)](#admin-management-ui-complete-logic-placeholder)
-      - [Data Management](#data-management)
-    - [🔴 Placeholder/Disabled Features](#-placeholderdisabled-features)
-      - [Academic Management](#academic-management)
-      - [Advanced Features](#advanced-features)
-      - [Communication System](#communication-system)
-      - [Staff \& Student Management](#staff--student-management)
-    - [🔧 Technical Implementation Status](#-technical-implementation-status)
-      - [API Integration](#api-integration)
-      - [Security \& Authentication](#security--authentication)
-      - [Data Management](#data-management-1)
-    - [📋 Next Steps for Development](#-next-steps-for-development)
-      - [High Priority](#high-priority)
-      - [Medium Priority](#medium-priority)
-      - [Low Priority](#low-priority)
-    - [🎯 Feature Completion Overview](#-feature-completion-overview)
-  - [Features](#features)
-    - [Core Functionality](#core-functionality)
-    - [Administrative Features](#administrative-features)
-    - [UI/UX Features](#uiux-features)
-  - [Tech Stack](#tech-stack)
-  - [Prerequisites](#prerequisites)
-  - [Getting Started](#getting-started)
-  - [Folder Structure](#folder-structure)
-  - [Routes Structure](#routes-structure)
-  - [Key Flows](#key-flows)
-    - [Onboarding](#onboarding)
-    - [Payment \& Pricing](#payment--pricing)
-  - [UI Component Library \& Styling](#ui-component-library--styling)
-  - [State Management \& Context](#state-management--context)
-  - [Custom Hooks](#custom-hooks)
-  - [Responsiveness](#responsiveness)
-  - [Testing](#testing)
-  - [Available Scripts](#available-scripts)
-  - [Role-Based Features](#role-based-features)
-    - [Superadmin](#superadmin)
-    - [Admin](#admin)
-    - [Teacher](#teacher)
-    - [Parent](#parent)
-    - [Student](#student)
-  - [Environment Variables](#environment-variables)
-  - [API Routes](#api-routes)
-    - [User Management](#user-management)
-    - [Class Management](#class-management)
-  - [Deployment](#deployment)
-    - [Vercel (Recommended)](#vercel-recommended)
-    - [Manual Deployment](#manual-deployment)
-    - [Docker Deployment](#docker-deployment)
-  - [Performance Considerations](#performance-considerations)
-  - [Security Features](#security-features)
-  - [Troubleshooting](#troubleshooting)
-    - [Common Issues](#common-issues)
-    - [Getting Help](#getting-help)
-  - [Future Enhancements](#future-enhancements)
-  - [Contributing](#contributing)
-  - [License](#license)
-
-## Project Status
-
-This section provides a comprehensive overview of the current implementation status across all features and modules of the school management system.
-
-### 🟢 Fully Implemented Features
-
-#### Core Infrastructure
-
-- ✅ **Next.js 15 App Router Structure** - Complete routing setup with role-based access
-- ✅ **Authentication System** - Mock authentication with localStorage persistence
-- ✅ **Theme System** - Light/dark mode support with next-themes
-- ✅ **Component Library** - Full Shadcn UI integration with custom components
-- ✅ **Responsive Design** - Mobile, tablet, and desktop layouts
-- ✅ **Form Validation** - Custom useFormValidation hook with error handling
-
-#### User Onboarding & Registration
-
-- ✅ **Multi-Role Registration** - Complete onboarding flows for all user types
-- ✅ **School Registration** - Full school setup with branding and configuration
-- ✅ **Profile Management** - User profile creation and editing
-- ✅ **Country/Region Selection** - Integrated location selectors
-
-#### Payment & Pricing System
-
-- ✅ **Pricing Plans Display** - Subscription plans with feature comparison
-- ✅ **Mock Payment Processing** - Complete payment flow simulation
-- ✅ **Payment State Management** - Zustand store for pricing flow
-- ✅ **Success/Failure Handling** - Payment confirmation and error states
-
-#### Dashboard & Navigation
-
-- ✅ **Role-Based Dashboards** - Tailored interfaces for each user type
-- ✅ **Sidebar Navigation** - Responsive navigation with role-specific menus
-- ✅ **Header Components** - User profile, notifications, and settings
-- ✅ **Layout System** - Consistent page layouts across the application
-
-### 🟡 Partially Implemented Features
-
-#### Admin Management (UI Complete, Logic Placeholder)
-
-- 🟡 **User Management Interface** - Complete UI with mock data, needs backend integration
-- 🟡 **Analytics Dashboard** - Charts and metrics display, needs real data integration
-- 🟡 **School Settings** - Configuration interface built, needs data persistence
-- 🟡 **Communication Hub** - Announcement interface ready, needs messaging system
-
-#### Data Management
-
-- 🟡 **Data Import/Export** - UI components built, file processing needs implementation
-- 🟡 **Bulk Operations** - Interface ready, backend operations needed
-- 🟡 **Data Validation** - Frontend validation complete, server-side validation needed
-
-### 🔴 Placeholder/Disabled Features
-
-#### Academic Management
-
-- ❌ **Attendance Management** (`components/admin/AttendanceManagement.tsx`) - Disabled with placeholder UI
-- ❌ **Timetable Management** (`components/admin/TimetableManagement.tsx`) - Disabled with placeholder UI  
-- ❌ **Assignments Management** (`components/admin/AssignmentsManagement.tsx`) - Disabled with placeholder UI
-- ❌ **Grade Management** - Interface exists but functionality disabled
-- ❌ **Curriculum Management** - Placeholder implementation
-
-#### Advanced Features
-
-- ❌ **Class Attendance Tracking** (`app/(users)/admin/manage/academics/classes/view_class_attendance/`) - Multiple placeholder pages
-- ❌ **Performance Analytics** - Charts displayed with mock data only
-- ❌ **Report Generation** - Interface present but report generation disabled
-- ❌ **Calendar Integration** - Calendar components exist but event management disabled
-
-#### Communication System
-
-- ❌ **Real-time Messaging** - Basic UI implemented, WebSocket integration needed
-- ❌ **Notification System** - Toast notifications work, but persistent notifications placeholder
-- ❌ **Email Integration** - Interface exists but email sending disabled
-- ❌ **Parent-Teacher Communication** - Chat interface placeholder
-
-#### Staff & Student Management
-
-- ❌ **Staff Performance Tracking** - Dashboard exists but metrics are mock
-- ❌ **Student Progress Monitoring** - Charts and graphs show placeholder data
-- ❌ **Behavior Management** - Interface built but tracking disabled
-- ❌ **Health Records** - Forms exist but data handling placeholder
-
-### 🔧 Technical Implementation Status
-
-#### API Integration
-
-- ❌ **Backend API Calls** - All API routes are mock implementations
-- ❌ **Database Integration** - No real database connections
-- ❌ **File Upload System** - UI components ready, upload logic placeholder
-- ❌ **Real-time Features** - WebSocket connections not implemented
-
-#### Security & Authentication
-
-- 🟡 **Route Protection** - Basic role-based access implemented
-- ❌ **JWT Authentication** - Currently using mock localStorage authentication
-- ❌ **Permission System** - Fine-grained permissions not implemented
-- ❌ **Audit Logging** - User action tracking placeholder
-
-#### Data Management
-
-- ❌ **CRUD Operations** - Most forms exist but don't persist data
-- ❌ **Search & Filtering** - UI components present but search logic disabled
-- ❌ **Data Synchronization** - Real-time data updates not implemented
-- ❌ **Backup & Recovery** - No data backup systems
-
-### 📋 Next Steps for Development
-
-#### High Priority
-
-1. **Backend API Integration** - Connect frontend forms to real API endpoints
-2. **Database Setup** - Implement data persistence for all management features
-3. **Authentication System** - Replace mock auth with real JWT-based system
-4. **Enable Academic Management** - Activate attendance, timetable, and assignment features
-
-#### Medium Priority
-
-1. **Real-time Features** - Implement WebSocket connections for live updates
-2. **File Upload System** - Complete document and media upload functionality
-3. **Advanced Analytics** - Connect charts to real data sources
-4. **Communication System** - Build complete messaging and notification system
-
-#### Low Priority
-
-1. **Mobile App Integration** - Prepare APIs for mobile client
-2. **Third-party Integrations** - Connect with external services
-3. **Advanced Reporting** - Build comprehensive report generation
-4. **Performance Optimization** - Optimize for large-scale deployment
-
-### 🎯 Feature Completion Overview
-
-| Module | UI Complete | Logic Complete | Backend Ready | Status |
-|--------|-------------|----------------|---------------|---------|
-| Authentication | ✅ | 🟡 | ❌ | 70% |
-| User Management | ✅ | ❌ | ❌ | 40% |
-| School Setup | ✅ | ✅ | ❌ | 80% |
-| Payment System | ✅ | ✅ | ❌ | 90% |
-| Dashboard | ✅ | 🟡 | ❌ | 60% |
-| Academic Management | 🟡 | ❌ | ❌ | 20% |
-| Communication | 🟡 | ❌ | ❌ | 30% |
-| Analytics | ✅ | ❌ | ❌ | 40% |
-| Staff Management | ✅ | ❌ | ❌ | 35% |
-
-**Overall Project Completion: ~50%**
-
-The frontend infrastructure and user experience flows are largely complete, but most business logic and backend integrations are placeholders awaiting implementation.
-
----
-
-## Features
-
-### Core Functionality
-- Multi-role onboarding (Superadmin, Admin, Teacher, Parent, Student) with dedicated forms
-- Role-based dashboards with tailored functionality for each user type
-- Mock payment and subscription pricing flows using Zustand for state persistence
-- Simulated authentication flow using React Context and `localStorage`
-- Dynamic forms featuring a reusable validation hook (`useFormValidation`) for clear error handling
-
-### Administrative Features
-- **School Management**: Complete school setup and configuration
-- **User Management**: Add, edit, delete users across all roles
-- **Class Management**: Create and manage classes, assignments, and timetables
-- **Communication**: Announcements and messaging system
-- **Academic Management**: Course management, grading, and performance tracking
-- **Attendance Management**: Track and manage student attendance
-- **Staff Management**: Comprehensive staff information and role management
-- **Data Import/Export**: Bulk data operations for efficient management
-
-### UI/UX Features
-- Consistent and accessible design system powered by Shadcn UI (Radix UI primitives + Tailwind CSS)
-- Light/Dark theme support via `next-themes`
-- Responsive layout adapting to mobile, tablet, and desktop views
-- Country and region selectors (`react-country-region-selector`) integrated with form styling
-- Toast notifications for user feedback via Sonner
-- Advanced data visualization with charts and analytics
-- Modal dialogs for streamlined workflows
-- Search and filtering capabilities
-
----
-
-## Tech Stack
-
-- **Framework:** Next.js 15 (App Router)
-- **UI:** React 19, Tailwind CSS, Shadcn UI (Radix UI + CVA)
-- **State:** React Context (Auth), Zustand (Pricing)
-- **Validation:** Custom `useFormValidation` hook
-- **Notifications:** Sonner (toast)
-- **Country/Region:** `react-country-region-selector`
-- **Theming:** `next-themes`
-- **Testing:** Jest, React Testing Library
-- **Icons:** Lucide React
-- **Linting/Formatting:** ESLint, Prettier (configured via `eslint.config.mjs`, `postcss.config.mjs`)
-
----
-
-## Prerequisites
-
-- Node.js >= 18
-- npm, yarn, or pnpm
-
----
-
-## Getting Started
-
-1. **Clone the repo**
-
-   ```bash
-   git clone https://github.com/your-org/school_management_frontend.git
-   cd school_management_frontend
-   ```
-
-2. **Install dependencies**
-
-   ```bash
-   npm install
-   # or
-   yarn install
-   ```
-
-3. **Run development server**
-
-   ```bash
-   npm run dev
-   ```
-
-4. Open [http://localhost:3000](http://localhost:3000) in your browser.
-
----
-
-## Folder Structure
-
-```
-/app                     # Next.js App Router (routes, layouts, pages)
-  /(users)/             # Protected user routes
-    /admin/             # Admin-specific routes
-    /superadmin/        # Superadmin-specific routes
-  /api/                 # API route handlers
-    /classes/           # Class management endpoints
-    /users/             # User management endpoints
-  /auth/                # Authentication pages
-    /signin/            # Sign-in page
-    /signup/            # Sign-up page
-  /dashboard/           # Dashboard routes
-    /superadmin/        # Superadmin analytics dashboard
-  /mockPayment/         # Mock payment processing page
-  /onboarding/          # Onboarding flow pages
-    /admin/             # Admin onboarding
-    /parent/            # Parent onboarding
-    /student/           # Student onboarding
-    /teacher/           # Teacher onboarding
-  /paymentGateway/      # Pricing and subscription page
-  /register/            # Registration flows
-    /school/            # School registration
-
-/components              # Reusable UI components & feature-specific views
-  /admin/               # Admin-specific components
-    *.tsx               # Various admin management components
-    /annoucement/       # Admin announcement components
-    /parents/           # Parent management components
-    /students/          # Student management components
-  /auth/                # Authentication related components
-  /dashboard/           # Dashboard components
-  /Home/                # Landing page components
-  /layout/              # Layout components (Header, Sidebar, etc.)
-    /sidebar/           # Sidebar navigation components
-  /modal/               # Modal dialog components
-  /onboarding/          # Onboarding flow components
-  /PricingView/         # Pricing page components
-  /shared/              # Shared/common components
-  /StaffDashboard/      # Staff management components
-  /superadmin/          # Superadmin-specific components
-  /ui/                  # Base Shadcn UI components (Button, Card, Input, etc.)
-  theme-provider.tsx    # Provider for next-themes
-  theme-switcher.tsx    # Component to toggle theme
-
-/contexts               # React context providers
-  auth-context.tsx      # Authentication context
-
-/hooks                  # Custom React hooks
-  use-mobile.ts         # Mobile/responsive detection hook
-  useFormValidation.ts  # Form validation hook
-
-/lib                    # Utility functions and configurations
-  fakeData.ts          # Mock data for development
-  utils.ts             # Utility functions (cn class merger, etc.)
-  validatePassword.ts   # Password validation utilities
-
-/store                  # Zustand state management stores
-  parentStore.ts        # Parent-specific state management
-  usePricingStore.ts    # Pricing flow state management
-
-/_tests_                # Unit and integration tests using Jest & RTL
-  Home.test.tsx         # Home page tests
-  Onboarding.test.tsx   # Onboarding flow tests
-
-/public                 # Static assets (images, icons, fonts)
-  /icons/               # Icon assets
-  *.jpg, *.svg          # Various static images and assets
-
-# Configuration files
-components.json         # Shadcn UI configuration
-eslint.config.mjs      # ESLint configuration
-jest.config.js         # Jest testing configuration
-jest.setup.ts          # Jest setup file
-next.config.ts         # Next.js configuration
-package.json           # Dependencies and scripts
-postcss.config.mjs     # PostCSS configuration
-tailwind.config.ts     # Tailwind CSS configuration
-tsconfig.json          # TypeScript configuration
-```
-
-## Routes Structure
-
-```
-/                           # Landing page
-/auth/signin               # User sign-in page
-/auth/signup               # User registration page
-/onboarding                # Initial user registration flow
-/onboarding/admin          # Admin/Superadmin onboarding
-/onboarding/teacher        # Teacher onboarding
-/onboarding/parent         # Parent onboarding
-/onboarding/student        # Student onboarding
-/paymentGateway           # Subscription pricing plans
-/mockPayment              # Mock payment processing
-/register/school          # School registration
-
-# Protected User Routes
-/(users)/admin            # Admin dashboard home
-/(users)/superadmin       # Superadmin dashboard home
-/dashboard/superadmin     # Superadmin analytics dashboard
-
-# API Routes
-/api/users                # User management endpoints
-/api/classes              # Class management endpoints
-```
-
----
-
-## Key Flows
-
-### Onboarding
-
-1. **Registration** (`/app/onboarding/page.tsx`): Collects basic user info (`RegistrationForm`) and redirects based on selected role.
-
-2. **Role Forms**:
-   - **Superadmin/Admin**: `/app/onboarding/admin/page.tsx` uses `components/onboarding/SuperadminAndSchoolpage.tsx` for detailed profile and school setup (name, address, logo, brand color, etc.).
-   - **Teacher/Parent/Student**: Simpler profile forms located under `/app/onboarding/[role]/page.tsx`.
-
-3. **Validation**: The `useFormValidation` hook manages required fields and displays inline error messages for a smooth user experience.
-
-### Payment & Pricing
-
-- **Pricing Page** (`/app/paymentGateway/page.tsx` using `components/PricingView/pricingView.tsx`): Displays subscription plans. Superadmins select a plan, enter mock payment details, and are redirected to onboarding upon "successful" payment.
-- **Mock Payment** (`/app/mockPayment/page.tsx`): A standalone page for demonstrating the payment form UI.
-- **Success Modal** (`components/modal/Successfulmodal.tsx`): Shown after mock payment, includes a countdown before redirecting.
-
----
-
-## UI Component Library & Styling
-
-- **Shadcn UI**: The core component library, located in `components/ui`. These are unstyled primitives built on Radix UI, styled with Tailwind CSS. See `components.json` for configuration.
-- **Tailwind CSS**: Used for all styling, configured in `tailwind.config.ts` and `app/globals.css`. Utility classes provide rapid development and consistency.
-- **Class Variance Authority (CVA)**: Used within Shadcn components (like `Button`) for managing component variants.
-- **`cn` Utility**: (`lib/utils.ts`) Merges Tailwind classes, essential for conditional styling in components.
-
----
-
-## State Management & Context
-
-- **AuthContext** (`contexts/auth-context.tsx`): Manages simulated user authentication state (user object, loading status). Persists user info in `localStorage` for session persistence across refreshes. Provides context to protect routes and display user-specific UI.
-- **PricingStore** (`store/usePricingStore.ts`): A Zustand store for managing global state related to the pricing flow, such as the selected plan and user email. Zustand provides a simple and powerful way to handle state outside of the React component tree, with persistence middleware included.
-
----
-
-## Custom Hooks
-
-- **`useFormValidation`** (`hooks/useFormValidation.ts`): A generic hook to handle form validation logic. Takes form data and a list of required fields, returning an `errors` object, a `validate` function, and a `clearError` function.
-- **`useMobile`** (`hooks/use-mobile.ts`): Detects if the current device screen width corresponds to mobile or tablet breakpoints, returning boolean flags (`isMobile`, `isTablet`). Useful for conditional rendering based on device type.
-
----
-
-## Responsiveness
-
-- The application utilizes Tailwind CSS's responsive design features (e.g., `sm:`, `md:`, `lg:` prefixes) to ensure layouts adapt gracefully to different screen sizes.
-- Key components like forms, cards, and navigation are designed with responsiveness in mind.
-- The `useMobile` hook can be used for more complex JavaScript-based responsive logic if needed.
-
----
-
-## Testing
-
-- **Jest**: The primary testing framework, configured in `jest.config.js` and `jest.setup.ts`.
-- **React Testing Library (RTL)**: Used for writing tests that interact with components similarly to how a user would. Encourages accessible and maintainable tests.
-- Sample tests are located in the `_tests_` directory (e.g., `Home.test.tsx`, `Onboarding.test.tsx`). Run tests using `npm test` or `yarn test`.
-
----
-
-## Available Scripts
-
-In the project directory, you can run:
-
-- **`npm run dev`** - Runs the app in development mode with Turbopack
-- **`npm run build`** - Builds the app for production
-- **`npm start`** - Runs the built app in production mode
-- **`npm run lint`** - Runs ESLint to check code quality
-- **`npm test`** - Launches the test runner in watch mode
-
----
-
-## Role-Based Features
-
-### Superadmin
-- Complete system overview and analytics
-- School configuration and branding
-- Subscription and payment management
-- Global system settings
-- Multi-school management capabilities
-
-### Admin
-- School-specific dashboard and analytics
-- User management (teachers, parents, students)
-- Class and academic management
-- Communication and announcements
-- Attendance oversight
-- Performance monitoring
-
-### Teacher
-- Class management and assignments
-- Student attendance tracking
-- Grade management
-- Parent-teacher communication
-- Timetable management
-
-### Parent
-- Child's academic progress monitoring
-- Attendance tracking
-- Communication with teachers
-- Fee payment status
-- School announcements
+# School Management System - Frontend
+
+![Next.js](https://img.shields.io/badge/Next.js-15-black?style=flat-square&logo=next.js)
+![React](https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3-38B2AC?style=flat-square&logo=tailwind-css)
+
+## 📋 Table of Contents
+
+- [About the Project](#about-the-project)
+- [Goals & Vision](#goals--vision)
+- [User Roles & Features](#user-roles--features)
+- [Tech Stack](#tech-stack)
+- [Getting Started](#getting-started)
+- [Project Structure](#project-structure)
+- [Authentication & Authorization](#authentication--authorization)
+- [API Integration](#api-integration)
+- [Development Guidelines](#development-guidelines)
+- [Testing](#testing)
+- [Deployment](#deployment)
+- [Contributing](#contributing)
+- [Troubleshooting](#troubleshooting)
+
+## 🎯 About the Project
+
+A comprehensive Multi-Tenant School Management System (SMS) designed as a SaaS platform for schools in Nigeria and Ghana. The system provides optimized performance for low-resource environments, integrated teacher development, customizable lesson planning, actionable insights, and seamless parent engagement. Each school operates independently with complete data isolation while sharing the same powerful platform.
+
+### Goals & Vision
+
+#### Primary Goals
+- **Multi-Tenant SaaS Platform**: Serve multiple schools with complete data isolation
+- **Simplified Authentication**: Universal email + password login for all users (no role selection required)
+- **Enhanced Communication**: Enable seamless interaction between students, parents, teachers, and administrators
+- **Role-Based Access Control**: Granular permissions system with 7 distinct user roles
+- **Financial Management**: Automated fee collection, invoicing, and financial reporting
+- **Scalable Architecture**: Support unlimited schools with invitation-based onboarding
+
+#### Multi-Tenant Benefits
+- **Cost Effective**: Shared infrastructure reduces costs for schools
+- **Easy Onboarding**: School owners can register and invite users instantly  
+- **Data Security**: Complete isolation between schools with tenant-level security
+- **Centralized Updates**: All schools benefit from platform improvements simultaneously
+- **Flexible Domains**: Support for custom school domains and branding
+
+#### Target Audience
+- School owners and administrators
+- Teachers and academic staff
+- Parents and guardians
+- Students
+- Educational consultants
+- Government education agencies
+
+## 👥 User Roles & Features
+
+### Super Admin
+- **Access**: Platform-wide system control across all schools
+- **Features**: 
+  - Complete system management
+  - School creation and oversight
+  - Global user management
+  - Platform analytics and monitoring
+  - Billing and subscription management
+  - System configuration and updates
+
+### School Admin  
+- **Access**: Complete school operations management
+- **Features**:
+  - Staff and student management
+  - Academic structure setup (classes, subjects, terms)
+  - School calendar and event management
+  - Communication management (announcements, messages)
+  - Financial oversight and fee management
+  - School settings and customization
+  - User invitation and role assignment
+
+### Assistant Admin
+- **Access**: Limited administrative functions
+- **Features**:
+  - Data entry and basic record management
+  - Report generation and viewing
+  - Communication assistance
+  - Student and parent information updates
+  - Basic academic calendar management
+
+### Class Teacher
+- **Access**: Class-specific academic management
+- **Features**:
+  - Class student management
+  - Grade recording and progress tracking
+  - Attendance management for assigned classes
+  - Assignment creation and grading
+  - Parent communication regarding class students
+  - Class performance analytics
+
+### Subject Teacher
+- **Access**: Subject-specific academic management
+- **Features**:
+  - Subject grade recording across multiple classes
+  - Lesson planning and curriculum management
+  - Subject-specific assignments and assessments
+  - Student performance analysis for taught subjects
+  - Resource management for subject materials
 
 ### Student
-- Personal dashboard
-- Assignment submissions
-- Grade viewing
-- Attendance history
-- School announcements
+- **Access**: Personal learning portal
+- **Features**:
+  - Grade and progress viewing
+  - Assignment submission and tracking
+  - Attendance record access
+  - Course material downloads
+  - Communication with teachers
+  - Academic calendar viewing
+  - Fee payment status tracking
 
----
+### Parent
+- **Access**: Child progress monitoring and school interaction
+- **Features**:
+  - Child's academic progress monitoring
+  - Fee payment and financial tracking
+  - Direct communication with teachers and school admin
+  - Attendance and behavior reports
+  - School event and announcement notifications
+  - Multiple children management (if applicable)
 
-## Environment Variables
+## 🛠️ Tech Stack
 
-Create a `.env.local` file in the root directory:
+### 🆕 NEW: Global Education Systems Support
 
-```env
-# Application
-NEXT_PUBLIC_APP_URL=http://localhost:3000
-NEXT_PUBLIC_APP_NAME="School Management System"
+The frontend now supports **8 major education systems** worldwide with specialized UI components:
 
-# Theme
-NEXT_PUBLIC_DEFAULT_THEME=light
+#### Supported Education Systems
+- **Nigeria**: 6-3-3-4 System with Primary → JSS → SSS structure
+- **United States**: K-12 System with Elementary → Middle → High School
+- **United Kingdom**: Key Stages with GCSEs and A-Levels
+- **Canada**: Provincial variations with Elementary → Secondary
+- **South Africa**: CAPS System with Foundation → Senior phases
+- **Ghana**: 6-3-3-4 System with Primary → JHS → SHS
+- **Kenya**: 8-4-4 System with Primary → Secondary structure
+- **Australia**: National Curriculum with Foundation → Year 12
 
-# Mock API (for development)
-NEXT_PUBLIC_MOCK_API=true
+#### Enhanced Class Management UI
+- **Multi-Section Support**: Create classes like 1A, 1B, 1C with visual section indicators
+- **Smart Display Names**: Auto-generated labels like "P1A", "JSS2A-Sci", "Y7-Blue-Adv"
+- **Stream Management**: Science, Arts, Commercial, Technical stream selection
+- **Track Systems**: Advanced, Regular, Remedial, Honors performance tracking
+- **Capacity Management**: Visual enrollment indicators and capacity warnings
+
+### Core Technologies
+- **Framework**: Next.js 15 with App Router
+- **Language**: TypeScript 5
+- **Styling**: Tailwind CSS 3
+- **UI Components**: shadcn/ui + Radix UI + Custom Education Components
+- **State Management**: React Context API + Custom Hooks
+
+### Authentication & Security
+- **Authentication**: JWT-based with automatic role detection
+- **Authorization**: Role-based access control (RBAC) with feature permissions
+- **Multi-Tenancy**: Automatic school context switching
+- **Session Management**: Secure token storage with automatic refresh
+
+### Development Tools
+- **API Client**: Custom service layer with TypeScript interfaces
+- **Form Management**: React Hook Form with validation
+- **Icons**: Lucide React icon library
+- **Notifications**: Sonner toast notifications
+- **Testing**: Jest + React Testing Library
+- **Code Quality**: ESLint, Prettier, Husky pre-commit hooks
+
+### Performance Optimizations
+- **Code Splitting**: Automatic route-based and component-level splitting
+- **Image Optimization**: Next.js Image component with lazy loading
+- **API Caching**: Strategic response caching and request deduplication
+- **Bundle Analysis**: Webpack bundle analyzer for size optimization
+
+## 🚀 Getting Started
+
+### Prerequisites
+- **Node.js** >= 18.0.0
+- **npm** or **yarn**
+- **Backend API** running (see backend repository)
+
+### Installation
+
+1. **Clone the repository**
+```bash
+git clone <repository-url>
+cd school_management_frontend
 ```
 
----
+2. **Install dependencies**
+```bash
+npm install
+```
 
-## API Routes
+3. **Environment Setup**
+Create a `.env.local` file in the root directory:
+```env
+# API Configuration
+NEXT_PUBLIC_API_BASE_URL=http://localhost:4000
 
-The application includes mock API routes for development:
+# Environment
+NODE_ENV=development
 
-### User Management
-- `GET /api/users` - Fetch all users
-- `POST /api/users` - Create new user
-- `PUT /api/users/[id]` - Update user
-- `DELETE /api/users/[id]` - Delete user
+# Optional: For staging/production
+NEXT_PUBLIC_APP_ENV=development
 
-### Class Management
-- `GET /api/classes` - Fetch all classes
-- `POST /api/classes` - Create new class
-- `PUT /api/classes/[id]` - Update class
-- `DELETE /api/classes/[id]` - Delete class
+# Optional: School customization
+NEXT_PUBLIC_DEFAULT_SCHOOL_DOMAIN=localhost
+```
 
----
+4. **Start development server**
+```bash
+npm run dev
+```
 
-## Deployment
+The application will be available at `http://localhost:3000`
 
-### Vercel (Recommended)
+### Available Scripts
 
-1. Push your code to GitHub
-2. Connect your repository to [Vercel](https://vercel.com)
-3. Configure environment variables in Vercel dashboard
-4. Deploy automatically on push to main branch
+```bash
+# Development
+npm run dev          # Start development server with hot reload
+npm run build        # Build for production
+npm run start        # Start production server
+npm run lint         # Run ESLint
+npm run type-check   # Run TypeScript type checking
 
-### Manual Deployment
+# Testing
+npm run test         # Run unit tests
+npm run test:watch   # Run tests in watch mode
+npm run test:e2e     # Run end-to-end tests
+npm run test:coverage # Generate test coverage report
 
-1. Build the project:
-   ```bash
-   npm run build
-   ```
+# Deployment
+npm run deploy       # Deploy to production
+npm run build:analyze # Analyze bundle size
+```
 
-2. Start the production server:
-   ```bash
-   npm start
-   ```
+## 🏗️ Project Structure
 
-### Docker Deployment
+```
+school_management_frontend/
+├── app/                          # Next.js App Router
+│   ├── (users)/                  # Protected user routes (role-based)
+│   │   ├── admin/               # School admin dashboard and features
+│   │   ├── teacher/             # Teacher dashboard and tools
+│   │   ├── student/             # Student portal and learning resources
+│   │   ├── parent/              # Parent engagement portal
+│   │   ├── superadmin/          # Super admin system controls
+│   │   └── school_management/   # School management interface
+│   ├── auth/                    # Authentication pages
+│   │   ├── signin/              # Universal login (email + password)
+│   │   ├── school-signup/       # School owner registration
+│   │   ├── complete-registration/ # Invite-based registration
+│   │   ├── forgot-password/     # Password recovery flow
+│   │   └── reset-password/      # Password reset completion
+│   ├── onboarding/              # Role-specific onboarding flows
+│   ├── api/                     # API route handlers and middleware
+│   ├── page.tsx                 # Landing page with school selection
+│   └── layout.tsx               # Root layout with global providers
+├── components/                   # Reusable components organized by feature
+│   ├── admin/                   # Admin-specific components
+│   │   ├── students/            # Student management components
+│   │   ├── parents/             # Parent management components
+│   │   ├── announcement/        # Communication components
+│   │   └── ClassSectionManager.tsx # 🆕 Multi-section class management
+│   ├── auth/                    # Authentication components
+│   │   ├── registration-forms/  # Role-specific registration forms
+│   │   └── shared/              # Shared auth utilities
+│   ├── dashboard/               # Dashboard components for all roles
+│   ├── layout/                  # Layout components (sidebar, header, nav)
+│   │   └── sidebar/             # Role-based navigation sidebar
+│   ├── shared/                  # Shared utility components
+│   └── ui/                      # Base UI components (shadcn/ui)
+├── contexts/                     # React contexts for global state
+│   └── auth-context.tsx         # Authentication and user state management
+├── hooks/                        # Custom React hooks
+├── lib/                         # Utilities and configurations
+│   ├── api/                     # API client and service classes
+│   │   ├── auth.ts              # Authentication API service
+│   │   ├── users.ts             # User management API service
+│   │   ├── classes.ts           # Class management API service
+│   │   ├── education-systems.ts # 🆕 Education systems API service
+│   │   ├── client.ts            # Base API client with interceptors
+│   │   └── index.ts             # API service exports
+│   └── utils.ts                 # Utility functions and helpers
+├── store/                       # Additional state management (if needed)
+└── types/                       # TypeScript type definitions
+```
 
-Create a `Dockerfile`:
+## 🔐 Authentication & Authorization
 
+### Multi-Tenant Authentication Flow
+
+#### 1. School Owner Registration
+```typescript
+// School owners register and create their school + admin account
+POST /auth/create-school-admin
+{
+  "firstName": "John", "lastName": "Smith",
+  "email": "admin@school.edu", "password": "SecurePass123!",
+  "schoolName": "Lincoln High School", "schoolAlias": "lincoln-high",
+  "country": "Nigeria"
+}
+// Result: School entity + Admin user with SCHOOL_ADMIN role
+```
+
+#### 2. Admin Invites Users
+```typescript
+// School admin invites users with pre-assigned roles
+POST /invites/send
+{
+  "email": "teacher@example.com",
+  "role": "CLASS_TEACHER",
+  "firstName": "Jane"
+}
+// Result: Email with invite link containing pre-assigned role
+```
+
+#### 3. Invite Registration
+```typescript
+// Invited users complete registration via email link
+POST /auth/complete-invite-registration
+{
+  "inviteToken": "ABC123",
+  "email": "teacher@example.com", "password": "MyPassword123!",
+  "firstName": "Jane", "lastName": "Doe", "staffId": "TCH001"
+}
+// Result: User created with role from invite + school linkage
+```
+
+#### 4. Universal Login
+```typescript
+// All users login with just email + password (no role selection)
+POST /auth/login
+{
+  "email": "teacher@example.com",
+  "password": "MyPassword123!"
+}
+// Result: Backend determines role, frontend redirects accordingly
+```
+
+### Role-Based Access Control (RBAC)
+
+#### Role Structure
+```typescript
+export enum UserRole {
+  SUPER_ADMIN = 'super_admin',      // Platform-wide control
+  SCHOOL_ADMIN = 'school_admin',    // School operations
+  ASSISTANT_ADMIN = 'assistant_admin', // Limited admin functions
+  CLASS_TEACHER = 'class_teacher',   // Class-specific management
+  SUBJECT_TEACHER = 'subject_teacher', // Subject-specific management
+  STUDENT = 'student',              // Learning portal
+  PARENT = 'parent',                // Child monitoring
+}
+```
+
+#### Feature Permissions Matrix
+```typescript
+export const FEATURE_PERMISSIONS = {
+  USER_MANAGEMENT: [SUPER_ADMIN, SCHOOL_ADMIN],
+  SCHOOL_SETTINGS: [SUPER_ADMIN, SCHOOL_ADMIN],
+  ACADEMIC_CALENDAR: [SUPER_ADMIN, SCHOOL_ADMIN],
+  GRADE_MANAGEMENT: [SUPER_ADMIN, SCHOOL_ADMIN, CLASS_TEACHER, SUBJECT_TEACHER],
+  ATTENDANCE: [SUPER_ADMIN, SCHOOL_ADMIN, CLASS_TEACHER, SUBJECT_TEACHER],
+  VIEW_GRADES: [ALL_ROLES],
+  FEE_MANAGEMENT: [SUPER_ADMIN, SCHOOL_ADMIN, PARENT],
+  REPORTS: [ALL_ROLES],
+  BILLING: [SUPER_ADMIN],
+  SYSTEM_SETTINGS: [SUPER_ADMIN],
+};
+```
+
+### Auto-Redirect Dashboard System
+```typescript
+// Automatic role-based dashboard redirection
+function getDashboardPath(role: UserRole): string {
+  switch (role) {
+    case 'super_admin': return '/(users)/admin';
+    case 'school_admin': return '/(users)/admin';
+    case 'assistant_admin': return '/(users)/admin';
+    case 'class_teacher': return '/(users)/teacher';
+    case 'subject_teacher': return '/(users)/teacher';
+    case 'student': return '/(users)/student';
+    case 'parent': return '/(users)/parent';
+    default: return '/(users)/student';
+  }
+}
+```
+
+### Session Management
+- **JWT Tokens**: Secure access and refresh token handling
+- **Automatic Refresh**: Tokens refreshed automatically before expiration
+- **School Context**: All requests include school context for multi-tenancy
+- **Secure Storage**: Tokens stored securely in httpOnly cookies (production) or localStorage (development)
+
+## 🌐 API Integration
+
+### Multi-Tenant API Architecture
+```typescript
+// API Client with automatic school context
+class ApiClient {
+  private baseURL: string;
+  private schoolContext?: string;
+  
+  setSchoolContext(schoolId: string) {
+    this.schoolContext = schoolId;
+  }
+  
+  async request(endpoint: string, options?: RequestOptions) {
+    const headers = {
+      ...options?.headers,
+      'X-School-Context': this.schoolContext,
+      'Authorization': `Bearer ${this.getToken()}`
+    };
+    
+    return fetch(`${this.baseURL}${endpoint}`, { ...options, headers });
+  }
+}
+```
+
+### 🆕 NEW: Education Systems API Service
+```typescript
+export class EducationSystemsApiService {
+  // Get all available education systems
+  static async getAllEducationSystems(): Promise<EducationSystem[]>
+  
+  // Get education system by country
+  static async getEducationSystemByCountry(country: string): Promise<EducationSystem>
+  
+  // Get grade levels for an education system
+  static async getGradeLevels(educationSystemId: string): Promise<GradeLevel[]>
+  
+  // Get assessment types and term structures
+  static async getAssessmentTypes(educationSystemId: string): Promise<AssessmentType[]>
+  static async getTermStructures(educationSystemId: string): Promise<TermStructure[]>
+}
+```
+
+### 🆕 NEW: Class Sections API Service
+```typescript
+export class ClassSectionsApiService {
+  // Create single class section
+  static async createClassSection(data: CreateClassSectionDto): Promise<ClassSection>
+  
+  // Create multiple sections at once (1A, 1B, 1C, etc.)
+  static async createMultipleSections(
+    baseData: Omit<CreateClassSectionDto, 'section'>,
+    sections: string[]
+  ): Promise<ClassSection[]>
+  
+  // Get all sections for a specific class name
+  static async getClassSections(className: string, academicYearId: string): Promise<ClassSection[]>
+  
+  // Get available sections, streams, and tracks
+  static async getAvailableSections(): Promise<string[]>
+  static async getAvailableStreams(): Promise<string[]>
+  static async getAvailableTracks(): Promise<string[]>
+}
+```
+
+### Authentication API Service
+```typescript
+export class AuthApiService {
+  // Universal login for all users
+  static async login(credentials: LoginCredentials): Promise<AuthResponse>
+  
+  // School owner registration with education system selection
+  static async createSchoolAndAdmin(data: SchoolRegistrationData): Promise<AuthResponse>
+  
+  // Complete invite registration
+  static async completeInviteRegistration(data: InviteRegistrationData): Promise<AuthResponse>
+  
+  // Password reset system
+  static async requestPasswordReset(email: string): Promise<void>
+  static async resetPassword(token: string, newPassword: string): Promise<void>
+  
+  // Token management
+  static async refreshToken(): Promise<RefreshTokenResponse>
+  static getStoredUser(): User | null
+  static isAuthenticated(): boolean
+}
+```
+
+### Error Handling & Resilience
+- **Automatic Retry**: Failed requests retried with exponential backoff
+- **Token Refresh**: Expired tokens automatically refreshed
+- **School Context**: Automatic school switching for multi-tenant access
+- **Error Boundaries**: React error boundaries for graceful degradation
+- **Offline Support**: Basic offline functionality with request queuing
+
+## 🧪 Testing
+
+### Testing Strategy
+```bash
+# Run all tests
+npm run test
+
+# Test with coverage
+npm run test:coverage
+
+# E2E testing
+npm run test:e2e
+
+# Component testing
+npm run test -- LoginForm.test.tsx
+
+# API integration testing  
+npm run test -- api.test.tsx
+```
+
+### Multi-Tenant Testing
+```typescript
+// Example multi-tenant test
+describe('Multi-Tenant Authentication', () => {
+  test('users can only access their school data', async () => {
+    const schoolAUser = await loginAs('user@schoola.edu');
+    const schoolBUser = await loginAs('user@schoolb.edu');
+    
+    // School A user should not see School B data
+    expect(schoolAUser.schoolId).not.toBe(schoolBUser.schoolId);
+    
+    const schoolAData = await apiClient.getStudents();
+    expect(schoolAData.every(student => 
+      student.schoolId === schoolAUser.schoolId
+    )).toBe(true);
+  });
+});
+```
+
+## 🚀 Deployment
+
+### Development Deployment
+```bash
+npm run dev  # Local development with hot reload
+```
+
+### Production Deployment
+
+#### Railway Deployment
+```bash
+# Install Railway CLI
+npm install -g @railway/cli
+
+# Login and deploy
+railway login
+railway init
+railway add NEXT_PUBLIC_API_BASE_URL=https://your-backend.railway.app
+railway up
+```
+
+#### Docker Deployment
 ```dockerfile
+# Production Dockerfile
 FROM node:18-alpine
-
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci --only=production
 COPY . .
 RUN npm run build
-
 EXPOSE 3000
 CMD ["npm", "start"]
 ```
 
----
+### Environment Variables (Production)
+```env
+# API Configuration
+NEXT_PUBLIC_API_BASE_URL=https://your-backend-api.com
+NODE_ENV=production
 
-## Performance Considerations
+# Multi-tenant Configuration
+NEXT_PUBLIC_ENABLE_SCHOOL_SELECTION=true
+NEXT_PUBLIC_DEFAULT_SCHOOL_DOMAIN=your-platform.com
 
-- **Image Optimization**: Uses Next.js Image component for automatic optimization
-- **Code Splitting**: Automatic route-based code splitting with Next.js
-- **Bundle Analysis**: Run `npm run build` to see bundle size analysis
-- **Lazy Loading**: Components are lazy-loaded where appropriate
-- **Caching**: Leverages Next.js caching strategies for optimal performance
+# Optional: Analytics and monitoring
+NEXT_PUBLIC_ANALYTICS_ID=your-analytics-id
+```
 
----
+## 📊 Test Accounts (Development)
 
-## Security Features
+### School-Based Test Users
+```bash
+# Demo School Test Accounts
+School Admin:    admin@demoschool.edu         / Test123!
+Assistant Admin: assistant@demoschool.edu     / Test123!
+Class Teacher:   classteacher@demoschool.edu  / Test123!  
+Subject Teacher: subjectteacher@demoschool.edu / Test123!
+Student:         student@demoschool.edu       / Test123!
+Parent:          parent@example.com           / Test123!
 
-- **Authentication**: Simulated auth with secure localStorage persistence
-- **Role-Based Access**: Route protection based on user roles
-- **Form Validation**: Client-side validation with error handling
-- **XSS Protection**: React's built-in XSS protection
-- **CSRF Protection**: Next.js built-in CSRF protection
+# Super Admin (Platform-wide)
+Super Admin:     superadmin@platform.com      / SuperAdmin123!
+```
 
----
+### School Information
+```bash
+# Demo School Details
+School Name: Demo School
+School Alias: DEMO
+School ID: [Generated UUID]
+Country: Nigeria
+```
 
-## Troubleshooting
+## 🤝 Contributing
+
+### Development Workflow
+1. **Create Feature Branch**: `git checkout -b feature/your-feature`
+2. **Implement Changes**: Add features with comprehensive tests
+3. **Test Multi-Tenancy**: Verify school isolation works correctly
+4. **Update Documentation**: Update README and component docs
+5. **Create Pull Request**: Request review with detailed description
+
+### Code Standards
+- **TypeScript**: All code must be strictly typed
+- **Multi-Tenant Aware**: All features must respect school boundaries
+- **Role-Based**: Components must handle all user roles appropriately
+- **Responsive Design**: Support mobile and desktop interfaces
+- **Performance**: Consider low-bandwidth environments
+
+### Commit Convention
+```bash
+feat: add multi-tenant user invitation system
+fix: resolve school context switching bug
+docs: update authentication flow documentation
+test: add role-based access control tests
+```
+
+## 🔧 Troubleshooting
 
 ### Common Issues
 
-1. **Development server won't start**
-   ```bash
-   # Clear cache and reinstall dependencies
-   rm -rf .next node_modules package-lock.json
-   npm install
-   npm run dev
-   ```
+#### Authentication Issues
+```bash
+# Check API connection
+curl -X POST http://localhost:4000/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@demoschool.edu","password":"Test123!"}'
 
-2. **Build errors**
-   ```bash
-   # Check TypeScript errors
-   npm run lint
-   # Fix any TypeScript issues before building
-   ```
+# Verify environment variables
+echo $NEXT_PUBLIC_API_BASE_URL
 
-3. **Styling issues**
-   ```bash
-   # Regenerate Tailwind classes
-   npm run build
-   ```
+# Clear authentication cache
+localStorage.clear() // In browser console
+```
 
-### Getting Help
+#### Multi-Tenant Issues
+```bash
+# Verify school context
+console.log(authContext.user.schoolId) // In browser console
 
-- Check the [Next.js Documentation](https://nextjs.org/docs)
-- Review [Tailwind CSS Documentation](https://tailwindcss.com/docs)
-- Consult [Shadcn UI Documentation](https://ui.shadcn.com)
+# Check API headers
+// Network tab: verify X-School-Context header is present
+```
 
----
+#### Build Issues
+```bash
+# Clear Next.js cache
+rm -rf .next
 
-## Future Enhancements
+# Reinstall dependencies
+rm -rf node_modules package-lock.json
+npm install
 
-- Real-time notifications with WebSockets
-- File upload and document management
-- Advanced reporting and analytics
-- Mobile app integration
-- Multi-language support
-- Real payment gateway integration
-- Calendar and scheduling system
-- Video conferencing integration
+# Type checking
+npm run type-check
+```
 
----
+### Development Tools
+```bash
+# Bundle analysis
+npm run build:analyze
 
-## Contributing
+# Performance profiling
+npm run dev -- --profile
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feat/your-feature`)
-3. Commit your changes (`git commit -m "feat: add ..."`)
-4. Push to branch (`git push origin feat/your-feature`)
-5. Open a Pull Request
-
-Please follow existing code conventions and run `npm run lint` before pushing.
+# API debugging
+npm run test:api
+```
 
 ---
 
-## License
+## 📞 Support
 
-This project is licensed under the [MIT License](LICENSE).
+- **Issues**: GitHub Issues with detailed reproduction steps
+- **Documentation**: Check `/docs` for advanced guides
+- **Team Contact**: Frontend team leads
+- **Community**: Join project discussions
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 🌟 Key Features Highlight
+
+✅ **Multi-Tenant SaaS Architecture** - Complete school data isolation  
+✅ **Universal Authentication** - Email + password login for all users  
+✅ **7-Role RBAC System** - Granular permission management  
+✅ **Automatic School Context** - Seamless multi-tenant operation  
+✅ **Invitation-Based Onboarding** - Easy user registration system  
+✅ **Mobile-First Design** - Optimized for low-resource environments  
+✅ **Real-time Updates** - Live notifications and data synchronization  
+✅ **Offline Support** - Basic functionality without internet connection  
+
+### 🆕 NEW FEATURES (Latest Update)
+✅ **Global Education Systems** - Support for 8 major education systems worldwide  
+✅ **Multi-Section Classes** - Create classes like 1A, 1B, 1C with visual indicators  
+✅ **Smart Display Names** - Auto-generated class labels (P1A, JSS2A-Sci, Y7-Blue-Adv)  
+✅ **Stream Management** - Science, Arts, Commercial, Technical academic streams  
+✅ **Performance Tracking** - Advanced, Regular, Remedial, Honors track systems  
+✅ **Prisma Integration** - Enhanced database performance with Prisma ORM  
+✅ **Migration-Free Architecture** - Streamlined development without complex migrations  
+✅ **Enhanced Class UI** - Visual capacity management and enrollment indicators
+
+#### Deployment
+- **Railway**: Production deployment with automatic CI/CD
+- **Docker**: Containerized deployment for consistent environments
+- **Environment Variables**: Secure configuration management
+- **Health Checks**: Automated monitoring and status reporting
+
+### Contributing
+// ... existing code ...
