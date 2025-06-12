@@ -1,3 +1,4 @@
+import React from "react";
 import { Users, Building2, CreditCard, ClipboardCheck, BookOpen, Clipboard, Award, UserCheck } from "lucide-react";
 
 interface MetricCardProps {
