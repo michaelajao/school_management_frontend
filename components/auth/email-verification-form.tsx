@@ -26,9 +26,12 @@ export function EmailVerificationForm() {
       setState("success");
       toast({
         title: "Email verified successfully!",
-        description: "You can now sign in to your account.",
+        description: "Your account is now active.",
         variant: "default",
       });
+      
+      // Store verification success to prevent re-verification
+      sessionStorage.setItem('email_verified', 'true');
       
       // Redirect to sign in after 3 seconds
       setTimeout(() => {
@@ -48,6 +51,13 @@ export function EmailVerificationForm() {
   };
 
   useEffect(() => {
+    // Check if already verified in this session
+    const alreadyVerified = sessionStorage.getItem('email_verified');
+    if (alreadyVerified === 'true') {
+      setState("success");
+      return;
+    }
+
     if (token) {
       verifyEmail(token);
     } else {
