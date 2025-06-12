@@ -549,15 +549,6 @@ railway add NEXT_PUBLIC_API_BASE_URL=https://your-backend.railway.app
 railway up
 ```
 
-#### Vercel Deployment
-```bash
-# Install Vercel CLI
-npm install -g vercel
-
-# Deploy
-vercel --prod
-```
-
 #### Docker Deployment
 ```dockerfile
 # Production Dockerfile
@@ -721,3 +712,12 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ✅ **Prisma Integration** - Enhanced database performance with Prisma ORM  
 ✅ **Migration-Free Architecture** - Streamlined development without complex migrations  
 ✅ **Enhanced Class UI** - Visual capacity management and enrollment indicators
+
+#### Deployment
+- **Railway**: Production deployment with automatic CI/CD
+- **Docker**: Containerized deployment for consistent environments
+- **Environment Variables**: Secure configuration management
+- **Health Checks**: Automated monitoring and status reporting
+
+### Contributing
+// ... existing code ...
