@@ -1,6 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { rateLimit, getClientIdentifier, getRateLimitHeaders } from '@/lib/rate-limiter';
 
 export async function POST(request: NextRequest) {
+  // Apply rate limiting
+  const clientId = getClientIdentifier(request);
+  const rateLimitResult = rateLimit(clientId, { limit: 5, window: 300000 }); // 5 requests per 5 minutes
+  
+  if (!rateLimitResult.success) {
+    return NextResponse.json(
+      { 
+        error: 'Too many requests',
+        message: 'Rate limit exceeded. Please try again later.',
+        retryAfter: rateLimitResult.reset
+      },
+      { 
+        status: 429,
+        headers: getRateLimitHeaders(rateLimitResult)
+      }
+    );
+  }
+
   try {
     const body = await request.json();
     console.log('=== API Route Debug ===');
@@ -39,23 +58,13 @@ export async function POST(request: NextRequest) {
       console.log('Education systems endpoint error (will proceed without):', educationSystemError.message);
     }
     
-    if (!educationSystems || educationSystems.length === 0) {
-      return NextResponse.json(
-        { message: `No education system found for ${body.country}. Please contact support.` },
-        { status: 400 }
-      );
-    }
-    
-    const educationSystem = educationSystems[0]; // Use the first (and typically only) education system
-    console.log('Using education system:', educationSystem.id);
-    
-    // First create the school
+    // Create school data with optional education system
     const schoolData = {
       name: body.schoolName,
       alias: body.schoolAlias,
       country: body.country,
-      educationSystemId: educationSystem.id,
-      website: body.website || undefined
+      website: body.website || undefined,
+      ...(educationSystem && { educationSystemId: educationSystem.id })
     };
     
     console.log('Creating school with data:', JSON.stringify(schoolData, null, 2));

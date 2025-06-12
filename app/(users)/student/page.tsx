@@ -91,16 +91,16 @@ const StudentDashboard = () => {
       {/* Welcome Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Welcome back, Alex!</h1>
-          <p className="text-gray-600 mt-1">Here's your academic progress and upcoming tasks</p>
+          <h1 className=&quot;text-3xl font-bold text-gray-900&quot;>Welcome back, Alex!</h1>
+          <p className="text-gray-600 mt-1">Here&apos;s your academic progress and upcoming tasks</p>
         </div>
-        <div className="flex space-x-2">
-          <Button className="bg-blue-600 hover:bg-blue-700">
-            <Calendar className="w-4 h-4 mr-2" />
+        <div className=&quot;flex space-x-2&quot;>
+          <Button className=&quot;bg-blue-600 hover:bg-blue-700&quot;>
+            <Calendar className=&quot;w-4 h-4 mr-2&quot; />
             View Schedule
           </Button>
-          <Button variant="outline">
-            <MessageCircle className="w-4 h-4 mr-2" />
+          <Button variant=&quot;outline&quot;>
+            <MessageCircle className=&quot;w-4 h-4 mr-2&quot; />
             Messages
           </Button>
         </div>
@@ -110,10 +110,10 @@ const StudentDashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {dashboardMetrics.map((metric, index) => (
           <Card key={index} className="border-l-4" style={{ borderLeftColor: metric.primaryColor }}>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
+            <CardContent className=&quot;p-6&quot;>
+              <div className=&quot;flex items-center justify-between&quot;>
                 <div>
-                  <p className="text-sm font-medium text-gray-600">{metric.label}</p>
+                  <p className=&quot;text-sm font-medium text-gray-600&quot;>{metric.label}</p>
                   <p className="text-2xl font-bold" style={{ color: metric.primaryColor }}>
                     {metric.value}
                   </p>
@@ -135,20 +135,20 @@ const StudentDashboard = () => {
 
       {/* Main Content Tabs */}
       <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="grades">Grades</TabsTrigger>
-          <TabsTrigger value="assignments">Assignments</TabsTrigger>
-          <TabsTrigger value="schedule">Schedule</TabsTrigger>
-          <TabsTrigger value="progress">Progress</TabsTrigger>
+        <TabsList className=&quot;grid w-full grid-cols-5&quot;>
+          <TabsTrigger value=&quot;overview&quot;>Overview</TabsTrigger>
+          <TabsTrigger value=&quot;grades&quot;>Grades</TabsTrigger>
+          <TabsTrigger value=&quot;assignments&quot;>Assignments</TabsTrigger>
+          <TabsTrigger value=&quot;schedule&quot;>Schedule</TabsTrigger>
+          <TabsTrigger value=&quot;progress&quot;>Progress</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="overview" className="space-y-4">
+        <TabsContent value=&quot;overview&quot; className="space-y-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Today's Schedule */}
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center">
+                <CardTitle className=&quot;flex items-center&quot;>
                   <Calendar className="w-5 h-5 mr-2" />
                   Today's Schedule
                 </CardTitle>
@@ -159,12 +159,12 @@ const StudentDashboard = () => {
                     item.subject === 'Break' ? 'bg-yellow-50' : 'bg-gray-50'
                   }`}>
                     <div>
-                      <p className="font-medium">{item.subject}</p>
+                      <p className=&quot;font-medium&quot;>{item.subject}</p>
                       {item.teacher && (
                         <p className="text-sm text-gray-600">{item.teacher} • {item.room}</p>
                       )}
                     </div>
-                    <Badge variant="outline">{item.time}</Badge>
+                    <Badge variant=&quot;outline&quot;>{item.time}</Badge>
                   </div>
                 ))}
               </CardContent>
@@ -173,20 +173,20 @@ const StudentDashboard = () => {
             {/* Upcoming Assignments */}
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center">
+                <CardTitle className=&quot;flex items-center&quot;>
                   <FileText className="w-5 h-5 mr-2" />
                   Upcoming Assignments
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 {upcomingAssignments.slice(0, 4).map((assignment, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div key={index} className=&quot;flex items-center justify-between p-3 bg-gray-50 rounded-lg&quot;>
                     <div>
-                      <p className="font-medium">{assignment.title}</p>
-                      <p className="text-sm text-gray-600">{assignment.subject}</p>
+                      <p className=&quot;font-medium&quot;>{assignment.title}</p>
+                      <p className=&quot;text-sm text-gray-600&quot;>{assignment.subject}</p>
                     </div>
-                    <div className="text-right">
-                      <p className="text-sm font-medium">{assignment.dueDate}</p>
+                    <div className=&quot;text-right&quot;>
+                      <p className=&quot;text-sm font-medium&quot;>{assignment.dueDate}</p>
                       <Badge className={getStatusColor(assignment.status)}>
                         {assignment.status === 'due-soon' ? 'Due Soon' : 'Upcoming'}
                       </Badge>
@@ -203,21 +203,21 @@ const StudentDashboard = () => {
               <CardTitle>Quick Actions</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <Button className="h-20 flex flex-col space-y-2" variant="outline">
-                  <FileText className="w-6 h-6" />
+              <div className=&quot;grid grid-cols-2 md:grid-cols-4 gap-4&quot;>
+                <Button className=&quot;h-20 flex flex-col space-y-2&quot; variant="outline">
+                  <FileText className=&quot;w-6 h-6&quot; />
                   <span>Submit Assignment</span>
                 </Button>
-                <Button className="h-20 flex flex-col space-y-2" variant="outline">
-                  <Award className="w-6 h-6" />
+                <Button className=&quot;h-20 flex flex-col space-y-2&quot; variant="outline">
+                  <Award className=&quot;w-6 h-6&quot; />
                   <span>View Grades</span>
                 </Button>
-                <Button className="h-20 flex flex-col space-y-2" variant="outline">
-                  <Calendar className="w-6 h-6" />
+                <Button className=&quot;h-20 flex flex-col space-y-2&quot; variant="outline">
+                  <Calendar className=&quot;w-6 h-6&quot; />
                   <span>Class Schedule</span>
                 </Button>
-                <Button className="h-20 flex flex-col space-y-2" variant="outline">
-                  <MessageCircle className="w-6 h-6" />
+                <Button className=&quot;h-20 flex flex-col space-y-2&quot; variant="outline">
+                  <MessageCircle className=&quot;w-6 h-6&quot; />
                   <span>Messages</span>
                 </Button>
               </div>
@@ -225,7 +225,7 @@ const StudentDashboard = () => {
           </Card>
         </TabsContent>
 
-        <TabsContent value="grades" className="space-y-4">
+        <TabsContent value=&quot;grades&quot; className=&quot;space-y-4&quot;>
           <Card>
             <CardHeader>
               <CardTitle>Recent Grades</CardTitle>
@@ -234,14 +234,14 @@ const StudentDashboard = () => {
             <CardContent>
               <div className="space-y-4">
                 {recentGrades.map((grade, index) => (
-                  <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
-                    <div className="flex-1">
-                      <p className="font-medium">{grade.assignment}</p>
-                      <p className="text-sm text-gray-600">{grade.subject}</p>
-                      <p className="text-xs text-gray-500">{grade.date}</p>
+                  <div key={index} className=&quot;flex items-center justify-between p-4 border rounded-lg&quot;>
+                    <div className=&quot;flex-1&quot;>
+                      <p className=&quot;font-medium&quot;>{grade.assignment}</p>
+                      <p className=&quot;text-sm text-gray-600&quot;>{grade.subject}</p>
+                      <p className=&quot;text-xs text-gray-500&quot;>{grade.date}</p>
                     </div>
-                    <div className="text-right">
-                      <p className="text-2xl font-bold text-blue-600">{grade.grade}%</p>
+                    <div className=&quot;text-right&quot;>
+                      <p className=&quot;text-2xl font-bold text-blue-600&quot;>{grade.grade}%</p>
                       <Badge className={getStatusColor(grade.status)}>
                         {grade.status}
                       </Badge>
@@ -253,7 +253,7 @@ const StudentDashboard = () => {
           </Card>
         </TabsContent>
 
-        <TabsContent value="assignments" className="space-y-4">
+        <TabsContent value=&quot;assignments&quot; className="space-y-4">
           <Card>
             <CardHeader>
               <CardTitle>All Assignments</CardTitle>
@@ -262,13 +262,13 @@ const StudentDashboard = () => {
             <CardContent>
               <div className="space-y-4">
                 {upcomingAssignments.map((assignment, index) => (
-                  <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
-                    <div className="flex-1">
-                      <p className="font-medium">{assignment.title}</p>
-                      <p className="text-sm text-gray-600">{assignment.subject}</p>
+                  <div key={index} className=&quot;flex items-center justify-between p-4 border rounded-lg&quot;>
+                    <div className=&quot;flex-1&quot;>
+                      <p className=&quot;font-medium&quot;>{assignment.title}</p>
+                      <p className=&quot;text-sm text-gray-600&quot;>{assignment.subject}</p>
                     </div>
-                    <div className="text-right space-y-2">
-                      <p className="text-sm font-medium">Due: {assignment.dueDate}</p>
+                    <div className=&quot;text-right space-y-2&quot;>
+                      <p className=&quot;text-sm font-medium&quot;>Due: {assignment.dueDate}</p>
                       <Badge className={getStatusColor(assignment.status)}>
                         {assignment.status === 'due-soon' ? 'Due Soon' : 'Upcoming'}
                       </Badge>
@@ -283,7 +283,7 @@ const StudentDashboard = () => {
           </Card>
         </TabsContent>
 
-        <TabsContent value="schedule" className="space-y-4">
+        <TabsContent value=&quot;schedule&quot; className="space-y-4">
           <Card>
             <CardHeader>
               <CardTitle>Weekly Schedule</CardTitle>
@@ -292,18 +292,18 @@ const StudentDashboard = () => {
             <CardContent>
               <div className="space-y-4">
                 {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'].map((day) => (
-                  <div key={day} className="border-l-4 border-blue-500 pl-4">
-                    <h3 className="font-medium text-lg">{day}</h3>
+                  <div key={day} className=&quot;border-l-4 border-blue-500 pl-4&quot;>
+                    <h3 className=&quot;font-medium text-lg&quot;>{day}</h3>
                     <div className="space-y-2 mt-2">
                       {todaySchedule.filter(item => item.subject !== 'Break').map((item, index) => (
                         <div key={index} className="flex items-center justify-between py-2 px-3 bg-gray-50 rounded">
                           <div>
-                            <span className="font-medium">{item.subject}</span>
-                            <span className="text-gray-600 ml-2">- {item.teacher}</span>
+                            <span className=&quot;font-medium&quot;>{item.subject}</span>
+                            <span className=&quot;text-gray-600 ml-2&quot;>- {item.teacher}</span>
                           </div>
-                          <div className="text-right">
-                            <span className="text-sm text-gray-600">{item.time}</span>
-                            <p className="text-xs text-gray-500">{item.room}</p>
+                          <div className=&quot;text-right&quot;>
+                            <span className=&quot;text-sm text-gray-600&quot;>{item.time}</span>
+                            <p className=&quot;text-xs text-gray-500&quot;>{item.room}</p>
                           </div>
                         </div>
                       ))}
@@ -315,7 +315,7 @@ const StudentDashboard = () => {
           </Card>
         </TabsContent>
 
-        <TabsContent value="progress" className="space-y-4">
+        <TabsContent value=&quot;progress&quot; className="space-y-4">
           <Card>
             <CardHeader>
               <CardTitle>Academic Progress</CardTitle>
@@ -324,15 +324,15 @@ const StudentDashboard = () => {
             <CardContent>
               <div className="space-y-6">
                 {subjectProgress.map((subject, index) => (
-                  <div key={index} className="space-y-2">
-                    <div className="flex justify-between items-center">
-                      <span className="font-medium">{subject.name}</span>
+                  <div key={index} className=&quot;space-y-2&quot;>
+                    <div className=&quot;flex justify-between items-center&quot;>
+                      <span className=&quot;font-medium&quot;>{subject.name}</span>
                       <Badge style={{ backgroundColor: subject.color, color: 'white' }}>
                         {subject.grade}
                       </Badge>
                     </div>
                     <Progress value={subject.progress} className="h-3" />
-                    <p className="text-sm text-gray-600">{subject.progress}% Complete</p>
+                    <p className=&quot;text-sm text-gray-600&quot;>{subject.progress}% Complete</p>
                   </div>
                 ))}
               </div>

@@ -11,6 +11,11 @@ import { PasswordInput } from "@/components/ui/password-input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 
+// Consolidated imports for form validation and API
+import { useFormErrors } from "@/hooks/useFormErrors";
+import { validateForm, FormValidators } from "@/lib/form-validators";
+import { apiMethods, handleApiError } from "@/lib/api-utils";
+
 
 
 // Only countries with education systems available in the backend
@@ -37,7 +42,9 @@ export function CreateAccountForm() {
     phone: "",
     password: ""
   });
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  
+  // Use centralized error management
+  const { errors, setError, clearError, clearAllErrors, hasErrors, setMultipleErrors } = useFormErrors();
 
   // Load school data from localStorage if available
   useEffect(() => {
@@ -51,57 +58,28 @@ export function CreateAccountForm() {
   const handleChange = (name: string, value: string) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
     
-    // Clear error when user starts typing
-    if (errors[name]) {
-      setErrors((prev) => {
-        const newErrors = { ...prev };
-        delete newErrors[name];
-        return newErrors;
-      });
-    }
+    // Clear error when user starts typing - using centralized error management
+    clearError(name);
   };
 
-  const validateForm = () => {
-    const newErrors: Record<string, string> = {};
+  const validateFormData = () => {
+    // Use centralized validation
+    const userValidationErrors = validateForm(formData, FormValidators.user);
     
-    if (!formData.firstName.trim()) {
-      newErrors.firstName = "First name is required";
-    }
-    
-    if (!formData.lastName.trim()) {
-      newErrors.lastName = "Last name is required";
-    }
-    
-    if (!formData.email.trim()) {
-      newErrors.email = "Email address is required";
-    } else if (!/^\S+@\S+\.\S+$/.test(formData.email.trim())) {
-      newErrors.email = "Please enter a valid email address";
-    }
-    
-    if (!formData.phone.trim()) {
-      newErrors.phone = "Phone number is required";
-    } else if (formData.phone.trim().length < 10) {
-      newErrors.phone = "Phone number must be at least 10 digits";
-    }
-    
-    if (!formData.password) {
-      newErrors.password = "Password is required";
-    } else if (formData.password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters";
-    }
-    
+    // Add terms validation
+    const allErrors = { ...userValidationErrors };
     if (!agreeToTerms) {
-      newErrors.terms = "You must agree to the Terms of Service and Privacy Policy";
+      allErrors.terms = "You must agree to the Terms of Service and Privacy Policy";
     }
     
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    setMultipleErrors(allErrors);
+    return !hasErrors();
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
-    if (!validateForm()) {
+    if (!validateFormData()) {
       toast.error("Please fix the errors before proceeding");
       return;
     }
@@ -111,33 +89,14 @@ export function CreateAccountForm() {
     try {
       // Get school data from localStorage
       const schoolDataString = localStorage.getItem("schoolData");
-      console.log("Raw school data string:", schoolDataString);
-      
       const schoolData = schoolDataString ? JSON.parse(schoolDataString) : null;
-      console.log("Parsed school data:", schoolData);
       
-      if (!schoolData) {
+      if (!schoolData || !schoolData.name || !schoolData.alias) {
         throw new Error("School data not found. Please complete school registration first.");
       }
       
-      // Validate required school fields
-      if (!schoolData.name || !schoolData.alias) {
-        console.error("Missing required school fields:", {
-          name: schoolData.name,
-          alias: schoolData.alias,
-          country: schoolData.country
-        });
-        throw new Error("Incomplete school data. Please complete school registration first.");
-      }
-      
-      // Prepare registration data with automatic SCHOOL_ADMIN role
-      let processedPhone;
-      try {
-        processedPhone = `${selectedCountryCode.replace(/-[A-Z]{2}$/, '')}${formData.phone.trim()}`;
-      } catch (phoneError) {
-        console.error("Phone processing error:", phoneError);
-        processedPhone = `${selectedCountryCode}${formData.phone.trim()}`;
-      }
+      // Prepare registration data
+      const processedPhone = `${selectedCountryCode.replace(/-[A-Z]{2}$/, '')}${formData.phone.trim()}`;
       
       const registrationData = {
         firstName: formData.firstName.trim(),
@@ -151,61 +110,19 @@ export function CreateAccountForm() {
         website: schoolData.website || undefined
       };
       
-      console.log("Registration data being sent:", registrationData);
-      console.log("Selected country code:", selectedCountryCode);
-      console.log("Processed phone:", processedPhone);
+      // Use centralized API method
+      const response = await apiMethods.createSchoolAdmin(registrationData);
       
-      // Validate the final data before sending
-      if (!registrationData.schoolName || !registrationData.schoolAlias) {
-        console.error("Final validation failed:", {
-          schoolName: registrationData.schoolName,
-          schoolAlias: registrationData.schoolAlias
-        });
-        throw new Error("School name and alias are required but missing.");
+      if (response.success) {
+        // Clear school data from localStorage after successful registration
+        localStorage.removeItem("schoolData");
+        toast.success("School and admin account created successfully! You can now login.");
+        router.push("/auth/signin");
       }
       
-      // Use the createSchoolAndAdmin API endpoint
-      console.log('Making API request to:', '/api/auth/create-school-admin');
-      const response = await fetch('/api/auth/create-school-admin', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(registrationData),
-      });
-      
-      console.log('API Response status:', response.status);
-      console.log('API Response headers:', Object.fromEntries(response.headers.entries()));
-      
-      let errorData;
-      if (!response.ok) {
-        try {
-          errorData = await response.json();
-          console.log('Error response data:', errorData);
-        } catch (parseError) {
-          console.error('Failed to parse error response:', parseError);
-          const errorText = await response.text();
-          console.log('Error response text:', errorText);
-          errorData = { message: `Server error (${response.status}): ${errorText}` };
-        }
-        
-        throw new Error(errorData.message || `HTTP ${response.status}: Failed to create school and admin account`);
-      }
-      
-      const successData = await response.json();
-      console.log('Success response data:', successData);
-      
-      // Clear school data from localStorage after successful registration
-      localStorage.removeItem("schoolData");
-      
-      toast.success("School and admin account created successfully! You can now login.");
-      
-      // Redirect to signin page
-      router.push("/auth/signin");
-      
-    } catch (error: any) {
+    } catch (error) {
       console.error("Create account error:", error);
-      toast.error(error.message || "Failed to create account. Please try again.");
+      toast.error(handleApiError(error));
     } finally {
       setIsLoading(false);
     }

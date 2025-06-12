@@ -4,14 +4,14 @@ const nextConfig: NextConfig = {
   // Disable strict mode for development
   reactStrictMode: true,
   
-  // Disable ESLint during build to allow deployment
+  // Enable ESLint during build for code quality
   eslint: {
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: false,
   },
   
-  // Disable TypeScript errors during build  
+  // Enable TypeScript checking during build
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false,
   },
   
   // Turbopack configuration (moved from experimental.turbo)
@@ -24,6 +24,31 @@ const nextConfig: NextConfig = {
     },
   },
   
+  // Security headers for production
+  headers: async () => [
+    {
+      source: '/(.*)',
+      headers: [
+        {
+          key: 'X-Frame-Options',
+          value: 'DENY',
+        },
+        {
+          key: 'X-Content-Type-Options',
+          value: 'nosniff',
+        },
+        {
+          key: 'Referrer-Policy',
+          value: 'strict-origin-when-cross-origin',
+        },
+        {
+          key: 'X-XSS-Protection',
+          value: '1; mode=block',
+        },
+      ],
+    },
+  ],
+
   // Allow cross-origin requests from network IP
   allowedDevOrigins: [
     'http://192.168.0.85:3000',
