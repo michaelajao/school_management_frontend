@@ -17,11 +17,12 @@ class ApiClient {
   private static instance: ApiClient;
   constructor() {
     this.client = axios.create({
-      baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:4000',
-      timeout: 10000,
+      baseURL: '/api/proxy', // Use proxy API route for security
+      timeout: 30000, // Increased timeout for proxy
       headers: {
         'Content-Type': 'application/json',
       },
+      withCredentials: true, // Include cookies for auth
     });
 
     this.setupInterceptors();
@@ -35,13 +36,10 @@ class ApiClient {
   }
 
   private setupInterceptors() {
-    // Request interceptor to add auth token
+    // Request interceptor - auth token is now handled by proxy via httpOnly cookies
     this.client.interceptors.request.use(
       (config) => {
-        const token = this.getStoredToken();
-        if (token) {
-          config.headers.Authorization = `Bearer ${token}`;
-        }
+        // No need to manually add auth token - proxy handles it via cookies
         return config;
       },
       (error) => {

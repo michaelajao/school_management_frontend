@@ -11,8 +11,8 @@ interface AppConfig {
 }
 
 export const config: AppConfig = {
-  apiUrl: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000', // School management backend
-  appUrl: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
+  apiUrl: '/api/proxy', // Use proxy API route to hide backend URL
+  appUrl: typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000',
   environment: (process.env.NEXT_PUBLIC_ENVIRONMENT as any) || 'development',
   features: {
     pwa: process.env.NEXT_PUBLIC_ENABLE_PWA === 'true',

@@ -95,11 +95,31 @@ export class AuthApiService {
       if (response.accessToken) {
         apiClient.setAuthToken(response.accessToken);
         
-        // Store user data and tokens
+        // Store tokens securely via API routes
         if (typeof window !== 'undefined') {
+          // Store tokens in httpOnly cookies
+          await fetch('/api/auth/set-cookie', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              name: 'auth_token',
+              value: response.accessToken,
+              options: { maxAge: 60 * 60 * 2 } // 2 hours
+            })
+          });
+          
+          await fetch('/api/auth/set-cookie', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              name: 'refresh_token',
+              value: response.refreshToken,
+              options: { maxAge: 60 * 60 * 24 * 7 } // 7 days
+            })
+          });
+          
+          // Store non-sensitive user data in localStorage
           localStorage.setItem('user_data', JSON.stringify(response.user));
-          localStorage.setItem('auth_token', response.accessToken);
-          localStorage.setItem('refresh_token', response.refreshToken);
         }
       }
       
@@ -148,9 +168,21 @@ export class AuthApiService {
       console.error('Logout error:', error);
       // Continue with local logout even if API call fails
     } finally {
-      // Clear local storage
+      // Clear secure storage
       if (typeof window !== 'undefined') {
-        localStorage.removeItem('auth_token');
+        // Clear httpOnly cookies
+        await fetch('/api/auth/clear-cookie', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: 'auth_token' })
+        });
+        
+        await fetch('/api/auth/clear-cookie', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: 'refresh_token' })
+        });
+        
         localStorage.removeItem('user_data');
       }
     }
@@ -402,17 +434,36 @@ export class AuthApiService {
   }
 
   /**
-   * Get stored auth token from localStorage
+   * Get stored auth token from secure storage
    */
-  static getStoredToken(): string | null {
+  static async getStoredToken(): Promise<string | null> {
     if (typeof window === 'undefined') return null;
-    return localStorage.getItem('auth_token');
+    
+    try {
+      const response = await fetch('/api/auth/get-token', {
+        method: 'GET',
+        credentials: 'include'
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        return data.token || null;
+      }
+      
+      return null;
+    } catch (error) {
+      console.error('Failed to get stored token:', error);
+      return null;
+    }
   }
 
   /**
    * Check if user is authenticated
-   */  static isAuthenticated(): boolean {
-    return !!this.getStoredToken() && !!this.getStoredUser();
+   */
+  static async isAuthenticated(): Promise<boolean> {
+    const token = await this.getStoredToken();
+    const user = this.getStoredUser();
+    return !!(token && user);
   }
 
   /**

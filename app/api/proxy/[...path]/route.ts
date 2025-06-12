@@ -1,38 +1,58 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 
-// Get the backend URL from environment
+// Get the backend URL from environment (server-side only)
 const BACKEND_URL = process.env.NODE_ENV === 'production'
   ? 'https://schoolmanagementbackend-production-be10.up.railway.app'
   : 'http://localhost:4000';
 
-export async function GET(request: NextRequest) {
-  return handleRequest('GET', request);
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { path: string[] } }
+) {
+  return handleRequest('GET', request, params.path);
 }
 
-export async function POST(request: NextRequest) {
-  return handleRequest('POST', request);
+export async function POST(
+  request: NextRequest,
+  { params }: { params: { path: string[] } }
+) {
+  return handleRequest('POST', request, params.path);
 }
 
-export async function PUT(request: NextRequest) {
-  return handleRequest('PUT', request);
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: { path: string[] } }
+) {
+  return handleRequest('PUT', request, params.path);
 }
 
-export async function DELETE(request: NextRequest) {
-  return handleRequest('DELETE', request);
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { path: string[] } }
+) {
+  return handleRequest('DELETE', request, params.path);
 }
 
-export async function PATCH(request: NextRequest) {
-  return handleRequest('PATCH', request);
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: { path: string[] } }
+) {
+  return handleRequest('PATCH', request, params.path);
 }
 
-async function handleRequest(method: string, request: NextRequest) {
+async function handleRequest(
+  method: string,
+  request: NextRequest,
+  pathSegments: string[]
+) {
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get('auth_token');
     
     // Build the backend URL
-    const backendUrl = `${BACKEND_URL}/classes`;
+    const backendPath = pathSegments.join('/');
+    const backendUrl = `${BACKEND_URL}/${backendPath}`;
     
     // Copy search params
     const url = new URL(backendUrl);
@@ -90,7 +110,7 @@ async function handleRequest(method: string, request: NextRequest) {
     });
     
   } catch (error) {
-    console.error('Classes API error:', error);
+    console.error('Proxy API error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

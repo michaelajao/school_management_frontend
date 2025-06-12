@@ -110,13 +110,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         } catch (error) {
           // Token is invalid, clear storage
           console.error("Token verification failed:", error);
-          localStorage.removeItem('auth_token');
+          // Clear secure storage instead of localStorage
+          await fetch('/api/auth/clear-cookie', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: 'auth_token' }),
+          });
+          await fetch('/api/auth/clear-cookie', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: 'refresh_token' }),
+          });
           localStorage.removeItem('user_data');
           setUser(null);
         }
       } catch (error) {
         console.error("Auth check failed:", error);
-        localStorage.removeItem('auth_token');
+        // Clear secure storage instead of localStorage
+        await fetch('/api/auth/clear-cookie', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: 'auth_token' }),
+        });
+        await fetch('/api/auth/clear-cookie', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: 'refresh_token' }),
+        });
         localStorage.removeItem('user_data');
         setUser(null);
       } finally {
