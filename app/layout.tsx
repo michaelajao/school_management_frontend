@@ -5,6 +5,8 @@ import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/contexts/auth-context";
 import { HealthCheck } from "@/components/shared/HealthCheck";
 
+// Force Railway rebuild - Railway cache fix
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
