@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import ParentDashboard from '../app/(users)/parent/page';
+import ParentDashboard from '../app/(dashboard)/(users)/parent/page';
 
 // Mock the auth context
 const mockAuth = {
