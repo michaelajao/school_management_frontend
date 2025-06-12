@@ -1,12 +1,6 @@
-<<<<<<< Updated upstream:app/dashboard/communication/page.tsx
 // Communications.jsx (Server Component)
 import { CommunicationsClient } from "@/components/admin/annoucement/Communication";
-import { SummaryCard } from "@/components/admin/parents/SummaryCard";
-=======
-"use client"
-import { GeneraltList } from "@/components/admin/annoucement/general"
-import { useAuth } from "@/contexts/auth-context"
->>>>>>> Stashed changes:app/admin/communications/general/page.tsx
+import { MetricCard } from "@/components/shared/MetricCard";
 
 // Mock data - in a real app this would come from your database
 const dummyAnnouncements = {
@@ -95,43 +89,38 @@ const dummyEvents = [
   },
 ];
 
-<<<<<<< Updated upstream:app/dashboard/communication/page.tsx
 const links = {
   "my-announcement": "/dashboard/communication/announcement",
   general: "/dashboard/communication/general",
   classroom: "/dashboard/communication/classroom",
   events: "/dashboard/communication/events",
 };
-=======
-  return <GeneraltList />
-}
->>>>>>> Stashed changes:app/admin/communications/general/page.tsx
 
 export default function Communications() {
   return (
     <div className="space-y-6 p-6">
       {/* Top Stats */}
       <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 my-4">
-        <SummaryCard
+        <MetricCard
           label="Announcements Created"
           value={10}
-          icon={"/megaphone-line.svg"}
-          textColor="#008080"
-          bgColor="#BDFAFF4D"
+          icon={"/icons/megaphone-line.svg"}
+          primaryColor="#008080"
+          secondaryColor="#BDFAFF4D"
         />
-        <SummaryCard
+        <MetricCard
           label="Unread Messages"
           value={20}
-          icon={"/mail-line.svg"}
-          textColor="#FF9F43"
-          bgColor="#FFAB5A33"
+          icon={"/icons/mail-line.svg"}
+          primaryColor="#FF9F43"
+          secondaryColor="#FFAB5A33"
         />
-        <SummaryCard
+        <MetricCard
           label="Upcoming Events"
           value={40}
-          icon={"/color-filter-line.svg"}
-          textColor="#6A24FF"
-          bgColor="#6A24FF26"
+          icon={"/icons/color-filter-line.svg"}
+          primaryColor="#6A24FF"
+          secondaryColor="#6A24FF26"
         />
       </section>
 
