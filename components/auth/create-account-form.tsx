@@ -16,13 +16,13 @@ import { toast } from "sonner";
 // Only countries with education systems available in the backend
 const countryCodes = [
   { code: "+61", country: "Australia", flag: "🇦🇺" },
-  { code: "+1", country: "Canada", flag: "🇨🇦" },
+  { code: "+1-CA", country: "Canada", flag: "🇨🇦", display: "+1" },
   { code: "+233", country: "Ghana", flag: "🇬🇭" },
   { code: "+254", country: "Kenya", flag: "🇰🇪" },
   { code: "+234", country: "Nigeria", flag: "🇳🇬" },
   { code: "+27", country: "South Africa", flag: "🇿🇦" },
   { code: "+44", country: "United Kingdom", flag: "🇬🇧" },
-  { code: "+1", country: "United States", flag: "🇺🇸" }
+  { code: "+1-US", country: "United States", flag: "🇺🇸", display: "+1" }
 ];
 
 export function CreateAccountForm() {
@@ -131,11 +131,19 @@ export function CreateAccountForm() {
       }
       
       // Prepare registration data with automatic SCHOOL_ADMIN role
+      let processedPhone;
+      try {
+        processedPhone = `${selectedCountryCode.replace(/-[A-Z]{2}$/, '')}${formData.phone.trim()}`;
+      } catch (phoneError) {
+        console.error("Phone processing error:", phoneError);
+        processedPhone = `${selectedCountryCode}${formData.phone.trim()}`;
+      }
+      
       const registrationData = {
         firstName: formData.firstName.trim(),
         lastName: formData.lastName.trim(),
         email: formData.email.trim(),
-        phone: `${selectedCountryCode}${formData.phone.trim()}`,
+        phone: processedPhone,
         password: formData.password,
         schoolName: schoolData.name.trim(),
         schoolAlias: schoolData.alias.trim(),
@@ -144,6 +152,8 @@ export function CreateAccountForm() {
       };
       
       console.log("Registration data being sent:", registrationData);
+      console.log("Selected country code:", selectedCountryCode);
+      console.log("Processed phone:", processedPhone);
       
       // Validate the final data before sending
       if (!registrationData.schoolName || !registrationData.schoolAlias) {
@@ -155,6 +165,7 @@ export function CreateAccountForm() {
       }
       
       // Use the createSchoolAndAdmin API endpoint
+      console.log('Making API request to:', '/api/auth/create-school-admin');
       const response = await fetch('/api/auth/create-school-admin', {
         method: 'POST',
         headers: {
@@ -163,10 +174,26 @@ export function CreateAccountForm() {
         body: JSON.stringify(registrationData),
       });
       
+      console.log('API Response status:', response.status);
+      console.log('API Response headers:', Object.fromEntries(response.headers.entries()));
+      
+      let errorData;
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to create school and admin account');
+        try {
+          errorData = await response.json();
+          console.log('Error response data:', errorData);
+        } catch (parseError) {
+          console.error('Failed to parse error response:', parseError);
+          const errorText = await response.text();
+          console.log('Error response text:', errorText);
+          errorData = { message: `Server error (${response.status}): ${errorText}` };
+        }
+        
+        throw new Error(errorData.message || `HTTP ${response.status}: Failed to create school and admin account`);
       }
+      
+      const successData = await response.json();
+      console.log('Success response data:', successData);
       
       // Clear school data from localStorage after successful registration
       localStorage.removeItem("schoolData");
@@ -262,17 +289,18 @@ export function CreateAccountForm() {
                 Phone
               </Label>
               <div className="flex space-x-2">
-                <Select value={selectedCountryCode} onValueChange={setSelectedCountryCode}>
-                  <SelectTrigger className="w-24 px-2 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent">
+                <Select
+                  value={selectedCountryCode}
+                  onValueChange={setSelectedCountryCode}
+                  disabled={isLoading}
+                >
+                  <SelectTrigger className="w-[100px] border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {countryCodes.map((item) => (
-                      <SelectItem key={item.code} value={item.code}>
-                        <span className="flex items-center space-x-2">
-                          <span>{item.flag}</span>
-                          <span>{item.code}</span>
-                        </span>
+                    {countryCodes.map((country, index) => (
+                      <SelectItem key={`${country.code}-${country.country}-${index}`} value={country.code}>
+                        {country.flag} {country.display || country.code}
                       </SelectItem>
                     ))}
                   </SelectContent>
