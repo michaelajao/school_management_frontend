@@ -44,35 +44,35 @@ export function QuickActions() {
       title: "Add New User",
       description: "Onboard students, teachers or staff",
       icon: <PlusCircle className="w-6 h-6" />,
-      href: "/dashboard/users/add",
+      href: "/(users)/admin/add",
       color: "#4f46e5" // Indigo
     },
     {
       title: "Assign Class Teacher",
       description: "Manage class assignments & schedules",
       icon: <UserCog className="w-6 h-6" />,
-      href: "/dashboard/academics/classes",
+      href: "/(users)/admin/academics/classes",
       color: "#0891b2" // Cyan
     },
     {
       title: "Update Payment Record",
       description: "Record & manage student fee payments",
       icon: <CreditCard className="w-6 h-6" />,
-      href: "/dashboard/finance/fees",
+      href: "/(users)/admin/finance/fees",
       color: "#16a34a" // Green
     },
     {
       title: "Import School Data",
       description: "Upload students, teachers and classes",
       icon: <Upload className="w-6 h-6" />,
-      href: "/dashboard/admin/data-upload",
+      href: "/(users)/admin/data-upload",
       color: "#9333ea" // Purple
     },
     {
       title: "Timetable & Attendance",
       description: "Manage schedules and record attendance",
       icon: <Calendar className="w-6 h-6" />,
-      href: "/dashboard/academics/timetable",
+      href: "/(users)/admin/academics/timetable",
       color: "#db2777" // Pink
     }
   ];

@@ -14,21 +14,26 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { UsersApiService, type UserRole } from "@/lib/api/users";
 
 type UserData = {
   id?: string;
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
-  role: "admin" | "teacher" | "student";
+  role: UserRole;
+  phoneNumber?: string;
+  address?: string;
+  dateOfBirth?: string;
+  gender?: 'MALE' | 'FEMALE' | 'OTHER';
 };
 
 type UserFormDialogProps = {
   mode: "add" | "edit";
-  roleToAddOrEdit: "admin" | "teacher" | "student";
+  roleToAddOrEdit: UserRole;
   initialData?: UserData | null;
-  children?: React.ReactNode; // Make children optional for controlled mode
+  children?: React.ReactNode;
   onUserSaved?: (userData: UserData) => void;
-  // Add props for controlled mode
   isOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
 };
@@ -37,75 +42,114 @@ export function UserFormDialog({
   mode,
   roleToAddOrEdit,
   initialData,
-  children, // Trigger for uncontrolled mode
+  children,
   onUserSaved,
-  isOpen: controlledIsOpen, // Use controlled state if provided
-  onOpenChange: controlledOnOpenChange // Use controlled handler if provided
+  isOpen: controlledIsOpen,
+  onOpenChange: controlledOnOpenChange
 }: UserFormDialogProps) {
-  // Internal state for uncontrolled mode
   const [internalIsOpen, setInternalIsOpen] = useState(false);
-  // Determine if the dialog is controlled or uncontrolled
   const isControlled = controlledIsOpen !== undefined && controlledOnOpenChange !== undefined;
-
-  // Use controlled state/handler if available, otherwise use internal state
   const isOpen = isControlled ? controlledIsOpen : internalIsOpen;
   const setIsOpen = isControlled ? controlledOnOpenChange : setInternalIsOpen;
 
-  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [address, setAddress] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState("");
+  const [gender, setGender] = useState<'MALE' | 'FEMALE' | 'OTHER'>('MALE');
   const [isLoading, setIsLoading] = useState(false);
 
   const isEditMode = mode === 'edit';
   const role = isEditMode && initialData ? initialData.role : roleToAddOrEdit;
 
-  // Populate form effect
   useEffect(() => {
     if (isEditMode && initialData && isOpen) {
-      setName(initialData.name || "");
+      setFirstName(initialData.firstName || "");
+      setLastName(initialData.lastName || "");
       setEmail(initialData.email || "");
+      setPhoneNumber(initialData.phoneNumber || "");
+      setAddress(initialData.address || "");
+      setDateOfBirth(initialData.dateOfBirth || "");
+      setGender(initialData.gender || 'MALE');
     } else if (!isEditMode && isOpen) {
-      setName("");
+      setFirstName("");
+      setLastName("");
       setEmail("");
+      setPhoneNumber("");
+      setAddress("");
+      setDateOfBirth("");
+      setGender('MALE');
     }
-    // Reset if closed externally while in edit mode
     if (!isOpen && isEditMode) {
-        setName("");
-        setEmail("");
+      setFirstName("");
+      setLastName("");
+      setEmail("");
+      setPhoneNumber("");
+      setAddress("");
+      setDateOfBirth("");
+      setGender('MALE');
     }
   }, [initialData, isEditMode, isOpen]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    const userData: UserData = {
-      ...(isEditMode && initialData && { id: initialData.id }),
-      name,
-      email,
-      role: role,
-    };
-    console.log(isEditMode ? "Updating user:" : "Adding user:", userData);
-    // --- TODO: Replace with actual API call --- 
-    await new Promise(resolve => setTimeout(resolve, 1000)); 
-    // --- End TODO ---
-    setIsLoading(false);
-    toast.success(`${role.charAt(0).toUpperCase() + role.slice(1)} ${isEditMode ? 'updated' : 'added'} successfully!`);
-    if (onUserSaved) {
-      onUserSaved(userData);
+    try {
+      const userData: UserData = {
+        ...(isEditMode && initialData && { id: initialData.id }),
+        firstName,
+        lastName,
+        email,
+        role,
+        phoneNumber,
+        address,
+        dateOfBirth,
+        gender,
+      };
+
+      let response;
+      if (isEditMode && initialData?.id) {
+        response = await UsersApiService.updateUser(initialData.id, userData);
+      } else {
+        switch (role) {
+          case 'STUDENT':
+            response = await UsersApiService.createStudentUser({
+              ...userData,
+              studentId: `STU${Date.now()}`, // Generate a temporary student ID
+            });
+            break;
+          case 'PARENT':
+            response = await UsersApiService.createParentUser({
+              ...userData,
+              relationshipToStudent: 'Parent', // Default relationship
+            });
+            break;
+          default:
+            response = await UsersApiService.createUser(userData);
+        }
+      }
+
+      toast.success(`${role.charAt(0).toUpperCase() + role.slice(1)} ${isEditMode ? 'updated' : 'added'} successfully!`);
+      if (onUserSaved) {
+        onUserSaved(response.user || response);
+      }
+      setIsOpen(false);
+    } catch (error) {
+      console.error('Error saving user:', error);
+      toast.error(`Failed to ${isEditMode ? 'update' : 'add'} ${role.toLowerCase()}`);
+    } finally {
+      setIsLoading(false);
     }
-    setIsOpen(false); // Close dialog using the correct setter
   };
 
-  // Reset form state when dialog closes
   const handleOpenChange = (open: boolean) => {
-    setIsOpen(open); // Use the determined setter
-    if (!open) {
-        // Resetting state is handled by useEffect now based on isOpen
-    }
+    setIsOpen(open);
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      {/* Only render trigger if in uncontrolled mode (usually 'add' mode) */}
       {!isControlled && children && (
         <DialogTrigger asChild>
           {children}
@@ -115,19 +159,31 @@ export function UserFormDialog({
         <DialogHeader>
           <DialogTitle>{isEditMode ? 'Edit' : 'Add New'} {role.charAt(0).toUpperCase() + role.slice(1)}</DialogTitle>
           <DialogDescription>
-            {isEditMode ? `Update the details for ${initialData?.name}.` : `Enter the details for the new ${role}.`} Click save when you're done.
+            {isEditMode ? `Update the details for ${initialData?.firstName} ${initialData?.lastName}.` : `Enter the details for the new ${role.toLowerCase()}.`} Click save when you're done.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
-           <div className="grid gap-4 py-4">
+          <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="name" className="text-right">
-                Name
+              <Label htmlFor="firstName" className="text-right">
+                First Name
               </Label>
               <Input 
-                id="name" 
-                value={name} 
-                onChange={(e) => setName(e.target.value)} 
+                id="firstName" 
+                value={firstName} 
+                onChange={(e) => setFirstName(e.target.value)} 
+                className="col-span-3" 
+                required 
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="lastName" className="text-right">
+                Last Name
+              </Label>
+              <Input 
+                id="lastName" 
+                value={lastName} 
+                onChange={(e) => setLastName(e.target.value)} 
                 className="col-span-3" 
                 required 
               />
@@ -144,6 +200,56 @@ export function UserFormDialog({
                 className="col-span-3" 
                 required 
               />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="phoneNumber" className="text-right">
+                Phone
+              </Label>
+              <Input 
+                id="phoneNumber" 
+                type="tel" 
+                value={phoneNumber} 
+                onChange={(e) => setPhoneNumber(e.target.value)} 
+                className="col-span-3" 
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="address" className="text-right">
+                Address
+              </Label>
+              <Input 
+                id="address" 
+                value={address} 
+                onChange={(e) => setAddress(e.target.value)} 
+                className="col-span-3" 
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="dateOfBirth" className="text-right">
+                Date of Birth
+              </Label>
+              <Input 
+                id="dateOfBirth" 
+                type="date" 
+                value={dateOfBirth} 
+                onChange={(e) => setDateOfBirth(e.target.value)} 
+                className="col-span-3" 
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="gender" className="text-right">
+                Gender
+              </Label>
+              <select
+                id="gender"
+                value={gender}
+                onChange={(e) => setGender(e.target.value as 'MALE' | 'FEMALE' | 'OTHER')}
+                className="col-span-3 p-2 border rounded-md"
+              >
+                <option value="MALE">Male</option>
+                <option value="FEMALE">Female</option>
+                <option value="OTHER">Other</option>
+              </select>
             </div>
           </div>
           <DialogFooter>

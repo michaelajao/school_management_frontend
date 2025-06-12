@@ -11,14 +11,14 @@ export default function ClassActions() {
 
   const handleNavigate = () => {
     if (selectedOption === 'class') {
-      router.push('/dashboard/academics/classes/assign_class_teacher');
+      router.push('/admin/manage/academics/classes/assign_class_teacher');
     } else if (selectedOption === 'subject') {
-      router.push('/dashboard/academics/classes/assign_subject_teacher');
+      router.push('/admin/manage/academics/classes/assign_subject_teacher');
     }
   };
 
   const create = () => {
-    router.push('/dashboard/academics/classes/create');
+    router.push('/admin/manage/academics/classes/create');
   };
 
   return (
@@ -80,7 +80,7 @@ export default function ClassActions() {
       <button
         className="border border-#BDFAFF-400 text-[#BDFAFF]-500 px-3 py-2 rounded-lg font-medium hover:bg-[#BAE6E0]"
         onClick={() => {
-          router.push('/dashboard/academics/classes/assign_subject_teacher');
+          router.push('/admin/manage/academics/classes/add_subject');
         }}
       >
         Add Subject
@@ -99,7 +99,7 @@ export default function ClassActions() {
       <button
         className="border border-#BDFAFF-400 text-[#7C3AED] px-3 py-2 rounded-lg font-medium hover:bg-[#D8D0FF]"
         onClick={() => {
-          router.push('/dashboard/academics/classes/view_class_performance');
+          router.push('/admin/manage/academics/classes/performance_grade');
         }}
       >
         View Class Performance
@@ -109,7 +109,7 @@ export default function ClassActions() {
       <button
         className="border border-gray-300 text-gray-800 px-3 py-2 rounded-lg font-medium hover:bg-gray-100"
         onClick={() => {
-          router.push('/dashboard/academics/classes/view_class_attendance');
+          router.push('/admin/manage/academics/classes/view_class_attendance');
         }}
       >
         View Class Attendance

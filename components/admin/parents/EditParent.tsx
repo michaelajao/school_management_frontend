@@ -5,6 +5,7 @@ import { ChevronLeft } from "lucide-react";
 import ParentForm from "@/components/admin/parents/ParentForm";
 import { useRouter } from "next/navigation";
 import { useParentStore } from "@/store/parentStore"; // adjust this to match your actual store
+import { Button } from "@/components/ui/button";
 
 export default function EditParent() {
   const router = useRouter();
@@ -13,7 +14,7 @@ export default function EditParent() {
   const handleEdit = (data: any) => {
     // Call your update API or mutation here
     console.log("Editing parent:", data);
-    router.push("/dashboard/users/parents");
+    router.push("/admin/manage/parents");
   };
 
   if (!selectedParent) {
@@ -22,15 +23,17 @@ export default function EditParent() {
 
   return (
     <div>
-      <Link className="flex gap-4 font-semibold mb-8" href="/dashboard/users/parents">
+      <Button className="flex gap-4 font-semibold mb-8 bg-transparent text-black" 
+        onClick={() => router.back()}
+      >
         <ChevronLeft />
         <p>Edit Info</p>
-      </Link>
+      </Button>
 
       <ParentForm
         parent={selectedParent}
         onSubmit={handleEdit}
-        onCancel={() => router.push("/dashboard/users/parents")}
+        onCancel={() => router.back()}
       />
     </div>
   );

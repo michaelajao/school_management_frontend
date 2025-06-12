@@ -3,12 +3,16 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { AuthApiService } from "@/lib/api/auth";
+
+// Use the proper types from the API service
+import type { LoginCredentials, RegisterData, User as ApiUser } from "@/lib/api/auth";
 
 type User = {
   id: string;
   name: string;
   email: string;
-  role: "admin" | "teacher" | "student" | "parent" | "superadmin"; // Added superadmin
+  role: "super_admin" | "school_admin" | "assistant_admin" | "class_teacher" | "subject_teacher" | "student" | "parent";
 };
 
 type AuthContextType = {
@@ -22,57 +26,134 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Helper function to map backend roles to frontend roles
+function mapBackendRoleToFrontend(backendRole: string): User['role'] {
+  switch (backendRole?.toUpperCase()) {
+    case 'SUPER_ADMIN':
+      return 'super_admin';
+    case 'SCHOOL_ADMIN':
+    case 'ADMIN':
+      return 'school_admin';
+    case 'ASSISTANT_ADMIN':
+      return 'assistant_admin';
+    case 'CLASS_TEACHER':
+    case 'TEACHER':
+      return 'class_teacher';
+    case 'SUBJECT_TEACHER':
+      return 'subject_teacher';
+    case 'STUDENT':
+      return 'student';
+    case 'PARENT':
+      return 'parent';
+    case 'SCHOOL_MANAGEMENT':
+      return 'super_admin'; // Map SCHOOL_MANAGEMENT to super_admin for frontend
+    default:
+      return 'student'; // Default fallback
+  }
+}
+
+// Helper function to get dashboard path based on role  
+function getDashboardPath(role: User['role']): string {
+  switch (role) {
+    case 'super_admin':
+      return '/(users)/admin';
+    case 'school_admin':
+      return '/(users)/admin';
+    case 'assistant_admin':
+      return '/(users)/admin';
+    case 'class_teacher':
+      return '/(users)/teacher';
+    case 'subject_teacher':
+      return '/(users)/teacher';
+    case 'student':
+      return '/(users)/student';
+    case 'parent':
+      return '/(users)/parent';
+    default:
+      return '/(users)/student';
+  }
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isClient, setIsClient] = useState(false);
   const router = useRouter();
-
+  
   useEffect(() => {
-    // Check if user data exists in localStorage
+    // Mark that we're now on the client side
+    setIsClient(true);
+    
+    // Check if user data exists in localStorage and verify with backend
     const checkAuth = async () => {
       try {
-        const userData = localStorage.getItem("user");
-        if (!userData) {
+        const storedToken = AuthApiService.getStoredToken();
+        const storedUser = AuthApiService.getStoredUser();
+        
+        if (!storedToken || !storedUser) {
           setLoading(false);
           return;
         }
-        
-        setUser(JSON.parse(userData));
+
+        // Verify token with backend
+        try {
+          const profile = await AuthApiService.getProfile();
+          
+          // Convert API user to local user format
+          const localUser: User = {
+            id: profile.id,
+            name: `${profile.firstName} ${profile.lastName}`.trim(),
+            email: profile.email,
+            role: mapBackendRoleToFrontend(profile.role),
+          };
+          setUser(localUser);
+        } catch (error) {
+          // Token is invalid, clear storage
+          console.error("Token verification failed:", error);
+          localStorage.removeItem('auth_token');
+          localStorage.removeItem('user_data');
+          setUser(null);
+        }
       } catch (error) {
         console.error("Auth check failed:", error);
-        localStorage.removeItem("user");
+        localStorage.removeItem('auth_token');
+        localStorage.removeItem('user_data');
+        setUser(null);
       } finally {
         setLoading(false);
       }
     };
     
     checkAuth();
-  }, []);
-
-  const login = async (email: string, password: string) => {
+  }, []);  const login = async (email: string, password: string) => {
     setLoading(true);
     try {
-      // This is a mock implementation
-      // Replace with actual API call when backend is ready
+      const credentials: LoginCredentials = { 
+        email, 
+        password
+      };
       
-      // Mock successful login for now
-      const mockUser = {
-        id: "user-1",
-        name: email.split('@')[0],
-        email,
-        // Updated mock role assignment to include superadmin
-        role: email.includes('superadmin') ? 'superadmin' :
-              email.includes('admin') ? 'admin' : 
-              email.includes('teacher') ? 'teacher' : 
-              email.includes('parent') ? 'parent' : 'student',
-      } as User;
+      const response = await AuthApiService.login(credentials);
       
-      // Store in localStorage
-      localStorage.setItem("user", JSON.stringify(mockUser));
-      setUser(mockUser);
+      // Convert API user to local user format
+      const localUser: User = {
+        id: response.user.id,
+        name: `${response.user.firstName} ${response.user.lastName}`.trim(),
+        email: response.user.email,
+        role: mapBackendRoleToFrontend(response.user.role),
+      };
       
-      // Redirect based on role
-      router.push(`/dashboard/${mockUser.role}`);
+      setUser(localUser);
+      
+      // Redirect based on returned role
+      const dashboardPath = getDashboardPath(localUser.role);
+      console.log('🔄 Login Success Redirect:', {
+        backendRole: response.user.role,
+        frontendRole: localUser.role,
+        dashboardPath,
+        schoolId: response.user.schoolId
+      });
+      router.push(dashboardPath);
       
     } catch (error) {
       console.error("Login failed:", error);
@@ -85,65 +166,59 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signup = async (email: string, password: string) => {
     setLoading(true);
     try {
-      // Mock signup - will be replaced with actual API implementation
-      console.log("Signup attempt with:", email, password);
-      
-      // Determine mock role based on email (temporary)
-      // Updated mock role assignment to include superadmin
-      const role = email.includes('superadmin') ? 'superadmin' :
-                   email.includes('admin') ? 'admin' : 
-                   email.includes('teacher') ? 'teacher' : 
-                   email.includes('parent') ? 'parent' : 'student';
-
-      // NOTE: In a real app, the backend would handle user creation and 
-      // potentially send back a token or confirm the next step.
-      // We are simulating the step *after* initial signup confirmation.
-
-      // *** FIX: Create and set user object after signup ***
-      const mockUser = {
-        id: `user-${Date.now()}`, // Simple unique ID for mock
-        name: email.split('@')[0],
+      const registerData: RegisterData = {
         email,
-        role,
-      } as User;
+        password,
+        firstName: email.split('@')[0],
+        lastName: 'User',
+        role: 'STUDENT',
+      };
 
-      // Store in localStorage and update state
-      localStorage.setItem("user", JSON.stringify(mockUser));
-      setUser(mockUser);
-      // *** END FIX ***
+      const response = await AuthApiService.register(registerData);
+      
+      // Convert API user to local user format
+      const localUser: User = {
+        id: response.user.id,
+        name: `${response.user.firstName} ${response.user.lastName}`.trim(),
+        email: response.user.email,
+        role: mapBackendRoleToFrontend(response.user.role),
+      };
+        setUser(localUser);
 
-      // Redirect to payment gateway
-      const redirectPath = `/paymentGateway`;
-      console.log(`Redirecting to: ${redirectPath}`);
-      router.push(redirectPath);
+      // Redirect to dashboard using correct path
+      const dashboardPath = getDashboardPath(localUser.role);
+      router.push(dashboardPath);
       
     } catch (error) {
       console.error("Signup failed:", error);
-      // Re-throw the error so the AuthForm can display a generic message
       throw error; 
     } finally {
       setLoading(false);
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem("user");
+  const logout = async () => {
+    try {
+      await AuthApiService.logout();
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
     setUser(null);
-    router.push("/auth/signin"); // Redirect to signin on logout
+    router.push("/auth/signin");
   };
 
   return (
     <AuthContext.Provider
       value={{
         user,
-        loading,
+        loading: loading || !isClient, // Keep loading until client-side hydration is complete
         login,
         signup,
         logout,
-        isAuthenticated: !!user,
+        isAuthenticated: !!user && isClient,
       }}
     >
-      {children}
+      {isClient ? children : <div>Loading...</div>}
     </AuthContext.Provider>
   );
 }
@@ -155,3 +230,6 @@ export const useAuth = () => {
   }
   return context;
 };
+
+// Export helper functions for use in other components
+export { getDashboardPath, mapBackendRoleToFrontend };
