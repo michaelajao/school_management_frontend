@@ -3,7 +3,7 @@ import { Card } from '@/components/ui/card';
 type IconType = React.FC<React.SVGProps<SVGSVGElement>> | string;
 export type MetricCardProps = {
     icon: IconType;
-    value: number;
+    value: string | number;
     label: string;
     primaryColor: string;
     secondaryColor: string;

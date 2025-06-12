@@ -299,9 +299,9 @@ export class AuthApiService {
   /**
    * Resend email verification
    */
-  static async resendEmailVerification(): Promise<void> {
+  static async resendEmailVerification(email: string): Promise<void> {
     try {
-      await apiClient.post(`${this.BASE_PATH}/resend-verification`);
+      await apiClient.post(`${this.BASE_PATH}/resend-verification`, { email });
     } catch (error) {
       console.error('Resend email verification error:', error);
       throw error;

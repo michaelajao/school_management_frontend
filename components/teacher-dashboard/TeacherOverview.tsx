@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { DashboardMetrics } from "@/components/shared/DashboardMetrics";
-import { getTeacherDefaultMetrics } from "@/lib/default-metrics";
+import { getTeacherDefaultMetrics } from "@/components/shared/default-metrics";
 import { CanTakeAttendance, CanCreateAssignments, CanManageGrades } from "@/components/auth/PermissionWrapper";
 import { 
   CalendarDays, BookOpen, CheckCircle, MessageSquare,

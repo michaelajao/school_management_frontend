@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { config } from '@/lib/config';
-import api from '@/lib/api';
+import { apiClient } from '@/lib/api/client';
 
 interface HealthStatus {
   status: 'checking' | 'connected' | 'disconnected';
@@ -23,14 +23,14 @@ export function HealthCheck() {
         setHealthStatus({ status: 'checking' });
         
         // Test with our backend health endpoint
-        const response = await api.get('/', { timeout: 5000 });
+        const response = await apiClient.get('/health');
         
         setHealthStatus({
           status: 'connected',
           backendInfo: {
-            version: response.data?.version || '1.0.0',
-            environment: config.environment,
-            timestamp: new Date().toISOString(),
+            version: response.version || '1.0.0',
+            environment: response.environment || config.environment,
+            timestamp: response.timestamp || new Date().toISOString(),
           }
         });
       } catch (error: any) {
