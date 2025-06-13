@@ -5,7 +5,7 @@ import { Progress } from "@/components/ui/progress";
 import { DollarSign, TrendingUp, ArrowRight, GraduationCap, Users, IdCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PiPercentBold } from "react-icons/pi";
-import { MetricCard } from "../shared/MetricCard";
+import { SummaryCard } from "../admin/parents/SummaryCard";
 
 export function FinanceSummary() {
   // Mock finance data

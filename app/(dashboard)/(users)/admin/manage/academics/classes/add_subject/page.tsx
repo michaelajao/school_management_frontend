@@ -80,8 +80,8 @@ const SubjectList: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {subjectData.map((item) => (
-              <tr key={item.subject} className="border-b hover:bg-gray-50">
+            {subjectData.map((item, index) => (
+              <tr key={index} className="border-b hover:bg-gray-50">
                 <td className="py-3 px-4 whitespace-nowrap font-medium">{item.subject}</td>
                 <td className="py-3 px-4 whitespace-nowrap">{item.teachers}</td>
                 <td className="py-3 px-4 whitespace-nowrap">
