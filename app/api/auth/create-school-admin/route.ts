@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
         console.log('Education systems endpoint not available, proceeding without education system');
       }
     } catch (educationSystemError) {
-      console.log('Education systems endpoint error (will proceed without):', educationSystemError.message);
+      console.log('Education systems endpoint error (will proceed without):', educationSystemError);
     }
     
     // Create school data with optional education system

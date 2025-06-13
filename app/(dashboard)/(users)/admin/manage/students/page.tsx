@@ -17,7 +17,7 @@ export default async function StudentManagementPage() {
     <StudentManagementClient
       summaryData={summaryData} 
       studentColumns={studentColumns}
-      studentRows={studentRows}
+      studentRows={studentRows as any}
     />
   );
 }

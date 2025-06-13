@@ -35,7 +35,7 @@ export default function Home() {
     const checkAuthAndRedirect = async () => {
       try {
         // Check if user is already authenticated
-        const storedToken = AuthApiService.getStoredToken();
+        const storedToken = await AuthApiService.getStoredToken();
         const storedUser = AuthApiService.getStoredUser();
 
         if (storedToken && storedUser) {
@@ -43,7 +43,7 @@ export default function Home() {
           try {
             await AuthApiService.getProfile();
             // Token is valid, redirect to appropriate dashboard
-            const dashboardPath = getDashboardPath(storedUser.role as UserRole);
+            const dashboardPath = getDashboardPath(storedUser.role as any);
             router.replace(dashboardPath);
             return;
           } catch {

@@ -75,9 +75,8 @@ export default function AuthenticationTester() {
     const testLogin = async (identifier: string, password: string, role: any) => {
     try {
       const result = await AuthApiService.login({
-        identifier,
-        password,
-        role
+        email: identifier,
+        password
       });
       
       setTestResults(prev => [

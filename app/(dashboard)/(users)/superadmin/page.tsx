@@ -97,7 +97,7 @@ export default function SuperAdminDashboardPage() {
   // Redirect if not superadmin or loading
   if (loading) {
     return <div className="flex h-screen items-center justify-center">Loading...</div>;
-  }  if (user?.role !== "superadmin") {
+  }  if (user?.role !== "super_admin") {
     // Redirect to their appropriate dashboard or login using getDashboardPath helper
     redirect(user?.role ? getDashboardPath(user.role) : "/auth/signin");
     return null; // Prevent rendering during redirect

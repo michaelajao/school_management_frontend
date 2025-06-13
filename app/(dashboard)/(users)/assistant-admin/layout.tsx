@@ -10,7 +10,6 @@ export default function AssistantAdminLayout({
   return (
     <RouteGuard 
       allowedRoles={["assistant_admin", "school_admin", "super_admin"]}
-      fallback="/auth/signin"
     >
       <div className="min-h-screen bg-gray-50">
         {children}

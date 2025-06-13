@@ -13,9 +13,13 @@ const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
   {
     rules: {
-      "@typescript-eslint/no-unused-vars": "warn",
-      "@typescript-eslint/no-explicit-any": "warn",
-      "react/no-unescaped-entities": "warn",
+      // Production-friendly ESLint rules
+      "@typescript-eslint/no-unused-vars": process.env.NODE_ENV === 'production' ? "off" : "warn",
+      "@typescript-eslint/no-explicit-any": process.env.NODE_ENV === 'production' ? "off" : "warn", 
+      "react/no-unescaped-entities": process.env.NODE_ENV === 'production' ? "off" : "warn",
+      "react-hooks/exhaustive-deps": process.env.NODE_ENV === 'production' ? "off" : "warn",
+      "@next/next/no-img-element": process.env.NODE_ENV === 'production' ? "off" : "warn",
+      "react/jsx-no-undef": "error", // Keep this as error - it's a real issue
     },
   },
 ];

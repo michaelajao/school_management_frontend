@@ -38,7 +38,11 @@ export default function ManageStaffPage() {
           </div>
 
           <div className="w-full flex flex-col md:flex-row gap-2 mt-2">
-            <DeleteModal />
+            <DeleteModal 
+              title="Delete Staff Member"
+              deleteaction={() => console.log('Delete staff')}
+              onCancel={() => console.log('Cancel delete')}
+            />
             <button onClick={editstaff} className="flex items-center justify-center bg-[#008080] text-white rounded-lg px-1 py-1 text-sm md:w-1/6 cursor-pointer">
               <Pencil className="mr-2"  /> Edit Info
 

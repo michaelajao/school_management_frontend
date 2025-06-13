@@ -8,37 +8,42 @@ const BACKEND_URL = process.env.NODE_ENV === 'production'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { path: string[] } }
+  { params }: { params: Promise<{ path: string[] }> }
 ) {
-  return handleRequest('GET', request, params.path);
+  const { path } = await params;
+  return handleRequest('GET', request, path);
 }
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { path: string[] } }
+  { params }: { params: Promise<{ path: string[] }> }
 ) {
-  return handleRequest('POST', request, params.path);
+  const { path } = await params;
+  return handleRequest('POST', request, path);
 }
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { path: string[] } }
+  { params }: { params: Promise<{ path: string[] }> }
 ) {
-  return handleRequest('PUT', request, params.path);
+  const { path } = await params;
+  return handleRequest('PUT', request, path);
 }
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { path: string[] } }
+  { params }: { params: Promise<{ path: string[] }> }
 ) {
-  return handleRequest('DELETE', request, params.path);
+  const { path } = await params;
+  return handleRequest('DELETE', request, path);
 }
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { path: string[] } }
+  { params }: { params: Promise<{ path: string[] }> }
 ) {
-  return handleRequest('PATCH', request, params.path);
+  const { path } = await params;
+  return handleRequest('PATCH', request, path);
 }
 
 async function handleRequest(

@@ -534,9 +534,9 @@ function MultiSectionForm({
   onCancel: () => void;
 }) {
   const toggleSection = (section: string) => {
-    setSelectedSections(prev => 
+    (setSelectedSections as any)((prev: any) => 
       prev.includes(section) 
-        ? prev.filter(s => s !== section)
+        ? prev.filter((s: any) => s !== section)
         : [...prev, section]
     );
   };

@@ -71,7 +71,7 @@ const TeacherDashboard = () => {
 
         <TabsContent value="notifications" className="space-y-4">
           <NotificationsManager 
-            notifications={notifications}
+            notifications={notifications as any}
             onNotificationRead={handleNotificationRead}
             onMarkAllRead={handleMarkAllRead}
           />

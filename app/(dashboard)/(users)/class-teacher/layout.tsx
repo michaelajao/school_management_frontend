@@ -10,7 +10,6 @@ export default function ClassTeacherLayout({
   return (
     <RouteGuard 
       allowedRoles={["class_teacher", "school_admin", "super_admin"]}
-      fallback="/auth/signin"
     >
       <div className="min-h-screen bg-gray-50">
         {children}

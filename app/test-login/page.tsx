@@ -98,7 +98,7 @@ export default function TestLoginPage() {
       const tokenData = await tokenResponse.json();
       console.log('Token from cookie:', tokenData);
 
-      setResult(prev => ({
+      setResult((prev: any) => ({
         ...prev,
         cookieTest: tokenData
       }));

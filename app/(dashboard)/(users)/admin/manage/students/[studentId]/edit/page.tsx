@@ -4,7 +4,14 @@ import StudentEditFormClient from "@/components/admin/students/StudentEditFormCl
 
 
 
-export default async function StudentEditPage({ params }: { params: { studentId: string } }) {
+export default async function StudentEditPage({ 
+  params 
+}: { 
+  params: Promise<{ studentId: string }> 
+}) {
+  // Await params for Next.js 15 compatibility
+  const { studentId } = await params;
+  
   // In a real application, you would fetch this data from your database
   // This would be server-side data fetching
   const studentData = {
@@ -24,12 +31,12 @@ export default async function StudentEditPage({ params }: { params: { studentId:
   };
 
   // You could replace the above with actual data fetching:
-  // const studentData = await getStudentData(params.studentId);
+  // const studentData = await getStudentData(studentId);
 
   return (
     <StudentEditFormClient
       studentData={studentData} 
-      studentId={params.studentId}
+      studentId={studentId}
     />
   );
 }

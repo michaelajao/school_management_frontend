@@ -38,7 +38,7 @@ export default function PaymentPage() {
 
     setTimeout(() => {
       // Redirect based on user role (assuming admin for this flow)
-      if (user?.role === 'admin') {
+      if (user?.role === 'school_admin') {
         router.push(`/onboarding/admin`);
       } else {
         // Handle other roles or default redirect if needed

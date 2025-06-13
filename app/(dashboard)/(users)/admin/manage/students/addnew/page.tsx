@@ -50,11 +50,22 @@ interface StudentData {
   medicalCondition: string;
 }
 
-export default function StudentCreateForm({
-  onBack,
-  onSave,
-  onCancel,
-}: StudentFormProps) {
+export default function StudentCreatePage() {
+  // Page component handlers - these would typically navigate or call APIs
+  const handleBack = () => {
+    // Navigate back to student list
+    console.log('Navigate back');
+  };
+
+  const handleSave = (data: StudentData) => {
+    // Save student data via API
+    console.log('Save student:', data);
+  };
+
+  const handleCancel = () => {
+    // Navigate back or show confirmation
+    console.log('Cancel creation');
+  };
   const [date, setDate] = useState<Date | null>(null);
 
   // Initialize form with empty values for a new student
@@ -76,13 +87,11 @@ export default function StudentCreateForm({
     },
   });
 
-  const handleSave = (data: StudentData) => {
-    if (onSave) {
-      onSave({
-        ...data,
-        dateOfBirth: date,
-      });
-    }
+  const handleFormSave = (data: StudentData) => {
+    handleSave({
+      ...data,
+      dateOfBirth: date,
+    });
   };
   
   const inputStyles =
@@ -94,7 +103,7 @@ export default function StudentCreateForm({
   return (
     <div className="p-4">
       <button
-        onClick={onBack}
+        onClick={handleBack}
         className="flex items-center text-sm text-gray-500 hover:text-gray-700"
       >
         <ChevronLeft className="h-4 w-4 mr-1" />
@@ -107,7 +116,7 @@ export default function StudentCreateForm({
           
           <Form {...form}>
             <form
-              onSubmit={form.handleSubmit(handleSave)}
+              onSubmit={form.handleSubmit(handleFormSave)}
               className="space-y-6"
             >
               {/* Name */}
@@ -219,8 +228,9 @@ export default function StudentCreateForm({
                     <Calendar
                       mode="single"
                       selected={date || undefined}
-                      onSelect={setDate}
+                      onSelect={(selectedDate) => setDate(selectedDate || null)}
                       initialFocus
+                      required={false}
                     />
                   </PopoverContent>
                 </Popover>
@@ -468,7 +478,7 @@ export default function StudentCreateForm({
                   type="button"
                   variant="outline"
                   className="flex-1 border-gray-300 text-gray-700 hover:bg-gray-50 h-12 rounded-xl"
-                  onClick={onCancel}
+                  onClick={handleCancel}
                 >
                   Cancel
                 </Button>

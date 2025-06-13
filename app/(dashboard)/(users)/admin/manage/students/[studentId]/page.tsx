@@ -4,7 +4,14 @@ import StudentProfileClient from "@/components/admin/students/StudentProfileClie
 
 
 
-export default async function StudentProfilePage({ params }: { params: { studentId: string } }) {
+export default async function StudentProfilePage({ 
+  params 
+}: { 
+  params: Promise<{ studentId: string }> 
+}) {
+  // Await params for Next.js 15 compatibility
+  const { studentId } = await params;
+  
   //  fetch this data from your database
   // This would be server-side data fetching
   const studentData = {
@@ -28,7 +35,5 @@ export default async function StudentProfilePage({ params }: { params: { student
     lastLogin: "20 minutes ago",
   };
 
-
-
-  return <StudentProfileClient studentData={studentData} studentId={params.studentId} />;
+  return <StudentProfileClient studentData={studentData} studentId={studentId} />;
 }
