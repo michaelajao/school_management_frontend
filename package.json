@@ -6,7 +6,7 @@
     "dev": "next dev --turbopack",
     "build": "NODE_ENV=production next build",
     "build:railway": "ESLINT_CONFIG_FILE=.eslintrc.production.json NODE_ENV=production next build",
-    "start": "next start",
+    "start": "node server.js",
     "lint": "next lint",
     "lint:prod": "ESLINT_CONFIG_FILE=.eslintrc.production.json next lint",
     "test": "jest"

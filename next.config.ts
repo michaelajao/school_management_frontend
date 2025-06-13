@@ -1,8 +1,13 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Disable strict mode for development
+  // Enable strict mode for better error detection
   reactStrictMode: true,
+  
+  // Configure port for Railway deployment
+  ...(process.env.NODE_ENV === 'production' && {
+    port: parseInt(process.env.PORT || '3000', 10),
+  }),
   
   // Enable ESLint during build for code quality
   eslint: {
