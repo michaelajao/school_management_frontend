@@ -4,10 +4,7 @@ const nextConfig: NextConfig = {
   // Enable strict mode for better error detection
   reactStrictMode: true,
   
-  // Configure port for Railway deployment
-  ...(process.env.NODE_ENV === 'production' && {
-    port: parseInt(process.env.PORT || '3000', 10),
-  }),
+  // Railway deployment is handled by server.js
   
   // Enable ESLint during build for code quality
   eslint: {
@@ -59,7 +56,7 @@ const nextConfig: NextConfig = {
             "img-src 'self' data: https:",
             "font-src 'self' data:",
             "connect-src 'self' " + (process.env.NODE_ENV === 'production' 
-              ? 'https://schoolmanagementbackend-production-be10.up.railway.app' 
+              ? (process.env.RAILWAY_BACKEND_URL || 'https://schoolmanagementbackend-production-be10.up.railway.app')
               : 'http://localhost:4000'),
             "frame-ancestors 'none'",
             "base-uri 'self'",

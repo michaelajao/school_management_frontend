@@ -3,7 +3,7 @@ import { cookies } from 'next/headers';
 
 // Get the backend URL from environment (server-side only)
 const BACKEND_URL = process.env.NODE_ENV === 'production'
-  ? 'https://schoolmanagementbackend-production-be10.up.railway.app'
+  ? (process.env.RAILWAY_BACKEND_URL || 'https://schoolmanagementbackend-production-be10.up.railway.app')
   : 'http://localhost:4000';
 
 export async function GET(
@@ -115,9 +115,18 @@ async function handleRequest(
     });
     
   } catch (error) {
-    console.error('Proxy API error:', error);
+    console.error('Proxy API error:', {
+      error: error instanceof Error ? error.message : error,
+      backendUrl: BACKEND_URL,
+      path: pathSegments.join('/'),
+      method,
+      nodeEnv: process.env.NODE_ENV
+    });
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { 
+        error: 'Proxy request failed',
+        details: process.env.NODE_ENV === 'development' ? error instanceof Error ? error.message : error : undefined
+      },
       { status: 500 }
     );
   }

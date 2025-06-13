@@ -29,6 +29,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 function mapBackendRoleToFrontend(backendRole: string): User['role'] {
   switch (backendRole?.toUpperCase()) {
     case 'SUPER_ADMIN':
+    case 'SCHOOL_MANAGEMENT':
       return 'super_admin';
     case 'SCHOOL_ADMIN':
     case 'ADMIN':
@@ -44,9 +45,10 @@ function mapBackendRoleToFrontend(backendRole: string): User['role'] {
       return 'student';
     case 'PARENT':
       return 'parent';
-    case 'SCHOOL_MANAGEMENT':
-      return 'super_admin'; // Map SCHOOL_MANAGEMENT to super_admin for frontend
+    case 'STAFF':
+      return 'assistant_admin'; // Map STAFF to assistant_admin for frontend
     default:
+      console.warn(`Unknown backend role: ${backendRole}, defaulting to student`);
       return 'student'; // Default fallback
   }
 }
@@ -86,7 +88,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Check if user data exists in localStorage and verify with backend
     const checkAuth = async () => {
       try {
-        const storedToken = AuthApiService.getStoredToken();
+        const storedToken = await AuthApiService.getStoredToken();
         const storedUser = AuthApiService.getStoredUser();
         
         if (!storedToken || !storedUser) {

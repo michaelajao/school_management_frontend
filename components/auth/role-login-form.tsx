@@ -19,7 +19,7 @@ const roleConfig = {
   super_admin: {
     title: "Super Admin Login",
     description: "Access your administrative dashboard",
-    backendRole: "SCHOOL_MANAGEMENT",
+    backendRole: "SUPER_ADMIN",
     identifierType: "email",
     identifierLabel: "Email Address",
     identifierPlaceholder: "Enter your email address"
@@ -27,7 +27,7 @@ const roleConfig = {
   principal: {
     title: "Principal Login",
     description: "Access school operations dashboard",
-    backendRole: "PRINCIPAL",
+    backendRole: "SCHOOL_ADMIN",
     identifierType: "email",
     identifierLabel: "Email Address",
     identifierPlaceholder: "Enter your email address"
@@ -35,7 +35,7 @@ const roleConfig = {
   head_teacher: {
     title: "Head Teacher Login",
     description: "Access academic oversight dashboard",
-    backendRole: "HEAD_TEACHER",
+    backendRole: "ASSISTANT_ADMIN",
     identifierType: "email",
     identifierLabel: "Email Address", 
     identifierPlaceholder: "Enter your email address"
@@ -43,7 +43,7 @@ const roleConfig = {
   restricted_admin: {
     title: "Admin Login",
     description: "Access limited administrative functions",
-    backendRole: "RESTRICTED_ADMIN",
+    backendRole: "ASSISTANT_ADMIN",
     identifierType: "email",
     identifierLabel: "Email Address",
     identifierPlaceholder: "Enter your email address"
@@ -51,7 +51,7 @@ const roleConfig = {
   teacher: {
     title: "Teacher Login", 
     description: "Access your teaching dashboard",
-    backendRole: "TEACHER",
+    backendRole: "CLASS_TEACHER",
     identifierType: "email",
     identifierLabel: "Email Address",
     identifierPlaceholder: "Enter your email address"
