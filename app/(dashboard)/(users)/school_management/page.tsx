@@ -9,11 +9,10 @@ import { Progress } from "@/components/ui/progress";
 import { 
   Building, Users, GraduationCap, DollarSign, 
   TrendingUp, Bell, Settings, BarChart3, 
-  FileText, Calendar, MessageSquare, UserPlus 
+  FileText, Calendar, UserPlus 
 } from "lucide-react";
 
 const SchoolManagementDashboard = () => {
-  const [selectedPeriod, setSelectedPeriod] = useState("This Month");
 
   const dashboardMetrics = [
     {

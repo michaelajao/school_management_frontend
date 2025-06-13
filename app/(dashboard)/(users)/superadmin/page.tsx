@@ -1,13 +1,11 @@
 "use client";
 
-import { useState } from "react";
 import { useAuth, getDashboardPath } from "@/contexts/auth-context";
 import { redirect } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
 import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
 // Import specific chart components from recharts
 import {
@@ -15,7 +13,7 @@ import {
   Tooltip, LineChart, Line, BarChart, Bar
 } from "recharts";
 import {
-  Search, Building, Users, TrendingUp, CreditCard,
+  Building, Users, TrendingUp, CreditCard,
   PlusCircle, DollarSign, ArrowUp, ArrowDown,
   Download, AlertTriangle, Bell, CheckCircle, Eye, ArrowRight,
   Globe, Settings, School, Layers, Link as LinkIcon, Calendar

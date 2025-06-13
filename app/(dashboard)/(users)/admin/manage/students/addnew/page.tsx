@@ -397,7 +397,7 @@ export default function StudentCreateForm({
                       {Array.from({ length: 8 }, (_, i) => i + 1).map(
                         (feet) => (
                           <SelectItem key={feet} value={feet.toString()}>
-                            {feet}'
+                            {feet}&apos;
                           </SelectItem>
                         )
                       )}
@@ -419,7 +419,7 @@ export default function StudentCreateForm({
                     <SelectContent>
                       {Array.from({ length: 12 }, (_, i) => i).map((inch) => (
                         <SelectItem key={inch} value={inch.toString()}>
-                          {inch}"
+                          {inch}&quot;
                         </SelectItem>
                       ))}
                     </SelectContent>

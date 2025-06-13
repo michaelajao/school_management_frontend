@@ -9,8 +9,8 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { 
   BookOpen, Users, BarChart3, Calendar, 
-  ClipboardCheck, FileText, MessageSquare, Settings,
-  TrendingUp, Award, Bell, Clock, Target, CheckCircle
+  ClipboardCheck, FileText, MessageSquare,
+  Bell, Clock, Target, CheckCircle
 } from "lucide-react";
 
 const SubjectTeacherDashboard = () => {
@@ -213,7 +213,7 @@ const SubjectTeacherDashboard = () => {
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <Calendar className="w-5 h-5 mr-2" />
-                  Today's Lessons
+                  Today&apos;s Lessons
                 </CardTitle>
                 <CardDescription>Your teaching schedule for today</CardDescription>
               </CardHeader>

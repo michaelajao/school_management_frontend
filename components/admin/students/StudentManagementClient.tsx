@@ -1,12 +1,20 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useRouter } from "next/navigation";
 import { useState, useCallback } from "react";
-import { GenericTable } from "@/components/ui/GenericTable";
+import { GenericTable, Column } from "@/components/ui/GenericTable";
 import { DashboardMetrics } from "@/components/shared/DashboardMetrics";
 import { GraduationCap } from 'lucide-react'
+
+// Define Student interface
+interface Student {
+  id: string;
+  name: string;
+  email: string;
+  studentId: string;
+  class: string;
+  [key: string]: unknown;
+}
 
 export interface StudentManagementClientProps {
   summaryData: {
@@ -14,8 +22,8 @@ export interface StudentManagementClientProps {
     activeParents: number;
     pendingParents: number;
   };
-  studentColumns: any[];
-  studentRows: any[];
+  studentColumns: Column<Student>[];
+  studentRows: Student[];
 }
 
 export default function StudentManagementClient({ 

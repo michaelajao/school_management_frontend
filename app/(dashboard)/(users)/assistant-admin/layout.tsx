@@ -2,7 +2,7 @@
 
 import { useAuth } from "@/contexts/auth-context";
 import { RouteGuard } from "@/components/auth/RouteGuard";
-import { hasPermission } from "@/lib/rbac";
+import { hasPermission, UserRole } from "@/lib/rbac";
 
 export default function AssistantAdminLayout({
   children,
@@ -11,12 +11,6 @@ export default function AssistantAdminLayout({
 }) {
   const { user } = useAuth();
 
-  // Check if user has assistant admin permissions
-  const canAccess = user && (
-    user.role === "assistant_admin" ||
-    hasPermission(user.role as any, "manage_students") ||
-    hasPermission(user.role as any, "manage_parents")
-  );
 
   return (
     <RouteGuard 

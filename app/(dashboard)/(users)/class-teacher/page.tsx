@@ -8,9 +8,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { 
-  Users, GraduationCap, ClipboardCheck, MessageSquare, 
-  BarChart3, Calendar, BookOpen, Award, Bell, Settings,
-  TrendingUp, UserCheck, AlertCircle, FileText, CheckCircle
+  Users, ClipboardCheck, MessageSquare, 
+  BarChart3, Calendar, BookOpen, Bell,
+  UserCheck, AlertCircle, FileText, CheckCircle
 } from "lucide-react";
 
 const ClassTeacherDashboard = () => {
@@ -207,7 +207,7 @@ const ClassTeacherDashboard = () => {
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <Calendar className="w-5 h-5 mr-2" />
-                  Today's Schedule
+                  Today&apos;s Schedule
                 </CardTitle>
                 <CardDescription>Your class schedule for today</CardDescription>
               </CardHeader>
@@ -388,7 +388,7 @@ const ClassTeacherDashboard = () => {
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
-                  <h3 className="font-semibold">Today's Attendance</h3>
+                  <h3 className="font-semibold">Today&apos;s Attendance</h3>
                   <div className="p-4 bg-green-50 rounded-lg">
                     <div className="flex justify-between items-center mb-2">
                       <span className="text-sm font-medium">Present</span>

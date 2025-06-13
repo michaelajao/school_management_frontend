@@ -1,7 +1,5 @@
 "use client"
-import React, { useState } from 'react';
-import SearchAndActions from '@/components/admin/SearchAndActions';
-import { TimetableManagement } from '@/components/admin/TimetableManagement';
+import React from 'react';
 import ClassActions from '@/components/admin/ClassActions';
 import ClassTables from '@/components/admin/ClassTables';
 import { BookOpenText, GraduationCap, School } from 'lucide-react';

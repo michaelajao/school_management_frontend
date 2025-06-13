@@ -9,14 +9,13 @@ import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   User, GraduationCap, Calendar, MessageSquare, 
-  TrendingUp, Bell, DollarSign, BookOpen, Clock,
-  AlertCircle, CheckCircle, CalendarDays, Star,
-  FileText, Users, BarChart3, Award
+  Bell, DollarSign, BookOpen, Clock,
+  AlertCircle, CheckCircle, Star,
+  FileText, Users, Award
 } from "lucide-react";
 
 const ParentDashboard = () => {
   const [selectedChild, setSelectedChild] = useState("Emma Johnson");
-  const [activeTab, setActiveTab] = useState("overview");
   const [notifications, setNotifications] = useState([
     { id: 1, type: "assignment", title: "Math homework due tomorrow", message: "Emma has a math homework assignment due tomorrow", child: "Emma Johnson", read: false, date: "2025-06-06" },
     { id: 2, type: "fee", title: "School fee payment due", message: "Monthly fee payment due in 3 days", child: "all", read: false, date: "2025-06-08" },
@@ -171,7 +170,7 @@ const ParentDashboard = () => {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Welcome, Mr. & Mrs. Johnson!</h1>
-          <p className="text-gray-600 mt-1">Monitor your children's academic progress and school activities</p>
+          <p className="text-gray-600 mt-1">Monitor your children&apos;s academic progress and school activities</p>
         </div>        <div className="flex space-x-2">
           <Button className="bg-blue-600 hover:bg-blue-700 relative">
             <MessageSquare className="w-4 h-4 mr-2" />
@@ -824,7 +823,7 @@ const ParentDashboard = () => {
                   Mark All as Read
                 </Button>
               </CardTitle>
-              <CardDescription>Important updates about your children's education</CardDescription>
+              <CardDescription>Important updates about your children&apos;s education</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">

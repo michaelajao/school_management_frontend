@@ -8,11 +8,10 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { 
   BookOpen, Calendar, FileText, Award, 
-  Clock, TrendingUp, Target, MessageCircle 
+  MessageCircle 
 } from "lucide-react";
 
 const StudentDashboard = () => {
-  const [selectedSubject, setSelectedSubject] = useState("Mathematics");
 
   const dashboardMetrics = [
     {
@@ -150,7 +149,7 @@ const StudentDashboard = () => {
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <Calendar className="w-5 h-5 mr-2" />
-                  Today's Schedule
+                  Today&apos;s Schedule
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">

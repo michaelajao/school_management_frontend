@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
@@ -145,7 +144,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
     
     checkAuth();
-  }, []);  const login = async (email: string, password: string) => {
+  }, []);
+  
+  const login = async (email: string, password: string) => {
     setLoading(true);
     try {
       const credentials: LoginCredentials = { 

@@ -105,7 +105,7 @@ export default function EditStaffForm() {
         <div>
           <label className="block text-sm font-medium mb-2">Document</label>
           <div className="bg-blue-50 border border-blue-300 rounded-lg px-4 py-3 flex items-center justify-between">
-            <span className="text-sm text-blue-900">Jenny Johnson's CV</span>
+            <span className="text-sm text-blue-900">Jenny Johnson&apos;s CV</span>
             <Download className="w-5 h-5 text-blue-600 cursor-pointer" />
           </div>
         </div>

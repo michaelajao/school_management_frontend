@@ -1,6 +1,5 @@
 "use client";
 
-import { useAuth } from "@/contexts/auth-context";
 import { RouteGuard } from "@/components/auth/RouteGuard";
 
 export default function SubjectTeacherLayout({

@@ -9,14 +9,13 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { 
   Users, UserPlus, MessageSquare, BarChart3, 
-  ClipboardCheck, Calendar, Bell, Settings,
+  ClipboardCheck, Calendar, Bell,
   GraduationCap, UserCheck, TrendingUp, AlertCircle
 } from "lucide-react";
 import Link from "next/link";
 
 const AssistantAdminDashboard = () => {
   const { user } = useAuth();
-  const [selectedPeriod, setSelectedPeriod] = useState("This Week");
 
   // Mock data - replace with actual API calls
   const dashboardMetrics = [
@@ -130,7 +129,7 @@ const AssistantAdminDashboard = () => {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Assistant Admin Dashboard</h1>
-          <p className="text-gray-600 mt-1">Welcome back, {user?.name}! Here's your daily overview.</p>
+          <p className="text-gray-600 mt-1">Welcome back, {user?.name}! Here&apos;s your daily overview.</p>
         </div>
         <div className="flex space-x-2">
           <Button className="bg-[#1B5B5E] hover:bg-[#134345]">
@@ -189,7 +188,7 @@ const AssistantAdminDashboard = () => {
               <CardHeader>
                 <CardTitle className="flex items-center">
                   <ClipboardCheck className="w-5 h-5 mr-2" />
-                  Today's Tasks
+                  Today&apos;s Tasks
                 </CardTitle>
                 <CardDescription>Your daily responsibilities and progress</CardDescription>
               </CardHeader>
@@ -359,7 +358,7 @@ const AssistantAdminDashboard = () => {
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-4">
-                    <h3 className="font-semibold">Today's Attendance</h3>
+                    <h3 className="font-semibold">Today&apos;s Attendance</h3>
                     <div className="p-4 bg-green-50 rounded-lg">
                       <div className="flex justify-between items-center mb-2">
                         <span className="text-sm font-medium">Overall Attendance</span>
