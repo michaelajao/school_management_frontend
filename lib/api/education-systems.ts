@@ -191,13 +191,6 @@ export const educationSystemsApi = {
   }
 };
 
-// Export types for use in components
-export type {
-  EducationSystem,
-  GradeLevel,
-  SubjectArea,
-  AssessmentType
-};
 
 // Helper functions for UI components
 export const educationSystemHelpers = {

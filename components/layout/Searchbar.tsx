@@ -13,7 +13,7 @@ export default function SearchBar() {
   const router = useRouter();
   //const { role } = useAuth();
   // For simplicity purposes; this will be removed.
-  const role: 'admin' = 'admin';
+  const role = 'admin' as const;
 
 
   const [open, setOpen] = useState(false);

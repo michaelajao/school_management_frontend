@@ -1,5 +1,6 @@
 import { apiClient } from './client';
-import type { ApiResponse, PaginatedResponse } from './client';
+import type { ApiResponse } from './client';
+import type { PaginatedResponse } from './grades';
 
 // Staff types
 export interface Staff {
@@ -69,7 +70,7 @@ export interface StaffStats {
 export class StaffApiService {
   private static baseUrl = '/api/proxy/staff';
 
-  static async getAll(filters?: StaffFilters): Promise<ApiResponse<PaginatedStaff>> {
+  static async getAll(filters?: StaffFilters): Promise<PaginatedStaff> {
     const params = new URLSearchParams();
     
     if (filters) {
@@ -84,39 +85,39 @@ export class StaffApiService {
     return apiClient.get<PaginatedStaff>(url);
   }
 
-  static async getById(id: string): Promise<ApiResponse<Staff>> {
+  static async getById(id: string): Promise<Staff> {
     return apiClient.get<Staff>(`${this.baseUrl}/${id}`);
   }
 
-  static async create(data: CreateStaffData): Promise<ApiResponse<Staff>> {
+  static async create(data: CreateStaffData): Promise<Staff> {
     return apiClient.post<Staff>(this.baseUrl, data);
   }
 
-  static async update(id: string, data: UpdateStaffData): Promise<ApiResponse<Staff>> {
+  static async update(id: string, data: UpdateStaffData): Promise<Staff> {
     return apiClient.put<Staff>(`${this.baseUrl}/${id}`, data);
   }
 
-  static async delete(id: string): Promise<ApiResponse<void>> {
+  static async delete(id: string): Promise<void> {
     return apiClient.delete<void>(`${this.baseUrl}/${id}`);
   }
 
-  static async getStats(): Promise<ApiResponse<StaffStats>> {
+  static async getStats(): Promise<StaffStats> {
     return apiClient.get<StaffStats>(`${this.baseUrl}/stats`);
   }
 
-  static async getByDepartment(department: string): Promise<ApiResponse<Staff[]>> {
+  static async getByDepartment(department: string): Promise<Staff[]> {
     return apiClient.get<Staff[]>(`${this.baseUrl}/department/${encodeURIComponent(department)}`);
   }
 
-  static async updateStatus(id: string, status: 'active' | 'inactive' | 'suspended'): Promise<ApiResponse<Staff>> {
+  static async updateStatus(id: string, status: 'active' | 'inactive' | 'suspended'): Promise<Staff> {
     return apiClient.patch<Staff>(`${this.baseUrl}/${id}/status`, { status });
   }
 
-  static async bulkUpdate(updates: Array<{ id: string; data: UpdateStaffData }>): Promise<ApiResponse<Staff[]>> {
+  static async bulkUpdate(updates: Array<{ id: string; data: UpdateStaffData }>): Promise<Staff[]> {
     return apiClient.put<Staff[]>(`${this.baseUrl}/bulk`, { updates });
   }
 
-  static async exportStaff(filters?: StaffFilters): Promise<ApiResponse<Blob>> {
+  static async exportStaff(filters?: StaffFilters): Promise<Blob> {
     const params = new URLSearchParams();
     
     if (filters) {

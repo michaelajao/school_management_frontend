@@ -71,18 +71,15 @@ export function ClientAnnouncementForm() {
     }));
   };
 
-  const handleNestedChange = <
-    K extends keyof AnnouncementFormData,
-    S extends keyof AnnouncementFormData[K]
-  >(
-    parent: K,
-    field: S,
-    value: AnnouncementFormData[K][S]
+  const handleNestedChange = (
+    parent: keyof AnnouncementFormData,
+    field: string,
+    value: any
   ) => {
     setFormData((prev) => ({
       ...prev,
       [parent]: {
-        ...prev[parent],
+        ...(prev[parent] as any || {}),
         [field]: value,
       },
     }));

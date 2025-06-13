@@ -1,5 +1,6 @@
 import { apiClient } from './client';
-import type { ApiResponse, PaginatedResponse } from './client';
+import type { ApiResponse } from './client';
+import type { PaginatedResponse } from './grades';
 
 // Student types
 export interface Student {
@@ -119,7 +120,7 @@ export interface StudentPromotion {
 export class StudentsApiService {
   private static baseUrl = '/api/proxy/students';
 
-  static async getAll(filters?: StudentFilters): Promise<ApiResponse<PaginatedStudents>> {
+  static async getAll(filters?: StudentFilters): Promise<PaginatedStudents> {
     const params = new URLSearchParams();
     
     if (filters) {
@@ -139,75 +140,75 @@ export class StudentsApiService {
     return apiClient.get<PaginatedStudents>(url);
   }
 
-  static async getById(id: string): Promise<ApiResponse<Student>> {
+  static async getById(id: string): Promise<Student> {
     return apiClient.get<Student>(`${this.baseUrl}/${id}`);
   }
 
-  static async create(data: CreateStudentData): Promise<ApiResponse<Student>> {
+  static async create(data: CreateStudentData): Promise<Student> {
     return apiClient.post<Student>(this.baseUrl, data);
   }
 
-  static async update(id: string, data: UpdateStudentData): Promise<ApiResponse<Student>> {
+  static async update(id: string, data: UpdateStudentData): Promise<Student> {
     return apiClient.put<Student>(`${this.baseUrl}/${id}`, data);
   }
 
-  static async delete(id: string): Promise<ApiResponse<void>> {
+  static async delete(id: string): Promise<void> {
     return apiClient.delete<void>(`${this.baseUrl}/${id}`);
   }
 
-  static async getStats(): Promise<ApiResponse<StudentStats>> {
+  static async getStats(): Promise<StudentStats> {
     return apiClient.get<StudentStats>(`${this.baseUrl}/stats`);
   }
 
-  static async getByClass(classId: string): Promise<ApiResponse<Student[]>> {
+  static async getByClass(classId: string): Promise<Student[]> {
     return apiClient.get<Student[]>(`${this.baseUrl}/class/${classId}`);
   }
 
-  static async getByGrade(grade: string): Promise<ApiResponse<Student[]>> {
+  static async getByGrade(grade: string): Promise<Student[]> {
     return apiClient.get<Student[]>(`${this.baseUrl}/grade/${encodeURIComponent(grade)}`);
   }
 
-  static async getByParent(parentId: string): Promise<ApiResponse<Student[]>> {
+  static async getByParent(parentId: string): Promise<Student[]> {
     return apiClient.get<Student[]>(`${this.baseUrl}/parent/${parentId}`);
   }
 
-  static async assignToClass(studentId: string, classId: string): Promise<ApiResponse<Student>> {
+  static async assignToClass(studentId: string, classId: string): Promise<Student> {
     return apiClient.patch<Student>(`${this.baseUrl}/${studentId}/assign-class`, { classId });
   }
 
-  static async removeFromClass(studentId: string): Promise<ApiResponse<Student>> {
+  static async removeFromClass(studentId: string): Promise<Student> {
     return apiClient.patch<Student>(`${this.baseUrl}/${studentId}/remove-class`);
   }
 
-  static async transfer(data: StudentTransfer): Promise<ApiResponse<Student>> {
+  static async transfer(data: StudentTransfer): Promise<Student> {
     return apiClient.post<Student>(`${this.baseUrl}/${data.studentId}/transfer`, data);
   }
 
-  static async bulkTransfer(transfers: StudentTransfer[]): Promise<ApiResponse<Student[]>> {
+  static async bulkTransfer(transfers: StudentTransfer[]): Promise<Student[]> {
     return apiClient.post<Student[]>(`${this.baseUrl}/bulk-transfer`, { transfers });
   }
 
-  static async promote(data: StudentPromotion): Promise<ApiResponse<Student[]>> {
+  static async promote(data: StudentPromotion): Promise<Student[]> {
     return apiClient.post<Student[]>(`${this.baseUrl}/promote`, data);
   }
 
-  static async graduate(studentIds: string[], graduationDate: string): Promise<ApiResponse<Student[]>> {
+  static async graduate(studentIds: string[], graduationDate: string): Promise<Student[]> {
     return apiClient.post<Student[]>(`${this.baseUrl}/graduate`, { studentIds, graduationDate });
   }
 
-  static async updateStatus(studentId: string, status: 'active' | 'inactive' | 'graduated' | 'transferred', reason?: string): Promise<ApiResponse<Student>> {
+  static async updateStatus(studentId: string, status: 'active' | 'inactive' | 'graduated' | 'transferred', reason?: string): Promise<Student> {
     return apiClient.patch<Student>(`${this.baseUrl}/${studentId}/status`, { status, reason });
   }
 
-  static async addParent(studentId: string, parentId: string): Promise<ApiResponse<Student>> {
+  static async addParent(studentId: string, parentId: string): Promise<Student> {
     return apiClient.post<Student>(`${this.baseUrl}/${studentId}/parents`, { parentId });
   }
 
-  static async removeParent(studentId: string, parentId: string): Promise<ApiResponse<Student>> {
+  static async removeParent(studentId: string, parentId: string): Promise<Student> {
     return apiClient.delete<Student>(`${this.baseUrl}/${studentId}/parents/${parentId}`);
   }
 
-  static async getAcademicRecord(studentId: string): Promise<ApiResponse<{
+  static async getAcademicRecord(studentId: string): Promise<{
     student: Student;
     grades: Array<{
       subject: string;
@@ -219,15 +220,15 @@ export class StudentsApiService {
       date: string;
       status: string;
     }>;
-  }>> {
+  }> {
     return apiClient.get(`${this.baseUrl}/${studentId}/academic-record`);
   }
 
-  static async generateStudentCard(studentId: string): Promise<ApiResponse<Blob>> {
+  static async generateStudentCard(studentId: string): Promise<Blob> {
     return apiClient.get<Blob>(`${this.baseUrl}/${studentId}/student-card`, { responseType: 'blob' });
   }
 
-  static async bulkImport(file: File): Promise<ApiResponse<{ successful: number; failed: number; errors: string[] }>> {
+  static async bulkImport(file: File): Promise<{ successful: number; failed: number; errors: string[] }> {
     const formData = new FormData();
     formData.append('file', file);
     
@@ -236,7 +237,7 @@ export class StudentsApiService {
     });
   }
 
-  static async exportStudents(filters?: StudentFilters): Promise<ApiResponse<Blob>> {
+  static async exportStudents(filters?: StudentFilters): Promise<Blob> {
     const params = new URLSearchParams();
     
     if (filters) {

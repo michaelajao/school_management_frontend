@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import React from "react";
 
-export type UserRole = 'student' | 'staff' | 'admin' | 'superadmin' | 'parent';
+export type UserRole = 'student' | 'teacher' | 'admin' | 'parent';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -25,7 +25,7 @@ export function cn(...inputs: ClassValue[]) {
 
 export const inviteLinks: Record<string, UserRole> = {
   'abc123xyz': 'student',
-  'def456uvw': 'staff',
+  'def456uvw': 'teacher',
   'ghi789rst': 'admin',
 };
 

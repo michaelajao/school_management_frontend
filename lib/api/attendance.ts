@@ -1,4 +1,5 @@
 import { apiClient } from './client';
+import type { PaginatedResponse } from './grades';
 
 export interface AttendanceRecord {
   id: string;
@@ -65,13 +66,7 @@ export interface AttendanceFilters {
   sortOrder?: 'ASC' | 'DESC';
 }
 
-export interface PaginatedAttendance {
-  data: AttendanceRecord[];
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
-}
+export type PaginatedAttendance = PaginatedResponse<AttendanceRecord>;
 
 export interface AttendanceStats {
   totalClasses: number;

@@ -65,7 +65,7 @@ export default function PricingView() {
     // Redirect based on user role
     setTimeout(() => {
       // Assuming 'admin' role corresponds to superadmin/school setup
-      if (user?.role === 'admin') {
+      if (user?.role === 'school_admin' || user?.role === 'super_admin') {
         router.push(`/onboarding/admin`);
       } else {
         // Handle other roles or default redirect if needed

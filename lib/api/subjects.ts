@@ -1,5 +1,6 @@
 import { apiClient } from './client';
-import type { ApiResponse, PaginatedResponse } from './client';
+import type { ApiResponse } from './client';
+import type { PaginatedResponse } from './grades';
 
 // Subject types
 export interface Subject {
@@ -86,7 +87,7 @@ export interface SubjectClassAssignment {
 export class SubjectsApiService {
   private static baseUrl = '/api/proxy/subjects';
 
-  static async getAll(filters?: SubjectFilters): Promise<ApiResponse<PaginatedSubjects>> {
+  static async getAll(filters?: SubjectFilters): Promise<PaginatedSubjects> {
     const params = new URLSearchParams();
     
     if (filters) {
@@ -101,89 +102,89 @@ export class SubjectsApiService {
     return apiClient.get<PaginatedSubjects>(url);
   }
 
-  static async getById(id: string): Promise<ApiResponse<Subject>> {
+  static async getById(id: string): Promise<Subject> {
     return apiClient.get<Subject>(`${this.baseUrl}/${id}`);
   }
 
-  static async create(data: CreateSubjectData): Promise<ApiResponse<Subject>> {
+  static async create(data: CreateSubjectData): Promise<Subject> {
     return apiClient.post<Subject>(this.baseUrl, data);
   }
 
-  static async update(id: string, data: UpdateSubjectData): Promise<ApiResponse<Subject>> {
+  static async update(id: string, data: UpdateSubjectData): Promise<Subject> {
     return apiClient.put<Subject>(`${this.baseUrl}/${id}`, data);
   }
 
-  static async delete(id: string): Promise<ApiResponse<void>> {
+  static async delete(id: string): Promise<void> {
     return apiClient.delete<void>(`${this.baseUrl}/${id}`);
   }
 
-  static async getStats(): Promise<ApiResponse<SubjectStats>> {
+  static async getStats(): Promise<SubjectStats> {
     return apiClient.get<SubjectStats>(`${this.baseUrl}/stats`);
   }
 
-  static async getByGradeLevel(gradeLevel: string): Promise<ApiResponse<Subject[]>> {
+  static async getByGradeLevel(gradeLevel: string): Promise<Subject[]> {
     return apiClient.get<Subject[]>(`${this.baseUrl}/grade-level/${encodeURIComponent(gradeLevel)}`);
   }
 
-  static async getByDepartment(department: string): Promise<ApiResponse<Subject[]>> {
+  static async getByDepartment(department: string): Promise<Subject[]> {
     return apiClient.get<Subject[]>(`${this.baseUrl}/department/${encodeURIComponent(department)}`);
   }
 
-  static async getCoreSubjects(gradeLevel?: string): Promise<ApiResponse<Subject[]>> {
+  static async getCoreSubjects(gradeLevel?: string): Promise<Subject[]> {
     const url = gradeLevel 
       ? `${this.baseUrl}/core?gradeLevel=${encodeURIComponent(gradeLevel)}`
       : `${this.baseUrl}/core`;
     return apiClient.get<Subject[]>(url);
   }
 
-  static async getElectiveSubjects(gradeLevel?: string): Promise<ApiResponse<Subject[]>> {
+  static async getElectiveSubjects(gradeLevel?: string): Promise<Subject[]> {
     const url = gradeLevel 
       ? `${this.baseUrl}/elective?gradeLevel=${encodeURIComponent(gradeLevel)}`
       : `${this.baseUrl}/elective`;
     return apiClient.get<Subject[]>(url);
   }
 
-  static async assignTeachers(subjectId: string, teacherIds: string[]): Promise<ApiResponse<Subject>> {
+  static async assignTeachers(subjectId: string, teacherIds: string[]): Promise<Subject> {
     return apiClient.post<Subject>(`${this.baseUrl}/${subjectId}/teachers`, { teacherIds });
   }
 
-  static async removeTeacher(subjectId: string, teacherId: string): Promise<ApiResponse<Subject>> {
+  static async removeTeacher(subjectId: string, teacherId: string): Promise<Subject> {
     return apiClient.delete<Subject>(`${this.baseUrl}/${subjectId}/teachers/${teacherId}`);
   }
 
-  static async assignClasses(subjectId: string, classIds: string[]): Promise<ApiResponse<Subject>> {
+  static async assignClasses(subjectId: string, classIds: string[]): Promise<Subject> {
     return apiClient.post<Subject>(`${this.baseUrl}/${subjectId}/classes`, { classIds });
   }
 
-  static async removeClass(subjectId: string, classId: string): Promise<ApiResponse<Subject>> {
+  static async removeClass(subjectId: string, classId: string): Promise<Subject> {
     return apiClient.delete<Subject>(`${this.baseUrl}/${subjectId}/classes/${classId}`);
   }
 
-  static async bulkAssignTeachers(assignments: SubjectTeacherAssignment[]): Promise<ApiResponse<Subject[]>> {
+  static async bulkAssignTeachers(assignments: SubjectTeacherAssignment[]): Promise<Subject[]> {
     return apiClient.put<Subject[]>(`${this.baseUrl}/bulk-assign-teachers`, { assignments });
   }
 
-  static async bulkAssignClasses(assignments: SubjectClassAssignment[]): Promise<ApiResponse<Subject[]>> {
+  static async bulkAssignClasses(assignments: SubjectClassAssignment[]): Promise<Subject[]> {
     return apiClient.put<Subject[]>(`${this.baseUrl}/bulk-assign-classes`, { assignments });
   }
 
-  static async toggleActive(id: string): Promise<ApiResponse<Subject>> {
+  static async toggleActive(id: string): Promise<Subject> {
     return apiClient.patch<Subject>(`${this.baseUrl}/${id}/toggle-active`);
   }
 
-  static async duplicate(id: string, newName: string, newCode: string): Promise<ApiResponse<Subject>> {
+  static async duplicate(id: string, newName: string, newCode: string): Promise<Subject> {
     return apiClient.post<Subject>(`${this.baseUrl}/${id}/duplicate`, { name: newName, code: newCode });
   }
 
-  static async getPrerequisites(id: string): Promise<ApiResponse<Subject[]>> {
+  static async getPrerequisites(id: string): Promise<Subject[]> {
     return apiClient.get<Subject[]>(`${this.baseUrl}/${id}/prerequisites`);
   }
 
-  static async getDependents(id: string): Promise<ApiResponse<Subject[]>> {
+  static async getDependents(id: string): Promise<Subject[]> {
     return apiClient.get<Subject[]>(`${this.baseUrl}/${id}/dependents`);
   }
 
-  static async exportSubjects(filters?: SubjectFilters): Promise<ApiResponse<Blob>> {
+  static async exportSubjects(filters?: SubjectFilters): Promise<Blob> {
     const params = new URLSearchParams();
     
     if (filters) {

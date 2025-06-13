@@ -1,6 +1,6 @@
 // Export API client
 export { apiClient } from './client';
-export type { ApiError, ApiResponse, PaginatedResponse } from './client';
+export type { ApiError, ApiResponse } from './client';
 
 // Export auth API
 export { AuthApiService } from './auth';
@@ -68,6 +68,7 @@ export type {
   GradeStats,
   StudentGradeSummary,
   BulkGradeData,
+  PaginatedResponse,
 } from './grades';
 
 // Export subjects API
@@ -86,12 +87,12 @@ export type {
 // Export classes API
 export { ClassesApiService } from './classes';
 export type {
-  Class,
+  ClassSection,
   CreateClassData,
   UpdateClassData,
   ClassFilters,
   PaginatedClasses,
-  ClassStudent,
+  EnrollStudentData,
 } from './classes';
 
 // Export attendance API

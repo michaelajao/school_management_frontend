@@ -45,14 +45,14 @@ export async function apiRequest<T = any>(
     });
 
     let responseData: any;
-    let responseText: string;
+    let responseText: string = '';
 
     try {
       responseText = await response.text();
       responseData = responseText ? JSON.parse(responseText) : {};
     } catch (parseError) {
       console.error('Failed to parse response:', parseError);
-      responseData = { message: `Server error (${response.status}): ${responseText}` };
+      responseData = { message: `Server error (${response.status}): ${responseText || 'Unknown error'}` };
     }
 
     if (!response.ok) {

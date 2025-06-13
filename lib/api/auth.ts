@@ -21,6 +21,8 @@ export interface AuthResponse {
   user: User;
 }
 
+export type UserRole = 'SUPER_ADMIN' | 'ADMIN' | 'TEACHER' | 'STUDENT' | 'PARENT' | 'SCHOOL_MANAGEMENT';
+
 export interface User {
   id: string;
   email: string;

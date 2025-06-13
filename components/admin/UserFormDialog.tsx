@@ -117,23 +117,30 @@ export function UserFormDialog({
           case 'STUDENT':
             response = await UsersApiService.createStudentUser({
               ...userData,
+              password: 'defaultPassword123',
               studentId: `STU${Date.now()}`, // Generate a temporary student ID
             });
             break;
           case 'PARENT':
             response = await UsersApiService.createParentUser({
               ...userData,
+              password: 'defaultPassword123',
               relationshipToStudent: 'Parent', // Default relationship
             });
             break;
           default:
-            response = await UsersApiService.createUser(userData);
+            response = await UsersApiService.createUser({
+              ...userData,
+              password: 'defaultPassword123'
+            });
         }
       }
 
       toast.success(`${role.charAt(0).toUpperCase() + role.slice(1)} ${isEditMode ? 'updated' : 'added'} successfully!`);
       if (onUserSaved) {
-        onUserSaved(response.user || response);
+        // Handle different response types from different endpoints
+        const user = 'user' in response ? response.user : response;
+        onUserSaved(user);
       }
       setIsOpen(false);
     } catch (error) {

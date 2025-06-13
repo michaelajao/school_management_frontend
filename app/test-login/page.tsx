@@ -30,8 +30,8 @@ export default function TestLoginPage() {
     try {
       console.log('Testing login with:', { email, password: '***' });
 
-      // Test mock authentication
-      const response = await fetch('/api/mock-auth/login', {
+      // Test real backend authentication
+      const response = await fetch('/api/proxy/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -41,28 +41,31 @@ export default function TestLoginPage() {
       });
 
       if (!response.ok) {
-        throw new Error(`Login failed: ${response.status}`);
+        const errorData = await response.json();
+        throw new Error(errorData.message || `Login failed: ${response.status}`);
       }
 
       const data = await response.json();
       console.log('Login response:', data);
 
-      // Test setting the cookie for auth
-      await fetch('/api/auth/set-cookie', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: 'auth_token',
-          value: data.accessToken,
-          options: { maxAge: 60 * 60 * 2 }
-        }),
-        credentials: 'include'
-      });
+      // Set auth token in cookie for subsequent requests
+      if (data.accessToken) {
+        await fetch('/api/auth/set-cookie', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: 'auth_token',
+            value: data.accessToken,
+            options: { maxAge: 60 * 60 * 2 }
+          }),
+          credentials: 'include'
+        });
+      }
 
-      // Test getting profile with cookie
-      const profileResponse = await fetch('/api/mock-auth/profile', {
+      // Test getting profile with auth token
+      const profileResponse = await fetch('/api/proxy/auth/profile', {
         method: 'GET',
         credentials: 'include'
       });

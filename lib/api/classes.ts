@@ -1,91 +1,75 @@
 import { apiClient } from './client';
+import type { PaginatedResponse } from './grades';
 
-export interface Class {
+export interface ClassSection {
   id: string;
   name: string;
-  section: string;
-  grade: string;
+  section?: string;
+  displayName: string;
   academicYear: string;
-  teacherId: string;
+  description?: string;
+  stream?: string;
+  track?: string;
+  capacity?: number;
+  currentEnrollment: number;
+  gradeLevelId?: string;
+  academicYearId?: string;
+  isActive?: boolean;
   teacher?: {
-    id: string;
     firstName: string;
     lastName: string;
-    email: string;
+    id?: string;
   };
-  maxStudents: number;
-  currentStudents: number;
-  room?: string;
-  schedule?: string;
-  description?: string;
-  isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface CreateClassData {
   name: string;
-  section: string;
-  grade: string;
+  section?: string;
   academicYear: string;
-  teacherId: string;
-  maxStudents: number;
-  room?: string;
-  schedule?: string;
   description?: string;
+  stream?: string;
+  track?: string;
+  capacity?: number;
+  gradeLevelId?: string;
+  academicYearId?: string;
+  teacherId?: string;
 }
 
 export interface UpdateClassData {
   name?: string;
   section?: string;
-  grade?: string;
-  teacherId?: string;
-  maxStudents?: number;
-  room?: string;
-  schedule?: string;
   description?: string;
+  stream?: string;
+  track?: string;
+  capacity?: number;
+  teacherId?: string;
   isActive?: boolean;
 }
 
 export interface ClassFilters {
-  grade?: string;
-  academicYear?: string;
-  teacherId?: string;
-  isActive?: boolean;
-  search?: string;
   page?: number;
   limit?: number;
-  sortBy?: string;
-  sortOrder?: 'ASC' | 'DESC';
+  search?: string;
+  gradeLevelId?: string;
+  academicYearId?: string;
+  isActive?: boolean;
 }
 
-export interface PaginatedClasses {
-  data: Class[];
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
-}
+export type PaginatedClasses = PaginatedResponse<ClassSection>;
 
-export interface ClassStudent {
-  id: string;
+export interface EnrollStudentData {
   studentId: string;
-  classId: string;
-  enrolledAt: string;
-  student: {
-    id: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-    rollNumber?: string;
-  };
+  enrollmentDate?: string;
+  status?: string;
 }
 
 export class ClassesApiService {
   private static readonly BASE_PATH = '/classes';
 
   /**
-   * Get all classes with optional filtering and pagination
+   * Get all classes with filtering and pagination
    */
   static async getClasses(filters?: ClassFilters): Promise<PaginatedClasses> {
     try {
@@ -112,9 +96,10 @@ export class ClassesApiService {
   /**
    * Get class by ID
    */
-  static async getClassById(id: string): Promise<Class> {
+  static async getClassById(id: string, includeStudents?: boolean): Promise<ClassSection> {
     try {
-      return await apiClient.get<Class>(`${this.BASE_PATH}/${id}`);
+      const params = includeStudents ? '?includeStudents=true' : '';
+      return await apiClient.get<ClassSection>(`${this.BASE_PATH}/${id}${params}`);
     } catch (error) {
       console.error('Get class by ID error:', error);
       throw error;
@@ -122,11 +107,11 @@ export class ClassesApiService {
   }
 
   /**
-   * Create new class
+   * Create a new class
    */
-  static async createClass(classData: CreateClassData): Promise<Class> {
+  static async createClass(classData: CreateClassData): Promise<ClassSection> {
     try {
-      return await apiClient.post<Class>(this.BASE_PATH, classData);
+      return await apiClient.post<ClassSection>(this.BASE_PATH, classData);
     } catch (error) {
       console.error('Create class error:', error);
       throw error;
@@ -134,11 +119,11 @@ export class ClassesApiService {
   }
 
   /**
-   * Update class
+   * Update a class
    */
-  static async updateClass(id: string, classData: UpdateClassData): Promise<Class> {
+  static async updateClass(id: string, classData: UpdateClassData): Promise<ClassSection> {
     try {
-      return await apiClient.patch<Class>(`${this.BASE_PATH}/${id}`, classData);
+      return await apiClient.patch<ClassSection>(`${this.BASE_PATH}/${id}`, classData);
     } catch (error) {
       console.error('Update class error:', error);
       throw error;
@@ -146,7 +131,7 @@ export class ClassesApiService {
   }
 
   /**
-   * Delete class
+   * Delete a class
    */
   static async deleteClass(id: string): Promise<void> {
     try {
@@ -158,141 +143,61 @@ export class ClassesApiService {
   }
 
   /**
-   * Get students in a class
+   * Get classes by grade level
    */
-  static async getClassStudents(classId: string): Promise<ClassStudent[]> {
+  static async getClassesByGradeLevel(gradeLevelId: string): Promise<ClassSection[]> {
     try {
-      return await apiClient.get<ClassStudent[]>(`${this.BASE_PATH}/${classId}/students`);
+      return await apiClient.get<ClassSection[]>(`${this.BASE_PATH}/grade-level/${gradeLevelId}`);
     } catch (error) {
-      console.error('Get class students error:', error);
+      console.error('Get classes by grade level error:', error);
       throw error;
     }
   }
 
   /**
-   * Add student to class
+   * Enroll a student in a class
    */
-  static async addStudentToClass(classId: string, studentId: string): Promise<ClassStudent> {
+  static async enrollStudent(classId: string, studentData: EnrollStudentData): Promise<any> {
     try {
-      return await apiClient.post<ClassStudent>(`${this.BASE_PATH}/${classId}/students`, {
-        studentId,
-      });
+      return await apiClient.post(`${this.BASE_PATH}/${classId}/enroll-student`, studentData);
     } catch (error) {
-      console.error('Add student to class error:', error);
+      console.error('Enroll student error:', error);
       throw error;
     }
   }
 
   /**
-   * Remove student from class
+   * Enroll multiple students in a class
    */
-  static async removeStudentFromClass(classId: string, studentId: string): Promise<void> {
+  static async enrollMultipleStudents(classId: string, students: EnrollStudentData[]): Promise<any> {
+    try {
+      return await apiClient.post(`${this.BASE_PATH}/${classId}/enroll-multiple`, { students });
+    } catch (error) {
+      console.error('Enroll multiple students error:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Remove a student from a class
+   */
+  static async removeStudent(classId: string, studentId: string): Promise<void> {
     try {
       await apiClient.delete(`${this.BASE_PATH}/${classId}/students/${studentId}`);
     } catch (error) {
-      console.error('Remove student from class error:', error);
+      console.error('Remove student error:', error);
       throw error;
     }
   }
 
   /**
-   * Bulk add students to class
+   * Update student enrollment in a class
    */
-  static async bulkAddStudentsToClass(classId: string, studentIds: string[]): Promise<ClassStudent[]> {
+  static async updateEnrollment(classId: string, studentId: string, enrollmentData: any): Promise<any> {
     try {
-      return await apiClient.post<ClassStudent[]>(`${this.BASE_PATH}/${classId}/students/bulk`, {
-        studentIds,
-      });
+      return await apiClient.patch(`${this.BASE_PATH}/${classId}/students/${studentId}`, enrollmentData);
     } catch (error) {
-      console.error('Bulk add students to class error:', error);
-      throw error;
-    }
-  }
-
-  /**
-   * Get classes by teacher ID
-   */
-  static async getClassesByTeacher(teacherId: string): Promise<Class[]> {
-    try {
-      return await apiClient.get<Class[]>(`${this.BASE_PATH}/teacher/${teacherId}`);
-    } catch (error) {
-      console.error('Get classes by teacher error:', error);
-      throw error;
-    }
-  }
-
-  /**
-   * Get classes by grade
-   */
-  static async getClassesByGrade(grade: string): Promise<Class[]> {
-    try {
-      return await apiClient.get<Class[]>(`${this.BASE_PATH}/grade/${grade}`);
-    } catch (error) {
-      console.error('Get classes by grade error:', error);
-      throw error;
-    }
-  }
-
-  /**
-   * Get class statistics
-   */
-  static async getClassStatistics(classId: string): Promise<{
-    totalStudents: number;
-    attendanceRate: number;
-    averageGrade: number;
-    subjectsCount: number;
-  }> {
-    try {
-      return await apiClient.get(`${this.BASE_PATH}/${classId}/statistics`);
-    } catch (error) {
-      console.error('Get class statistics error:', error);
-      throw error;
-    }
-  }
-
-  /**
-   * Search classes
-   */
-  static async searchClasses(query: string): Promise<Class[]> {
-    try {
-      return await apiClient.get<Class[]>(`${this.BASE_PATH}/search?q=${encodeURIComponent(query)}`);
-    } catch (error) {
-      console.error('Search classes error:', error);
-      throw error;
-    }
-  }
-
-  /**
-   * Export class list to CSV
-   */
-  static async exportClasses(filters?: ClassFilters): Promise<Blob> {
-    try {
-      const params = new URLSearchParams();
-      
-      if (filters) {
-        Object.entries(filters).forEach(([key, value]) => {
-          if (value !== undefined && value !== null) {
-            params.append(key, value.toString());
-          }
-        });
-      }
-
-      const queryString = params.toString();
-      const url = queryString ? `${this.BASE_PATH}/export?${queryString}` : `${this.BASE_PATH}/export`;
-      
-      const response = await fetch(url, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Export failed');
-      }
-
-      return await response.blob();
-    } catch (error) {
-      console.error('Export classes error:', error);
+      console.error('Update enrollment error:', error);
       throw error;
     }
   }

@@ -13,6 +13,7 @@ const noProfilePicture =
 
 export default function ViewParent() {
     const selectedParent = useParentStore((state) => state.selectedParent);
+    const setSelectedParent = useParentStore((state) => state.setSelectedParent);
     const router = useRouter();
 
     if (!selectedParent) {
@@ -20,8 +21,6 @@ export default function ViewParent() {
     }
 
     console.log(selectedParent, "here")
-
-    const setSelectedParent = useParentStore((state) => state.setSelectedParent);
     function handleEditParent(parent: Parent) {
         setSelectedParent(parent)
         router.push('edit')

@@ -223,8 +223,8 @@ export default function StudentEditFormClient({
                     <Calendar
                       mode="single"
                       selected={date || undefined}
-                      onSelect={setDate}
-
+                      onSelect={(selectedDate) => setDate(selectedDate || null)}
+                      required={false}
                     />
                   </PopoverContent>
                 </Popover>

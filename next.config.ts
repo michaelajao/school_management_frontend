@@ -24,7 +24,7 @@ const nextConfig: NextConfig = {
     },
   },
   
-  // Security headers for production
+  // Security headers for production and API integration
   headers: async () => [
     {
       source: '/(.*)',
@@ -71,6 +71,23 @@ const nextConfig: NextConfig = {
         },
       ],
     },
+    {
+      source: '/api/:path*',
+      headers: [
+        {
+          key: 'Access-Control-Allow-Origin',
+          value: '*',
+        },
+        {
+          key: 'Access-Control-Allow-Methods',
+          value: 'GET, POST, PUT, DELETE, OPTIONS',
+        },
+        {
+          key: 'Access-Control-Allow-Headers',
+          value: 'Content-Type, Authorization',
+        },
+      ],
+    },
   ],
 
   // Allow cross-origin requests from network IP
@@ -93,29 +110,6 @@ const nextConfig: NextConfig = {
         hostname: 'localhost',
       },
     ],
-  },
-  
-  // Headers for API integration
-  async headers() {
-    return [
-      {
-        source: '/api/:path*',
-        headers: [
-          {
-            key: 'Access-Control-Allow-Origin',
-            value: '*',
-          },
-          {
-            key: 'Access-Control-Allow-Methods',
-            value: 'GET, POST, PUT, DELETE, OPTIONS',
-          },
-          {
-            key: 'Access-Control-Allow-Headers',
-            value: 'Content-Type, Authorization',
-          },
-        ],
-      },
-    ];
   },
 };
 

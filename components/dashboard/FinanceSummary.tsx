@@ -2,10 +2,8 @@
 
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { DollarSign, TrendingUp, ArrowRight, GraduationCap, Users, IdCard } from "lucide-react";
+import { DollarSign, TrendingUp, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { PiPercentBold } from "react-icons/pi";
-import { SummaryCard } from "../admin/parents/SummaryCard";
 
 export function FinanceSummary() {
   // Mock finance data
@@ -117,41 +115,5 @@ export function FinanceSummary() {
         </Button>
       </CardFooter>
     </Card>
-      // <div className="flex gap-4 justify-between bg-[#f7f7f7] p-4 mb-6">
-      //     <SummaryCard
-      //         icon={<GraduationCap className="text-cyan-700" />}
-      //         value={1250}
-      //         label="Total Students"
-      //         textColor="#00787A"
-      //         bgColor="#E6FBFF"
-      //     />
-      //     <SummaryCard
-      //         icon={<Users className="text-orange-500" />}
-      //         value={78}
-      //         label="Total Staff"
-      //         textColor="#F78C1F"
-      //         bgColor="#FFE7CC"
-      //     />
-      //     <SummaryCard
-      //         // icon={<span className="bg-[#28C76F33] bg-opacity-30 rounded-full p-2">
-      //         //       <IdCard size={40} color="#28C76F"  />
-      //         //       </span>}
-      //         icon={<PiPercentBold className="text-[#00B266]-600" />}
-      //         value="78%"
-      //         label="Total Fee Paid"
-      //         textColor="#00B266"
-      //         bgColor="#DFF9E4"
-      //     />
-      //     <SummaryCard
-      //         icon={<span className="bg-[#FFDDDE80] bg-opacity-60 rounded-full p-2"> 
-      //               <IdCard size={40} color="#EF1A36" />
-      //               </span>}
-      //         // icon={<AlarmClock className="text-red-[#EF1A36]" />}
-      //         value={5}
-      //         label="Pending Approvals"
-      //         textColor="#EF1A36"
-      //         bgColor="#FFE6E6"
-      //     />
-      // </div>
   );
 }

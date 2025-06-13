@@ -1,5 +1,6 @@
 import { apiClient } from './client';
 import type { User } from './auth';
+import type { PaginatedResponse } from './grades';
 
 export type UserRole = 'SUPER_ADMIN' | 'ADMIN' | 'TEACHER' | 'STUDENT' | 'PARENT' | 'SCHOOL_MANAGEMENT';
 
@@ -35,13 +36,7 @@ export interface UserFilters {
   sortOrder?: 'ASC' | 'DESC';
 }
 
-export interface PaginatedUsers {
-  data: User[];
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
-}
+export type PaginatedUsers = PaginatedResponse<User>;
 
 export class UsersApiService {
   private static readonly BASE_PATH = '/users';
@@ -76,7 +71,7 @@ export class UsersApiService {
    */
   static async getStudents(page: number = 1, limit: number = 10): Promise<PaginatedUsers> {
     try {
-      return await apiClient.get<PaginatedUsers>(`${this.BASE_PATH}/students?page=${page}&limit=${limit}`);
+      return await apiClient.get<PaginatedUsers>(`/students?page=${page}&limit=${limit}`);
     } catch (error) {
       console.error('Get students error:', error);
       throw error;
@@ -88,7 +83,7 @@ export class UsersApiService {
    */
   static async getParents(page: number = 1, limit: number = 10): Promise<PaginatedUsers> {
     try {
-      return await apiClient.get<PaginatedUsers>(`${this.BASE_PATH}/parents?page=${page}&limit=${limit}`);
+      return await apiClient.get<PaginatedUsers>(`/parents?page=${page}&limit=${limit}`);
     } catch (error) {
       console.error('Get parents error:', error);
       throw error;
@@ -98,9 +93,36 @@ export class UsersApiService {
   /**
    * Create a new student user
    */
-  static async createStudentUser(userData: CreateUserData & { studentId: string; class?: string; parentIds?: string[] }): Promise<{ user: User; student: any }> {
+  static async createStudentUser(userData: CreateUserData & { studentId?: string; gradeLevelId?: string; parentIds?: string[] }): Promise<{ user: User; student: any }> {
     try {
-      return await apiClient.post<{ user: User; student: any }>(`${this.BASE_PATH}/students`, userData);
+      // First create user, then student record
+      const user = await apiClient.post<User>('/users', {
+        email: userData.email,
+        password: userData.password,
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        role: 'STUDENT',
+        phoneNumber: userData.phoneNumber,
+        address: userData.address,
+        dateOfBirth: userData.dateOfBirth,
+        gender: userData.gender,
+      });
+
+      // Then create student record
+      const student = await apiClient.post('/students', {
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        email: userData.email,
+        phoneNumber: userData.phoneNumber,
+        gender: userData.gender,
+        dateOfBirth: userData.dateOfBirth,
+        address: userData.address,
+        studentId: userData.studentId,
+        gradeLevelId: userData.gradeLevelId,
+        userId: user.id,
+      });
+
+      return { user, student };
     } catch (error) {
       console.error('Create student user error:', error);
       throw error;
@@ -112,7 +134,36 @@ export class UsersApiService {
    */
   static async createParentUser(userData: CreateUserData & { relationshipToStudent: string; studentId?: string }): Promise<{ user: User; parent: any }> {
     try {
-      return await apiClient.post<{ user: User; parent: any }>(`${this.BASE_PATH}/parents`, userData);
+      // First create user, then parent record
+      const user = await apiClient.post<User>('/users', {
+        email: userData.email,
+        password: userData.password,
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        role: 'PARENT',
+        phoneNumber: userData.phoneNumber,
+        address: userData.address,
+        dateOfBirth: userData.dateOfBirth,
+        gender: userData.gender,
+      });
+
+      // Then create parent record
+      const parent = await apiClient.post('/parents', {
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        email: userData.email,
+        phoneNumber: userData.phoneNumber,
+        address: userData.address,
+        relationship: userData.relationshipToStudent,
+        userId: user.id,
+        students: userData.studentId ? [{ 
+          studentId: userData.studentId, 
+          relationship: userData.relationshipToStudent,
+          isPrimary: true 
+        }] : undefined,
+      });
+
+      return { user, parent };
     } catch (error) {
       console.error('Create parent user error:', error);
       throw error;

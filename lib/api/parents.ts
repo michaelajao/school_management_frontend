@@ -1,5 +1,6 @@
 import { apiClient } from './client';
-import type { ApiResponse, PaginatedResponse } from './client';
+import type { ApiResponse } from './client';
+import type { PaginatedResponse } from './grades';
 
 // Parent types
 export interface Parent {
@@ -77,7 +78,7 @@ export interface ParentChildAssociation {
 export class ParentsApiService {
   private static baseUrl = '/api/proxy/parents';
 
-  static async getAll(filters?: ParentFilters): Promise<ApiResponse<PaginatedParents>> {
+  static async getAll(filters?: ParentFilters): Promise<PaginatedParents> {
     const params = new URLSearchParams();
     
     if (filters) {
@@ -92,54 +93,54 @@ export class ParentsApiService {
     return apiClient.get<PaginatedParents>(url);
   }
 
-  static async getById(id: string): Promise<ApiResponse<Parent>> {
+  static async getById(id: string): Promise<Parent> {
     return apiClient.get<Parent>(`${this.baseUrl}/${id}`);
   }
 
-  static async create(data: CreateParentData): Promise<ApiResponse<Parent>> {
+  static async create(data: CreateParentData): Promise<Parent> {
     return apiClient.post<Parent>(this.baseUrl, data);
   }
 
-  static async update(id: string, data: UpdateParentData): Promise<ApiResponse<Parent>> {
+  static async update(id: string, data: UpdateParentData): Promise<Parent> {
     return apiClient.put<Parent>(`${this.baseUrl}/${id}`, data);
   }
 
-  static async delete(id: string): Promise<ApiResponse<void>> {
+  static async delete(id: string): Promise<void> {
     return apiClient.delete<void>(`${this.baseUrl}/${id}`);
   }
 
-  static async getStats(): Promise<ApiResponse<ParentStats>> {
+  static async getStats(): Promise<ParentStats> {
     return apiClient.get<ParentStats>(`${this.baseUrl}/stats`);
   }
 
-  static async getByStudent(studentId: string): Promise<ApiResponse<Parent[]>> {
+  static async getByStudent(studentId: string): Promise<Parent[]> {
     return apiClient.get<Parent[]>(`${this.baseUrl}/student/${studentId}`);
   }
 
-  static async addChild(parentId: string, studentId: string): Promise<ApiResponse<Parent>> {
+  static async addChild(parentId: string, studentId: string): Promise<Parent> {
     return apiClient.post<Parent>(`${this.baseUrl}/${parentId}/children`, { studentId });
   }
 
-  static async removeChild(parentId: string, studentId: string): Promise<ApiResponse<Parent>> {
+  static async removeChild(parentId: string, studentId: string): Promise<Parent> {
     return apiClient.delete<Parent>(`${this.baseUrl}/${parentId}/children/${studentId}`);
   }
 
-  static async updateChildren(parentId: string, studentIds: string[]): Promise<ApiResponse<Parent>> {
+  static async updateChildren(parentId: string, studentIds: string[]): Promise<Parent> {
     return apiClient.put<Parent>(`${this.baseUrl}/${parentId}/children`, { studentIds });
   }
 
-  static async bulkAssociate(associations: ParentChildAssociation[]): Promise<ApiResponse<Parent[]>> {
+  static async bulkAssociate(associations: ParentChildAssociation[]): Promise<Parent[]> {
     return apiClient.put<Parent[]>(`${this.baseUrl}/bulk-associate`, { associations });
   }
 
-  static async sendMessage(parentIds: string[], message: { subject: string; body: string; priority?: 'low' | 'medium' | 'high' }): Promise<ApiResponse<{ sent: number; failed: number }>> {
+  static async sendMessage(parentIds: string[], message: { subject: string; body: string; priority?: 'low' | 'medium' | 'high' }): Promise<{ sent: number; failed: number }> {
     return apiClient.post<{ sent: number; failed: number }>(`${this.baseUrl}/send-message`, {
       parentIds,
       message
     });
   }
 
-  static async exportParents(filters?: ParentFilters): Promise<ApiResponse<Blob>> {
+  static async exportParents(filters?: ParentFilters): Promise<Blob> {
     const params = new URLSearchParams();
     
     if (filters) {

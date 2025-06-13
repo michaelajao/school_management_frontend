@@ -105,9 +105,8 @@ export default function AdminOnboardingView() {
       localStorage.setItem("superAdminOnboardingData", JSON.stringify({ ...formData, logo: logoPreview })); // Store preview URL for demo
       toast.success("Setup completed successfully!");
       
-      // Use the getDashboardPath helper function
-      const { getDashboardPath } = require("@/contexts/auth-context");
-      router.push(getDashboardPath("admin"));
+      // Navigate to admin dashboard
+      router.push("/admin/dashboard");
     } catch (error) {
       console.error("Setup failed:", error);
       toast.error("Setup failed. Please try again.");

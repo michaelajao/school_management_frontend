@@ -10,23 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Plus, Users, BookOpen, GraduationCap, X } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-
-interface ClassSection {
-  id: string;
-  name: string;
-  section?: string;
-  displayName: string;
-  academicYear: string;
-  description?: string;
-  stream?: string;
-  track?: string;
-  capacity?: number;
-  currentEnrollment: number;
-  teacher?: {
-    firstName: string;
-    lastName: string;
-  };
-}
+import { ClassesApiService, ClassSection, CreateClassData } from '@/lib/api/classes';
 
 interface ClassSectionFormData {
   name: string;
@@ -64,42 +48,6 @@ export function ClassSectionManager() {
     teacherId: '',
   });
 
-  // Mock data for demonstration
-  const mockClassSections: ClassSection[] = [
-    {
-      id: '1',
-      name: 'Primary 1',
-      section: 'A',
-      displayName: 'Primary 1A',
-      academicYear: '2024/2025',
-      capacity: 30,
-      currentEnrollment: 28,
-      teacher: { firstName: 'Jane', lastName: 'Smith' },
-    },
-    {
-      id: '2',
-      name: 'Primary 1',
-      section: 'B',
-      displayName: 'Primary 1B',
-      academicYear: '2024/2025',
-      capacity: 30,
-      currentEnrollment: 25,
-      teacher: { firstName: 'Mary', lastName: 'Johnson' },
-    },
-    {
-      id: '3',
-      name: 'JSS 2',
-      section: 'A',
-      displayName: 'JSS2A-Sci',
-      academicYear: '2024/2025',
-      stream: 'Science',
-      track: 'Advanced',
-      capacity: 35,
-      currentEnrollment: 32,
-      teacher: { firstName: 'Dr. John', lastName: 'Williams' },
-    },
-  ];
-
   useEffect(() => {
     loadClassSections();
   }, [selectedClassName, selectedAcademicYear]);
@@ -109,18 +57,17 @@ export function ClassSectionManager() {
     setError(null);
     
     try {
-      // Simulate API call - replace with actual API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Call real backend API
+      const response = await ClassesApiService.getClasses({
+        search: selectedClassName || undefined,
+        academicYearId: selectedAcademicYear || undefined,
+        page: 1,
+        limit: 100, // Get all for now
+      });
       
-      if (selectedClassName) {
-        const filtered = mockClassSections.filter(
-          cls => cls.name === selectedClassName && cls.academicYear === selectedAcademicYear
-        );
-        setClassSections(filtered);
-      } else {
-        setClassSections(mockClassSections.filter(cls => cls.academicYear === selectedAcademicYear));
-      }
+      setClassSections(response.data);
     } catch (err) {
+      console.error('Failed to load class sections:', err);
       setError('Failed to load class sections');
     } finally {
       setLoading(false);
@@ -129,42 +76,58 @@ export function ClassSectionManager() {
 
   const handleCreateSection = async () => {
     try {
-      // Simulate API call - replace with actual API call
-      console.log('Creating section:', formData);
-      
-      const newSection: ClassSection = {
-        id: Date.now().toString(),
-        ...formData,
-        displayName: generateDisplayName(formData.name, formData.section, formData.stream, formData.track),
-        currentEnrollment: 0,
+      // Call real backend API
+      const classData: CreateClassData = {
+        name: formData.name,
+        section: formData.section,
+        academicYear: formData.academicYear,
+        description: formData.description,
+        stream: formData.stream,
+        track: formData.track,
+        capacity: formData.capacity,
+        teacherId: formData.teacherId || undefined,
       };
 
-      setClassSections(prev => [...prev, newSection]);
+      const newSection = await ClassesApiService.createClass(classData);
+      
+      // Refresh the list
+      await loadClassSections();
+      
       setIsCreateDialogOpen(false);
       resetForm();
     } catch (err) {
+      console.error('Failed to create class section:', err);
       setError('Failed to create class section');
     }
   };
 
   const handleCreateMultipleSections = async () => {
     try {
-      // Simulate API call - replace with actual API call
-      console.log('Creating multiple sections:', { ...formData, sections: selectedSections });
-      
-      const newSections = selectedSections.map(section => ({
-        id: `${Date.now()}-${section}`,
-        ...formData,
-        section,
-        displayName: generateDisplayName(formData.name, section, formData.stream, formData.track),
-        currentEnrollment: 0,
-      }));
+      // Create multiple sections by calling API for each section
+      const createPromises = selectedSections.map(section => {
+        const classData: CreateClassData = {
+          name: formData.name,
+          section: section,
+          academicYear: formData.academicYear,
+          description: formData.description,
+          stream: formData.stream,
+          track: formData.track,
+          capacity: formData.capacity,
+          teacherId: formData.teacherId || undefined,
+        };
+        return ClassesApiService.createClass(classData);
+      });
 
-      setClassSections(prev => [...prev, ...newSections]);
+      await Promise.all(createPromises);
+      
+      // Refresh the list
+      await loadClassSections();
+      
       setIsMultiSectionDialogOpen(false);
       resetForm();
       setSelectedSections([]);
     } catch (err) {
+      console.error('Failed to create multiple sections:', err);
       setError('Failed to create multiple sections');
     }
   };
