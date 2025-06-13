@@ -10,7 +10,7 @@ import { Progress } from "@/components/ui/progress";
 import { 
   BookOpen, Users, BarChart3, Calendar, 
   ClipboardCheck, FileText, MessageSquare,
-  Bell, Clock, Target, CheckCircle
+  Bell, Clock, Target, CheckCircle, TrendingUp
 } from "lucide-react";
 
 const SubjectTeacherDashboard = () => {

@@ -11,7 +11,7 @@ import {
   User, GraduationCap, Calendar, MessageSquare, 
   Bell, DollarSign, BookOpen, Clock,
   AlertCircle, CheckCircle, Star,
-  FileText, Users, Award
+  FileText, Users, Award, TrendingUp
 } from "lucide-react";
 
 const ParentDashboard = () => {
