@@ -52,8 +52,8 @@ export function HealthCheck() {
     return () => clearInterval(interval);
   }, []);
 
-  // Don't show in production
-  if (config.environment === 'production') return null;
+  // Don't show in production or when NODE_ENV is production
+  if (config.environment === 'production' || process.env.NODE_ENV === 'production') return null;
 
   const getStatusColor = () => {
     switch (healthStatus.status) {

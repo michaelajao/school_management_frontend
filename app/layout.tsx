@@ -33,7 +33,7 @@ export default function RootLayout({
       >        <AuthProvider>
           {children}
           <Toaster position="top-right" />
-          <HealthCheck />
+          {process.env.NODE_ENV !== 'production' && <HealthCheck />}
         </AuthProvider>
       </body>
     </html>
