@@ -90,7 +90,7 @@ export const withRouteGuard = (
 export const AdminRouteGuard = ({ children }: { children: ReactNode }) => (
   <RouteGuard 
     allowedRoles={["super_admin", "school_admin", "assistant_admin"]}
-    fallbackRoute="/(dashboard)/(users)/student"
+    fallbackRoute="/dashboard/student"
   >
     {children}
   </RouteGuard>
@@ -99,7 +99,7 @@ export const AdminRouteGuard = ({ children }: { children: ReactNode }) => (
 export const TeacherRouteGuard = ({ children }: { children: ReactNode }) => (
   <RouteGuard 
     allowedRoles={["class_teacher", "subject_teacher"]}
-    fallbackRoute="/(dashboard)/(users)/student"
+    fallbackRoute="/dashboard/student"
   >
     {children}
   </RouteGuard>
@@ -108,7 +108,7 @@ export const TeacherRouteGuard = ({ children }: { children: ReactNode }) => (
 export const StudentRouteGuard = ({ children }: { children: ReactNode }) => (
   <RouteGuard 
     allowedRoles={["student"]}
-    fallbackRoute="/(dashboard)/(users)/teacher"
+    fallbackRoute="/dashboard/teacher"
   >
     {children}
   </RouteGuard>
@@ -117,7 +117,7 @@ export const StudentRouteGuard = ({ children }: { children: ReactNode }) => (
 export const ParentRouteGuard = ({ children }: { children: ReactNode }) => (
   <RouteGuard 
     allowedRoles={["parent"]}
-    fallbackRoute="/(dashboard)/(users)/student"
+    fallbackRoute="/dashboard/student"
   >
     {children}
   </RouteGuard>

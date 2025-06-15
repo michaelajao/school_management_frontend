@@ -14,7 +14,7 @@ export default function RootPage() {
       if (isAuthenticated && user) {
         // Redirect to appropriate dashboard based on role
         const dashboardPath = getDashboardPath(user.role);
-        router.replace(`/(dashboard)${dashboardPath}`);
+        router.replace(dashboardPath);
       } else {
         // Stay on this page - it will show the marketing content
         return;

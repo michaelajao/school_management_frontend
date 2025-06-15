@@ -106,34 +106,34 @@ export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
 // Define route permissions
 export const ROUTE_PERMISSIONS: RoutePermissions = {
   // Admin routes
-  "/(dashboard)/(users)/admin": ["manage_users"],
-  "/(dashboard)/(users)/admin/manage": ["manage_users"],
-  "/(dashboard)/(users)/admin/manage/students": ["manage_students"],
-  "/(dashboard)/(users)/admin/manage/staff": ["manage_staff"],
-  "/(dashboard)/(users)/admin/manage/parents": ["manage_parents"],
-  "/(dashboard)/(users)/admin/manage/academics": ["manage_classes", "manage_subjects"],
-  "/(dashboard)/(users)/admin/communications": ["send_messages"],
-  "/(dashboard)/(users)/admin/data-upload": ["manage_users"],
+  "/dashboard/admin": ["manage_users"],
+  "/dashboard/admin/manage": ["manage_users"],
+  "/dashboard/admin/manage/students": ["manage_students"],
+  "/dashboard/admin/manage/staff": ["manage_staff"],
+  "/dashboard/admin/manage/parents": ["manage_parents"],
+  "/dashboard/admin/manage/academics": ["manage_classes", "manage_subjects"],
+  "/dashboard/admin/communications": ["send_messages"],
+  "/dashboard/admin/data-upload": ["manage_users"],
 
   // Assistant admin routes
-  "/(dashboard)/(users)/assistant-admin": ["manage_students", "manage_parents"],
+  "/dashboard/assistant-admin": ["manage_students", "manage_parents"],
 
   // Teacher routes
-  "/(dashboard)/(users)/teacher": ["take_attendance", "view_assignments"],
-  "/(dashboard)/(users)/class-teacher": ["manage_students", "take_attendance", "manage_grades"],
-  "/(dashboard)/(users)/subject-teacher": ["manage_grades", "create_assignments", "view_assignments"],
+  "/dashboard/teacher": ["take_attendance", "view_assignments"],
+  "/dashboard/class-teacher": ["manage_students", "take_attendance", "manage_grades"],
+  "/dashboard/subject-teacher": ["manage_grades", "create_assignments", "view_assignments"],
   
   // Student routes  
-  "/(dashboard)/(users)/student": ["view_assignments"],
+  "/dashboard/student": ["view_assignments"],
   
   // Parent routes
-  "/(dashboard)/(users)/parent": ["view_reports"],
+  "/dashboard/parent": ["view_reports"],
 
   // Super admin routes
-  "/(dashboard)/(users)/superadmin": ["manage_school_settings"],
+  "/dashboard/superadmin": ["manage_school_settings"],
   
   // School management routes
-  "/(dashboard)/(users)/school_management": ["manage_school_settings"]
+  "/dashboard/school_management": ["manage_school_settings"]
 };
 
 // Check if user has permission
@@ -188,27 +188,27 @@ export function canAccessTeacherFeatures(userRole: UserRole): boolean {
 export function getUserDashboardPath(userRole: UserRole): string {
   switch (userRole) {
     case "super_admin":
-      return "/(dashboard)/(users)/superadmin";
+      return "/dashboard/superadmin";
     case "school_admin":
-      return "/(dashboard)/(users)/admin";
+      return "/dashboard/admin";
     case "assistant_admin":
-      return "/(dashboard)/(users)/assistant-admin";
+      return "/dashboard/assistant-admin";
     case "class_teacher":
-      return "/(dashboard)/(users)/class-teacher";
+      return "/dashboard/class-teacher";
     case "subject_teacher":
-      return "/(dashboard)/(users)/subject-teacher";
+      return "/dashboard/subject-teacher";
     case "student":
-      return "/(dashboard)/(users)/student";
+      return "/dashboard/student";
     case "parent":
-      return "/(dashboard)/(users)/parent";
+      return "/dashboard/parent";
     default:
       // Fallback for unrecognized roles
       if (canAccessAdminRoutes(userRole)) {
-        return "/(dashboard)/(users)/admin";
+        return "/dashboard/admin";
       }
       if (canAccessTeacherFeatures(userRole)) {
-        return "/(dashboard)/(users)/teacher";
+        return "/dashboard/teacher";
       }
-      return "/(dashboard)/(users)/student";
+      return "/dashboard/student";
   }
 }

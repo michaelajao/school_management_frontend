@@ -33,7 +33,7 @@ import { Button } from "../../ui/button";
 
 // Import the Announcement type from the server component
 import Image from "next/image";
-import { Announcement } from "@/app/(dashboard)/(users)/admin/communications/announcement/page";
+import { Announcement } from "@/app/(dashboard)/admin/communications/announcement/page";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "@/components/ui/breadcrumb";
 
 // Constants
