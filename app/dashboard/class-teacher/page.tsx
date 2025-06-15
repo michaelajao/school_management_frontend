@@ -7,6 +7,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { QuickActions } from "@/components/mobile/QuickActions";
+import { TouchCard } from "@/components/ui/touch-card";
 import { 
   Users, ClipboardCheck, MessageSquare, 
   BarChart3, Calendar, BookOpen, Bell,
@@ -142,14 +144,24 @@ const ClassTeacherDashboard = () => {
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 lg:p-6 space-y-6">
       {/* Welcome Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Class Teacher Dashboard</h1>
+          <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">Class Teacher Dashboard</h1>
           <p className="text-gray-600 mt-1">Welcome back, {user?.name}! Managing {selectedClass}</p>
         </div>
-        <div className="flex space-x-2">
+        <div className="flex space-x-2 lg:hidden">
+          <Button className="flex-1 bg-[#1B5B5E] hover:bg-[#134345]">
+            <ClipboardCheck className="w-4 h-4 mr-2" />
+            Take Attendance
+          </Button>
+          <Button variant="outline" className="flex-1">
+            <MessageSquare className="w-4 h-4 mr-2" />
+            Contact Parents
+          </Button>
+        </div>
+        <div className="hidden lg:flex space-x-2">
           <Button className="bg-[#1B5B5E] hover:bg-[#134345]">
             <ClipboardCheck className="w-4 h-4 mr-2" />
             Take Attendance
@@ -160,6 +172,9 @@ const ClassTeacherDashboard = () => {
           </Button>
         </div>
       </div>
+
+      {/* Quick Actions for Mobile */}
+      <QuickActions />
 
       {/* Class Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

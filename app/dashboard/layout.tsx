@@ -1,6 +1,7 @@
 "use client";
 
 import { RouteGuard } from "@/components/auth/RouteGuard";
+import { AppHeader } from "@/components/navigation/AppHeader";
 
 export default function DashboardLayout({
   children,
@@ -10,8 +11,10 @@ export default function DashboardLayout({
   return (
     <RouteGuard>
       <div className="min-h-screen bg-gray-50">
-        {/* Dashboard-specific layout elements */}
-        <main>{children}</main>
+        <AppHeader />
+        <main className="pb-16 lg:pb-0">
+          {children}
+        </main>
       </div>
     </RouteGuard>
   );

@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import withPWA from 'next-pwa';
 
 const nextConfig: NextConfig = {
   // Enable strict mode for better error detection
@@ -115,4 +116,26 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+// Configure PWA settings
+const pwaConfig = withPWA({
+  dest: 'public',
+  disable: process.env.NODE_ENV === 'development',
+  register: false, // We'll register manually for better control
+  sw: '/sw.js',
+  scope: '/',
+  reloadOnOnline: true,
+  fallbacks: {
+    document: '/offline',
+  },
+  cacheStartUrl: true,
+  dynamicStartUrl: false,
+  cacheOnFrontEndNav: true,
+  subdomainPrefix: undefined,
+  workboxOptions: {
+    disableDevLogs: true,
+    skipWaiting: false,
+    clientsClaim: false,
+  },
+});
+
+export default pwaConfig(nextConfig);
