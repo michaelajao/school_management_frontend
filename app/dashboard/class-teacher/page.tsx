@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { QuickActions } from "@/components/mobile/QuickActions";
+import QuickActions from "@/components/mobile/QuickActions";
 import { TouchCard } from "@/components/ui/touch-card";
 import { 
   Users, ClipboardCheck, MessageSquare, 

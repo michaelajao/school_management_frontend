@@ -343,7 +343,7 @@ export function MobileNavigation() {
               <SheetHeader className="p-6 pb-4 border-b">
                 <div className="flex items-center gap-3">
                   <Avatar className="h-10 w-10">
-                    <AvatarImage src={user.profilePicture} />
+                    <AvatarImage src={(user as any).profilePicture} />
                     <AvatarFallback className="bg-[#1B5B5E] text-white">
                       {user.name.split(' ').map(n => n[0]).join('').toUpperCase()}
                     </AvatarFallback>

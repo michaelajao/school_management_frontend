@@ -3,9 +3,10 @@
 import * as React from "react";
 import { useGesture } from '@use-gesture/react';
 import { cn } from "@/lib/utils";
-import { Card, CardProps } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 
-interface TouchCardProps extends CardProps {
+interface TouchCardProps extends Omit<React.ComponentProps<"div">, 'children'> {
+  children?: React.ReactNode;
   onTap?: () => void;
   onLongPress?: () => void;
   onSwipeLeft?: () => void;
@@ -42,7 +43,7 @@ const TouchCard = React.forwardRef<
       onDrag: ({ down, movement: [mx, my], direction: [dx, dy], distance, cancel }) => {
         setIsDragging(down);
         
-        if (distance > swipeThreshold) {
+        if (Math.sqrt(mx * mx + my * my) > swipeThreshold) {
           // Determine swipe direction
           if (Math.abs(mx) > Math.abs(my)) {
             // Horizontal swipe
@@ -84,8 +85,8 @@ const TouchCard = React.forwardRef<
         }
       },
       
-      onContextMenu: (e) => {
-        e.preventDefault();
+      onContextMenu: (state) => {
+        state.event.preventDefault();
         if (onLongPress) {
           onLongPress();
         }
@@ -126,7 +127,7 @@ export { TouchCard };
 export function withTouch<T extends React.HTMLAttributes<HTMLElement>>(
   Component: React.ComponentType<T>
 ) {
-  return React.forwardRef<HTMLElement, T & TouchCardProps>(
+  const TouchEnhancedComponent = React.forwardRef<HTMLElement, T & TouchCardProps>(
     (props, ref) => {
       const {
         onTap,
@@ -150,7 +151,7 @@ export function withTouch<T extends React.HTMLAttributes<HTMLElement>>(
           onDrag: ({ down, movement: [mx, my], direction: [dx, dy], distance, cancel }) => {
             setIsDragging(down);
             
-            if (distance > swipeThreshold) {
+            if (Math.sqrt(mx * mx + my * my) > swipeThreshold) {
               if (Math.abs(mx) > Math.abs(my)) {
                 if (dx > 0 && onSwipeRight) {
                   onSwipeRight();
@@ -189,8 +190,8 @@ export function withTouch<T extends React.HTMLAttributes<HTMLElement>>(
             }
           },
           
-          onContextMenu: (e) => {
-            e.preventDefault();
+          onContextMenu: (state) => {
+            state.event.preventDefault();
             if (onLongPress) {
               onLongPress();
             }
@@ -216,9 +217,12 @@ export function withTouch<T extends React.HTMLAttributes<HTMLElement>>(
             className
           )}
           {...bind()}
-          {...(componentProps as T)}
+          {...(componentProps as any)}
         />
       );
     }
   );
+  
+  TouchEnhancedComponent.displayName = `withTouch(${Component.displayName || Component.name})`;
+  return TouchEnhancedComponent;
 }

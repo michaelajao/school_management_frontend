@@ -296,7 +296,7 @@ export function AppHeader() {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="sm" className="relative">
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src={user.profilePicture} />
+                  <AvatarImage src={(user as any).profilePicture} />
                   <AvatarFallback className="bg-[#1B5B5E] text-white text-xs">
                     {user.name.split(' ').map(n => n[0]).join('').toUpperCase()}
                   </AvatarFallback>

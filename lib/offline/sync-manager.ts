@@ -139,7 +139,7 @@ export class SyncManager {
             date: attendance.date,
             present: attendance.present,
             status: attendance.status,
-            comment: attendance.comment
+            comment: attendance.notes
           });
           
           if (attendance.id) {
@@ -155,15 +155,15 @@ export class SyncManager {
         try {
           await ApiService.post('/api/grades', {
             studentId: grade.studentId,
-            subjectId: grade.subjectId,
+            subjectId: grade.subject,
             classId: grade.classId,
-            score: grade.score,
-            maxScore: grade.maxScore,
-            percentage: grade.percentage,
+            score: grade.grade,
+            maxScore: grade.maxGrade,
+            percentage: (grade.grade / grade.maxGrade) * 100,
             grade: grade.grade,
-            comment: grade.comment,
-            assessmentName: grade.assessmentName,
-            assessmentDate: grade.assessmentDate
+            comment: grade.notes,
+            assessmentName: grade.assignment,
+            assessmentDate: grade.date
           });
           
           if (grade.id) {

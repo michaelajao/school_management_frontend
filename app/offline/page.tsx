@@ -65,9 +65,12 @@ export default function OfflinePage() {
       window.location.reload();
     } else {
       // Try to trigger sync when back online
-      if ('serviceWorker' in navigator && 'sync' in window.ServiceWorkerRegistration.prototype) {
+      if ('serviceWorker' in navigator) {
         navigator.serviceWorker.ready.then((registration) => {
-          return registration.sync.register('sms-background-sync');
+          // Background sync is experimental, check if it exists
+          if ('sync' in registration) {
+            return (registration as any).sync.register('sms-background-sync');
+          }
         });
       }
     }

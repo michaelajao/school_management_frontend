@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
-import withPWA from 'next-pwa';
+// @ts-ignore
+const withPWA = require('next-pwa');
 
 const nextConfig: NextConfig = {
   // Enable strict mode for better error detection
@@ -131,11 +132,9 @@ const pwaConfig = withPWA({
   dynamicStartUrl: false,
   cacheOnFrontEndNav: true,
   subdomainPrefix: undefined,
-  workboxOptions: {
-    disableDevLogs: true,
-    skipWaiting: false,
-    clientsClaim: false,
-  },
+  skipWaiting: false,
+  clientsClaim: false,
+  disableDevLogs: true,
 });
 
 export default pwaConfig(nextConfig);

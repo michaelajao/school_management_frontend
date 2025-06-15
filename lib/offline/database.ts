@@ -6,10 +6,31 @@ export interface OfflineStudent {
   firstName: string;
   lastName: string;
   email?: string;
+  studentId?: string;
   admissionNumber?: string;
   classId?: string;
   className?: string;
+  class?: string;
+  grade?: string;
+  status?: 'ACTIVE' | 'INACTIVE' | 'GRADUATED' | 'TRANSFERRED';
+  dateOfBirth?: string;
+  gender?: string;
+  address?: string;
+  city?: string;
+  guardianName?: string;
+  guardianPhone?: string;
+  guardianEmail?: string;
+  emergencyContact?: string;
+  emergencyPhone?: string;
+  enrollmentDate?: string;
+  attendanceRate?: number;
+  averageGrade?: number;
+  totalCredits?: number;
   profilePicture?: string;
+  avatar?: string;
+  medicalInfo?: string;
+  notes?: string;
+  synced: boolean;
   lastSync: number;
 }
 
@@ -20,7 +41,8 @@ export interface OfflineAttendance {
   date: string;
   present: boolean;
   status: 'PRESENT' | 'ABSENT' | 'LATE' | 'EXCUSED' | 'SICK';
-  comment?: string;
+  subject?: string;
+  notes?: string;
   markedById?: string;
   synced: boolean;
   lastSync: number;
@@ -29,16 +51,15 @@ export interface OfflineAttendance {
 export interface OfflineGrade {
   id?: number;
   studentId: string;
-  subjectId: string;
+  subject: string;
+  assignment: string;
+  grade: number;
+  maxGrade: number;
+  date: string;
+  type: 'QUIZ' | 'EXAM' | 'ASSIGNMENT' | 'PROJECT' | 'PARTICIPATION';
   classId: string;
-  score: number;
-  maxScore: number;
-  percentage?: number;
-  grade?: string;
-  comment?: string;
-  assessmentName?: string;
-  assessmentDate?: string;
   teacherId?: string;
+  notes?: string;
   synced: boolean;
   lastSync: number;
 }
@@ -152,8 +173,8 @@ class SMSOfflineDatabase extends Dexie {
 
   // Helper methods for data management
   async clearAllData() {
-    await this.transaction('rw', this.students, this.attendance, this.grades, 
-      this.classes, this.subjects, this.assignments, this.syncQueue, async () => {
+    await this.transaction('rw', [this.students, this.attendance, this.grades, 
+      this.classes, this.subjects, this.assignments, this.syncQueue], async () => {
       await this.students.clear();
       await this.attendance.clear();
       await this.grades.clear();
@@ -166,9 +187,9 @@ class SMSOfflineDatabase extends Dexie {
 
   async getUnsyncedData() {
     const [attendance, grades, assignments] = await Promise.all([
-      this.attendance.where('synced').equals(false).toArray(),
-      this.grades.where('synced').equals(false).toArray(),
-      this.assignments.where('synced').equals(false).toArray()
+      this.attendance.where('synced').equals(0).toArray(),
+      this.grades.where('synced').equals(0).toArray(),
+      this.assignments.where('synced').equals(0).toArray()
     ]);
 
     return {
@@ -278,7 +299,7 @@ class SMSOfflineDatabase extends Dexie {
     let query = this.grades.where('classId').equals(classId);
     
     if (subjectId) {
-      query = query.and(grade => grade.subjectId === subjectId);
+      query = query.and(grade => grade.subject === subjectId);
     }
     
     return await query.toArray();
@@ -288,7 +309,7 @@ class SMSOfflineDatabase extends Dexie {
     let query = this.grades.where('studentId').equals(studentId);
     
     if (subjectId) {
-      query = query.and(grade => grade.subjectId === subjectId);
+      query = query.and(grade => grade.subject === subjectId);
     }
     
     return await query.toArray();
@@ -311,10 +332,10 @@ class SMSOfflineDatabase extends Dexie {
     const normalizedQuery = query.toLowerCase();
     
     return await this.students.filter(student => 
-      student.firstName.toLowerCase().includes(normalizedQuery) ||
-      student.lastName.toLowerCase().includes(normalizedQuery) ||
-      (student.email && student.email.toLowerCase().includes(normalizedQuery)) ||
-      (student.admissionNumber && student.admissionNumber.toLowerCase().includes(normalizedQuery))
+      Boolean(student.firstName && student.firstName.toLowerCase().includes(normalizedQuery)) ||
+      Boolean(student.lastName && student.lastName.toLowerCase().includes(normalizedQuery)) ||
+      Boolean(student.email && student.email.toLowerCase().includes(normalizedQuery)) ||
+      Boolean(student.admissionNumber && student.admissionNumber.toLowerCase().includes(normalizedQuery))
     ).toArray();
   }
 }

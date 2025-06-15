@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/auth-context";
 import { usePWA } from "@/components/providers/PWAProvider";
-import { TouchCard } from "@/components/ui/touch-card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -32,349 +31,269 @@ import {
   Share,
   Bookmark,
   Filter,
-  Sort,
+  ArrowUpDown,
   Zap
 } from "lucide-react";
 
 interface QuickAction {
   id: string;
   label: string;
-  icon: React.ElementType;
+  icon: React.ComponentType<{ className?: string }>;
   color: string;
+  category: 'primary' | 'secondary' | 'utility';
   href?: string;
   action?: () => void;
-  badge?: string | number;
+  badge?: string;
   description?: string;
   roles?: string[];
-  category?: 'primary' | 'secondary' | 'utility';
 }
 
-const getQuickActions = (userRole: string): QuickAction[] => {
-  const commonActions: QuickAction[] = [
+interface QuickActionsProps {
+  userRole?: string;
+  className?: string;
+}
+
+export default function QuickActions({ userRole = 'student', className }: QuickActionsProps) {
+  const router = useRouter();
+  const { user } = useAuth();
+  const { isOnline, syncStatus } = usePWA();
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<'all' | 'primary' | 'secondary' | 'utility'>('all');
+
+  // Define all possible actions based on user role
+  const allActions: QuickAction[] = [
+    // Primary Actions - Most commonly used
     {
-      id: 'search',
-      label: 'Search',
-      icon: Search,
-      color: 'bg-blue-500',
-      description: 'Search students, teachers, or classes',
-      category: 'utility',
-      roles: ['super_admin', 'school_admin', 'assistant_admin', 'class_teacher', 'subject_teacher'],
+      id: 'mark-attendance',
+      label: 'Mark Attendance',
+      icon: ClipboardCheck,
+      color: 'bg-green-500',
+      category: 'primary',
+      href: '/attendance',
+      description: 'Mark student attendance for today',
+      roles: ['teacher', 'admin']
     },
     {
-      id: 'notifications',
-      label: 'Notifications',
-      icon: Bell,
+      id: 'view-grades',
+      label: 'View Grades',
+      icon: BookOpen,
+      color: 'bg-blue-500',
+      category: 'primary',
+      href: '/gradebook',
+      description: 'View and manage student grades',
+      roles: ['teacher', 'student', 'parent', 'admin']
+    },
+    {
+      id: 'students',
+      label: 'Students',
+      icon: Users,
       color: 'bg-purple-500',
-      href: '/dashboard/notifications',
-      description: 'View all notifications',
-      category: 'utility',
-      roles: ['super_admin', 'school_admin', 'assistant_admin', 'class_teacher', 'subject_teacher', 'student', 'parent'],
+      category: 'primary',
+      href: '/students',
+      description: 'Manage student profiles and information',
+      roles: ['teacher', 'admin']
+    },
+    {
+      id: 'messages',
+      label: 'Messages',
+      icon: MessageSquare,
+      color: 'bg-orange-500',
+      category: 'primary',
+      href: '/messages',
+      description: 'Send and receive messages',
+      roles: ['teacher', 'student', 'parent', 'admin']
+    },
+
+    // Secondary Actions - Frequently used
+    {
+      id: 'reports',
+      label: 'Reports',
+      icon: FileText,
+      color: 'bg-indigo-500',
+      category: 'secondary',
+      href: '/reports',
+      description: 'Generate and export reports',
+      roles: ['teacher', 'admin']
+    },
+    {
+      id: 'analytics',
+      label: 'Analytics',
+      icon: BarChart3,
+      color: 'bg-teal-500',
+      category: 'secondary',
+      href: '/analytics',
+      description: 'View performance analytics',
+      roles: ['teacher', 'admin']
     },
     {
       id: 'schedule',
       label: 'Schedule',
       icon: Calendar,
-      color: 'bg-green-500',
-      href: '/dashboard/schedule',
-      description: 'View your schedule',
-      category: 'primary',
-      roles: ['class_teacher', 'subject_teacher', 'student'],
+      color: 'bg-pink-500',
+      category: 'secondary',
+      href: '/schedule',
+      description: 'View class schedule and timetable',
+      roles: ['teacher', 'student', 'parent']
     },
+    {
+      id: 'achievements',
+      label: 'Achievements',
+      icon: Award,
+      color: 'bg-yellow-500',
+      category: 'secondary',
+      href: '/achievements',
+      description: 'View student achievements and awards',
+      roles: ['teacher', 'student', 'parent', 'admin']
+    },
+
+    // Utility Actions - Less frequent but useful
+    {
+      id: 'search',
+      label: 'Search',
+      icon: Search,
+      color: 'bg-gray-500',
+      category: 'utility',
+      action: () => {
+        // Trigger search functionality
+        document.querySelector<HTMLInputElement>('input[type="search"]')?.focus();
+      },
+      description: 'Search across the system'
+    },
+    {
+      id: 'notifications',
+      label: 'Notifications',
+      icon: Bell,
+      color: 'bg-red-500',
+      category: 'utility',
+      href: '/notifications',
+      badge: '3',
+      description: 'View your notifications',
+      roles: ['teacher', 'student', 'parent', 'admin']
+    },
+    {
+      id: 'export',
+      label: 'Export Data',
+      icon: Download,
+      color: 'bg-emerald-500',
+      category: 'utility',
+      href: '/export',
+      description: 'Export data to various formats',
+      roles: ['teacher', 'admin']
+    },
+    {
+      id: 'import',
+      label: 'Import Data',
+      icon: Upload,
+      color: 'bg-violet-500',
+      category: 'utility',
+      href: '/import',
+      description: 'Import data from external sources',
+      roles: ['admin']
+    },
+    {
+      id: 'scan-qr',
+      label: 'Scan QR',
+      icon: Scan,
+      color: 'bg-cyan-500',
+      category: 'utility',
+      action: () => {
+        // Trigger QR scanner
+        if ('mediaDevices' in navigator) {
+          // QR scanning logic would go here
+          alert('QR Scanner would open here');
+        }
+      },
+      description: 'Scan QR codes for quick actions'
+    },
+    {
+      id: 'take-photo',
+      label: 'Take Photo',
+      icon: Camera,
+      color: 'bg-rose-500',
+      category: 'utility',
+      action: () => {
+        // Trigger camera
+        if ('mediaDevices' in navigator) {
+          alert('Camera would open here');
+        }
+      },
+      description: 'Take photos for documentation'
+    },
+    {
+      id: 'contact',
+      label: 'Contact',
+      icon: Phone,
+      color: 'bg-lime-500',
+      category: 'utility',
+      href: '/contact',
+      description: 'Contact school administration'
+    },
+    {
+      id: 'email',
+      label: 'Email',
+      icon: Mail,
+      color: 'bg-sky-500',
+      category: 'utility',
+      action: () => {
+        window.location.href = 'mailto:admin@school.com';
+      },
+      description: 'Send email to school'
+    },
+    {
+      id: 'share',
+      label: 'Share',
+      icon: Share,
+      color: 'bg-amber-500',
+      category: 'utility',
+      action: () => {
+        if (navigator.share) {
+          navigator.share({
+            title: 'School Management System',
+            url: window.location.href
+          });
+        }
+      },
+      description: 'Share school information'
+    },
+    {
+      id: 'bookmarks',
+      label: 'Bookmarks',
+      icon: Bookmark,
+      color: 'bg-stone-500',
+      category: 'utility',
+      href: '/bookmarks',
+      description: 'View saved bookmarks'
+    },
+    {
+      id: 'settings',
+      label: 'Settings',
+      icon: Settings,
+      color: 'bg-slate-500',
+      category: 'utility',
+      href: '/settings',
+      description: 'Manage your preferences'
+    }
   ];
 
-  const roleSpecificActions: Record<string, QuickAction[]> = {
-    school_admin: [
-      {
-        id: 'add_student',
-        label: 'Add Student',
-        icon: Plus,
-        color: 'bg-[#1B5B5E]',
-        href: '/admin/manage/students/addnew',
-        description: 'Register a new student',
-        category: 'primary',
-      },
-      {
-        id: 'add_staff',
-        label: 'Add Staff',
-        icon: Users,
-        color: 'bg-blue-600',
-        href: '/admin/manage/staff/addstaff',
-        description: 'Add new staff member',
-        category: 'primary',
-      },
-      {
-        id: 'announcements',
-        label: 'Announcement',
-        icon: MessageSquare,
-        color: 'bg-orange-500',
-        href: '/admin/communications/announcement/create',
-        description: 'Create announcement',
-        category: 'primary',
-      },
-      {
-        id: 'reports',
-        label: 'Reports',
-        icon: BarChart3,
-        color: 'bg-purple-600',
-        href: '/admin/reports',
-        description: 'View analytics and reports',
-        category: 'secondary',
-      },
-      {
-        id: 'bulk_upload',
-        label: 'Bulk Upload',
-        icon: Upload,
-        color: 'bg-indigo-500',
-        href: '/admin/data-upload',
-        description: 'Import data from spreadsheet',
-        category: 'utility',
-      },
-    ],
-    assistant_admin: [
-      {
-        id: 'mark_attendance',
-        label: 'Attendance',
-        icon: ClipboardCheck,
-        color: 'bg-green-600',
-        href: '/dashboard/attendance/mark',
-        description: 'Mark class attendance',
-        category: 'primary',
-      },
-      {
-        id: 'student_list',
-        label: 'Students',
-        icon: Users,
-        color: 'bg-blue-500',
-        href: '/admin/manage/students',
-        description: 'Manage students',
-        category: 'primary',
-      },
-      {
-        id: 'parent_contact',
-        label: 'Contact Parents',
-        icon: Phone,
-        color: 'bg-yellow-500',
-        description: 'Contact parents of absent students',
-        category: 'secondary',
-      },
-      {
-        id: 'attendance_report',
-        label: 'Attendance Report',
-        icon: FileText,
-        color: 'bg-purple-500',
-        href: '/dashboard/reports/attendance',
-        description: 'Generate attendance reports',
-        category: 'secondary',
-      },
-    ],
-    class_teacher: [
-      {
-        id: 'mark_attendance',
-        label: 'Mark Attendance',
-        icon: ClipboardCheck,
-        color: 'bg-green-600',
-        href: '/dashboard/attendance/mark',
-        description: 'Take class attendance',
-        category: 'primary',
-      },
-      {
-        id: 'enter_grades',
-        label: 'Enter Grades',
-        icon: Award,
-        color: 'bg-yellow-500',
-        href: '/dashboard/grades/enter',
-        description: 'Record student grades',
-        category: 'primary',
-      },
-      {
-        id: 'lesson_plan',
-        label: 'Lesson Plans',
-        icon: BookOpen,
-        color: 'bg-blue-500',
-        href: '/dashboard/lesson-plans',
-        description: 'Create and manage lesson plans',
-        category: 'secondary',
-      },
-      {
-        id: 'class_report',
-        label: 'Class Report',
-        icon: BarChart3,
-        color: 'bg-purple-500',
-        href: '/dashboard/reports/class',
-        description: 'View class performance',
-        category: 'secondary',
-      },
-      {
-        id: 'contact_parents',
-        label: 'Parent Messages',
-        icon: MessageSquare,
-        color: 'bg-orange-500',
-        href: '/dashboard/messages/parents',
-        description: 'Send messages to parents',
-        category: 'utility',
-      },
-    ],
-    subject_teacher: [
-      {
-        id: 'enter_grades',
-        label: 'Enter Grades',
-        icon: Award,
-        color: 'bg-yellow-500',
-        href: '/dashboard/grades/enter',
-        description: 'Record assessment scores',
-        category: 'primary',
-      },
-      {
-        id: 'create_assignment',
-        label: 'New Assignment',
-        icon: FileText,
-        color: 'bg-blue-500',
-        href: '/dashboard/assignments/create',
-        description: 'Create new assignment',
-        category: 'primary',
-      },
-      {
-        id: 'grade_assignments',
-        label: 'Grade Work',
-        icon: Scan,
-        color: 'bg-purple-500',
-        href: '/dashboard/assignments/grade',
-        description: 'Grade submitted work',
-        category: 'primary',
-      },
-      {
-        id: 'subject_report',
-        label: 'Subject Analytics',
-        icon: BarChart3,
-        color: 'bg-green-500',
-        href: '/dashboard/reports/subject',
-        description: 'View subject performance',
-        category: 'secondary',
-      },
-    ],
-    student: [
-      {
-        id: 'assignments',
-        label: 'Assignments',
-        icon: FileText,
-        color: 'bg-blue-500',
-        href: '/dashboard/assignments',
-        description: 'View and submit assignments',
-        category: 'primary',
-        badge: '3', // Mock pending assignments
-      },
-      {
-        id: 'grades',
-        label: 'My Grades',
-        icon: Award,
-        color: 'bg-yellow-500',
-        href: '/dashboard/grades',
-        description: 'View your grades',
-        category: 'primary',
-      },
-      {
-        id: 'attendance',
-        label: 'Attendance',
-        icon: ClipboardCheck,
-        color: 'bg-green-500',
-        href: '/dashboard/attendance',
-        description: 'View attendance record',
-        category: 'secondary',
-      },
-      {
-        id: 'timetable',
-        label: 'Timetable',
-        icon: Calendar,
-        color: 'bg-purple-500',
-        href: '/dashboard/timetable',
-        description: 'View class schedule',
-        category: 'secondary',
-      },
-      {
-        id: 'submit_work',
-        label: 'Submit Work',
-        icon: Upload,
-        color: 'bg-orange-500',
-        href: '/dashboard/assignments/submit',
-        description: 'Submit assignments',
-        category: 'utility',
-      },
-    ],
-    parent: [
-      {
-        id: 'child_progress',
-        label: 'Child Progress',
-        icon: BarChart3,
-        color: 'bg-blue-500',
-        href: '/dashboard/progress',
-        description: 'View your child\'s progress',
-        category: 'primary',
-      },
-      {
-        id: 'grades',
-        label: 'Grades',
-        icon: Award,
-        color: 'bg-yellow-500',
-        href: '/dashboard/grades',
-        description: 'View grades and reports',
-        category: 'primary',
-      },
-      {
-        id: 'attendance',
-        label: 'Attendance',
-        icon: ClipboardCheck,
-        color: 'bg-green-500',
-        href: '/dashboard/attendance',
-        description: 'View attendance record',
-        category: 'primary',
-      },
-      {
-        id: 'teacher_messages',
-        label: 'Messages',
-        icon: MessageSquare,
-        color: 'bg-purple-500',
-        href: '/dashboard/messages',
-        description: 'Messages from teachers',
-        category: 'secondary',
-      },
-      {
-        id: 'events',
-        label: 'School Events',
-        icon: Calendar,
-        color: 'bg-orange-500',
-        href: '/dashboard/events',
-        description: 'Upcoming school events',
-        category: 'secondary',
-      },
-    ],
-  };
-
-  const allActions = [...commonActions, ...(roleSpecificActions[userRole] || [])];
-  
-  return allActions.filter(action => 
+  // Filter actions based on user role
+  const availableActions = allActions.filter(action => 
     !action.roles || action.roles.includes(userRole)
   );
-};
 
-export function QuickActions() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<'all' | 'primary' | 'secondary' | 'utility'>('all');
-  const { user } = useAuth();
-  const { syncStatus } = usePWA();
-  const router = useRouter();
+  // Categorize actions
+  const primaryActions = availableActions.filter(action => action.category === 'primary');
+  const secondaryActions = availableActions.filter(action => action.category === 'secondary');
+  const utilityActions = availableActions.filter(action => action.category === 'utility');
 
-  if (!user) return null;
-
-  const quickActions = getQuickActions(user.role);
-  
-  // Group actions by category
-  const primaryActions = quickActions.filter(a => a.category === 'primary');
-  const secondaryActions = quickActions.filter(a => a.category === 'secondary');
-  const utilityActions = quickActions.filter(a => a.category === 'utility');
-
-  const filteredActions = selectedCategory === 'all' 
-    ? quickActions 
-    : quickActions.filter(a => a.category === selectedCategory);
+  // Get filtered actions for the sheet
+  const getFilteredActions = () => {
+    switch (selectedCategory) {
+      case 'primary': return primaryActions;
+      case 'secondary': return secondaryActions;
+      case 'utility': return utilityActions;
+      default: return availableActions;
+    }
+  };
 
   const handleActionClick = (action: QuickAction) => {
     if (action.href) {
@@ -386,7 +305,7 @@ export function QuickActions() {
   };
 
   return (
-    <>
+    <div className={cn("space-y-4", className)}>
       {/* Quick Actions Grid for Mobile Dashboard */}
       <div className="lg:hidden">
         <div className="mb-6">
@@ -397,10 +316,10 @@ export function QuickActions() {
             {primaryActions.slice(0, 4).map((action) => {
               const IconComponent = action.icon;
               return (
-                <TouchCard
+                <div
                   key={action.id}
-                  className="p-4 bg-white border border-gray-200 hover:shadow-md"
-                  onTap={() => handleActionClick(action)}
+                  className="p-4 bg-white border border-gray-200 hover:shadow-md rounded-lg cursor-pointer transition-shadow"
+                  onClick={() => handleActionClick(action)}
                 >
                   <div className="flex flex-col items-center text-center space-y-2">
                     <div className={cn("p-3 rounded-xl", action.color)}>
@@ -417,7 +336,7 @@ export function QuickActions() {
                       )}
                     </div>
                   </div>
-                </TouchCard>
+                </div>
               );
             })}
           </div>
@@ -452,37 +371,34 @@ export function QuickActions() {
                   ))}
                 </div>
 
-                <ScrollArea className="h-[60vh]">
-                  <div className="grid grid-cols-2 gap-3 pb-6">
-                    {filteredActions.map((action) => {
+                {/* Actions List */}
+                <ScrollArea className="h-full">
+                  <div className="space-y-2">
+                    {getFilteredActions().map((action) => {
                       const IconComponent = action.icon;
                       return (
-                        <TouchCard
+                        <div
                           key={action.id}
-                          className="p-4 bg-white border border-gray-200"
-                          onTap={() => handleActionClick(action)}
+                          className="flex items-center p-3 bg-gray-50 hover:bg-gray-100 rounded-lg cursor-pointer transition-colors"
+                          onClick={() => handleActionClick(action)}
                         >
-                          <div className="flex flex-col items-center text-center space-y-2">
-                            <div className={cn("p-3 rounded-xl", action.color)}>
-                              <IconComponent className="h-5 w-5 text-white" />
-                            </div>
-                            <div>
-                              <p className="text-sm font-medium text-gray-900">
-                                {action.label}
-                              </p>
-                              {action.description && (
-                                <p className="text-xs text-gray-500 mt-1">
-                                  {action.description}
-                                </p>
-                              )}
-                              {action.badge && (
-                                <Badge variant="secondary" className="mt-1">
-                                  {action.badge}
-                                </Badge>
-                              )}
-                            </div>
+                          <div className={cn("p-2 rounded-lg mr-3", action.color)}>
+                            <IconComponent className="h-5 w-5 text-white" />
                           </div>
-                        </TouchCard>
+                          <div className="flex-1">
+                            <div className="flex items-center justify-between">
+                              <span className="font-medium">{action.label}</span>
+                              {action.badge && (
+                                <Badge variant="secondary">{action.badge}</Badge>
+                              )}
+                            </div>
+                            {action.description && (
+                              <p className="text-sm text-gray-500 mt-1">
+                                {action.description}
+                              </p>
+                            )}
+                          </div>
+                        </div>
                       );
                     })}
                   </div>
@@ -493,37 +409,41 @@ export function QuickActions() {
         </div>
       </div>
 
-      {/* Desktop Quick Actions (Optional - can be integrated into existing layout) */}
-      <div className="hidden lg:block">
-        <div className="grid grid-cols-4 gap-4 mb-6">
-          {primaryActions.slice(0, 8).map((action) => {
-            const IconComponent = action.icon;
-            return (
-              <TouchCard
-                key={action.id}
-                className="p-4 bg-white border border-gray-200 hover:shadow-md"
-                onTap={() => handleActionClick(action)}
-              >
-                <div className="flex items-center space-x-3">
-                  <div className={cn("p-2 rounded-lg", action.color)}>
-                    <IconComponent className="h-5 w-5 text-white" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 truncate">
-                      {action.label}
-                    </p>
-                    {action.badge && (
-                      <Badge variant="secondary" className="mt-1">
-                        {action.badge}
-                      </Badge>
-                    )}
-                  </div>
-                </div>
-              </TouchCard>
-            );
-          })}
+      {/* Sync Status Indicator */}
+      {!isOnline && (
+        <div className="flex items-center justify-center p-2 bg-orange-100 border border-orange-200 rounded-lg">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
+            <span className="text-sm text-orange-700">
+              Offline Mode - {syncStatus?.unsyncedCount || 0} pending changes
+            </span>
+          </div>
         </div>
+      )}
+
+      {/* Desktop Quick Actions Bar */}
+      <div className="hidden lg:flex lg:items-center lg:gap-2 lg:overflow-x-auto lg:p-2">
+        {primaryActions.concat(secondaryActions.slice(0, 3)).map((action) => {
+          const IconComponent = action.icon;
+          return (
+            <Button
+              key={action.id}
+              variant="outline"
+              size="sm"
+              onClick={() => handleActionClick(action)}
+              className="flex items-center gap-2 whitespace-nowrap"
+            >
+              <IconComponent className="h-4 w-4" />
+              {action.label}
+              {action.badge && (
+                <Badge variant="secondary" className="ml-1">
+                  {action.badge}
+                </Badge>
+              )}
+            </Button>
+          );
+        })}
       </div>
-    </>
+    </div>
   );
 }
