@@ -57,21 +57,21 @@ function mapBackendRoleToFrontend(backendRole: string): User['role'] {
 function getDashboardPath(role: User['role']): string {
   switch (role) {
     case 'super_admin':
-      return '/(dashboard)/(users)/admin';
+      return '/dashboard/admin';
     case 'school_admin':
-      return '/(dashboard)/(users)/admin';
+      return '/dashboard/admin';
     case 'assistant_admin':
-      return '/(dashboard)/(users)/assistant-admin';
+      return '/dashboard/assistant-admin';
     case 'class_teacher':
-      return '/(dashboard)/(users)/class-teacher';
+      return '/dashboard/class-teacher';
     case 'subject_teacher':
-      return '/(dashboard)/(users)/subject-teacher';
+      return '/dashboard/subject-teacher';
     case 'student':
-      return '/(dashboard)/(users)/student';
+      return '/dashboard/student';
     case 'parent':
-      return '/(dashboard)/(users)/parent';
+      return '/dashboard/parent';
     default:
-      return '/(dashboard)/(users)/student';
+      return '/dashboard/student';
   }
 }
 
