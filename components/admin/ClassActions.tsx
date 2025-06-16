@@ -18,7 +18,7 @@ export default function ClassActions() {
   };
 
   const create = () => {
-    router.push('/admin/manage/academics/classes/create');
+    router.push('/admin/manage/academics/classes/add');
   };
 
   return (

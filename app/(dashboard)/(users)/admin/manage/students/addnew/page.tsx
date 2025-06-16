@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -17,7 +17,7 @@ import {
   FormItem,
   FormLabel,
 } from "@/components/ui/form";
-import { CalendarIcon, ChevronLeft, ChevronDown } from "lucide-react";
+import { CalendarIcon, ChevronLeft, ChevronDown, RefreshCw, Copy, CheckCircle } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
@@ -27,6 +27,8 @@ import {
 import { format } from "date-fns";
 import { useForm } from "react-hook-form";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/hooks/use-toast";
 
 interface StudentFormProps {
   onBack?: () => void;
@@ -51,6 +53,12 @@ interface StudentData {
 }
 
 export default function StudentCreatePage() {
+  const { toast } = useToast();
+  const [date, setDate] = useState<Date | null>(null);
+  const [generatedStudentId, setGeneratedStudentId] = useState<string>('');
+  const [isGeneratingId, setIsGeneratingId] = useState(false);
+  const [idCopied, setIdCopied] = useState(false);
+
   // Page component handlers - these would typically navigate or call APIs
   const handleBack = () => {
     // Navigate back to student list
@@ -66,7 +74,58 @@ export default function StudentCreatePage() {
     // Navigate back or show confirmation
     console.log('Cancel creation');
   };
-  const [date, setDate] = useState<Date | null>(null);
+
+  // Auto-generate student ID on component mount
+  useEffect(() => {
+    generateStudentId();
+  }, []);
+
+  const generateStudentId = async () => {
+    try {
+      setIsGeneratingId(true);
+      const response = await fetch('/api/settings/student-id', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ action: 'generate' }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        const newId = result.data?.studentId || `SMS${Date.now()}`;
+        setGeneratedStudentId(newId);
+        form.setValue('studentId', newId);
+      } else {
+        // Fallback to basic generation if API fails
+        const fallbackId = `SMS${new Date().getFullYear()}${String(Date.now()).slice(-3)}`;
+        setGeneratedStudentId(fallbackId);
+        form.setValue('studentId', fallbackId);
+      }
+    } catch (error) {
+      console.error('Failed to generate student ID:', error);
+      // Fallback to basic generation
+      const fallbackId = `SMS${new Date().getFullYear()}${String(Date.now()).slice(-3)}`;
+      setGeneratedStudentId(fallbackId);
+      form.setValue('studentId', fallbackId);
+    } finally {
+      setIsGeneratingId(false);
+    }
+  };
+
+  const copyStudentId = async () => {
+    try {
+      await navigator.clipboard.writeText(generatedStudentId);
+      setIdCopied(true);
+      toast({
+        title: "Copied!",
+        description: "Student ID copied to clipboard",
+      });
+      setTimeout(() => setIdCopied(false), 2000);
+    } catch (error) {
+      console.error('Failed to copy:', error);
+    }
+  };
 
   // Initialize form with empty values for a new student
   const form = useForm<StudentData>({
@@ -144,13 +203,55 @@ export default function StudentCreatePage() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className={labelStyles}>Student ID</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Enter student ID"
-                        className={inputStyles}
-                        {...field}
-                      />
-                    </FormControl>
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <FormControl>
+                          <Input
+                            placeholder="Auto-generated student ID"
+                            className={inputStyles}
+                            {...field}
+                            readOnly
+                          />
+                        </FormControl>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={generateStudentId}
+                          disabled={isGeneratingId}
+                          className="h-14 px-3"
+                        >
+                          {isGeneratingId ? (
+                            <RefreshCw className="w-4 h-4 animate-spin" />
+                          ) : (
+                            <RefreshCw className="w-4 h-4" />
+                          )}
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={copyStudentId}
+                          className="h-14 px-3"
+                        >
+                          {idCopied ? (
+                            <CheckCircle className="w-4 h-4 text-green-600" />
+                          ) : (
+                            <Copy className="w-4 h-4" />
+                          )}
+                        </Button>
+                      </div>
+                      {generatedStudentId && (
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline" className="text-xs">
+                            Auto-generated
+                          </Badge>
+                          <span className="text-xs text-gray-500">
+                            Click refresh to generate a new ID
+                          </span>
+                        </div>
+                      )}
+                    </div>
                   </FormItem>
                 )}
               />

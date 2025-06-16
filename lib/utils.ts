@@ -41,7 +41,7 @@ export type SideBarType = {
 // -- Universal Sections
 export const sideBarSettings: SideBarType[] = [
   {
-    href: '/settings',
+    href: '/admin/settings',
     label: 'Settings & Configuration',
     icon: UserCog 
   },
